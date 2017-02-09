@@ -46,7 +46,7 @@ public class Tree extends TwoDimCell {
 	public void deltext(double e, message x) {
 
 		Continue(e);
-		System.out.println(phase + " on " + xcoord + "," + ycoord);
+		//System.out.println(phase + " on " + xcoord + "," + ycoord);
 		if (phaseIs("tree")) {
 			for (int i = 0; i < x.getLength(); i++) {
 				// if (somethingOnPort(x, "start")) {

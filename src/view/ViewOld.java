@@ -65,7 +65,7 @@ import view.simView.*;
 import view.timeView.Graph;
 import view.timeView.GraphFactory;
 
-public class View extends JFrame implements ViewInterface
+public class ViewOld extends JFrame implements ViewInterface
 {
     public static JFrame PARENT_FRAME;
     private JToolBar DEVSToolBar;
@@ -108,7 +108,7 @@ public class View extends JFrame implements ViewInterface
 	
 	public static JTabbedPane tabbedPane;
     
-    public View(ControllerInterface controller) 
+    public ViewOld(ControllerInterface controller) 
     {
         super(ViewUtils.FRAME_TITLE);
         
@@ -318,7 +318,7 @@ public class View extends JFrame implements ViewInterface
  	   
  	   ButtonControls[1].addActionListener(new ActionListener() {
            public void actionPerformed(ActionEvent e) {
-        	   String val = JOptionPane.showInputDialog(View.PARENT_FRAME,"Number of steps to iterate: ");
+        	   String val = JOptionPane.showInputDialog(ViewOld.PARENT_FRAME,"Number of steps to iterate: ");
                if (val != null)
                    try
                    {
@@ -357,7 +357,7 @@ public class View extends JFrame implements ViewInterface
            public void actionPerformed(ActionEvent e) {
         	   String msg = "Reset this Model?\n";
                msg += "All Tracking Data Will Be Lost";
-               int option = JOptionPane.showConfirmDialog(View.PARENT_FRAME,msg,
+               int option = JOptionPane.showConfirmDialog(ViewOld.PARENT_FRAME,msg,
                             "Reset Model?",JOptionPane.YES_NO_OPTION);
                if (option == JOptionPane.YES_OPTION)
                    controller.userGesture(controller.SIM_RESET_GESTURE,null);        
@@ -484,7 +484,7 @@ public class View extends JFrame implements ViewInterface
 	            else if (cmd.equalsIgnoreCase("Step"))
 	            	controller.userGesture(controller.SIM_STEP_GESTURE,null);               
 	            else if (cmd.equalsIgnoreCase("Step(n)")){
-	            	String val = JOptionPane.showInputDialog(View.PARENT_FRAME,"Number of steps to iterate: ");
+	            	String val = JOptionPane.showInputDialog(ViewOld.PARENT_FRAME,"Number of steps to iterate: ");
 	                if (val != null)
 	                    try
 	                    {
@@ -500,7 +500,7 @@ public class View extends JFrame implements ViewInterface
 	            else if (cmd.equalsIgnoreCase("Reset")){
 	            	String msg = "Reset this Model?\n";
 	                msg += "All Tracking Data Will Be Lost";
-	                int option = JOptionPane.showConfirmDialog(View.PARENT_FRAME,msg,
+	                int option = JOptionPane.showConfirmDialog(ViewOld.PARENT_FRAME,msg,
 	                             "Reset Model?",JOptionPane.YES_NO_OPTION);
 	                if (option == JOptionPane.YES_OPTION)
 	                    controller.userGesture(controller.SIM_RESET_GESTURE,null);
@@ -668,7 +668,6 @@ public class View extends JFrame implements ViewInterface
     public void addTrackingColumn(double currentTime) 
     {
     		tracking.addTracking(currentTime);
-    		//added for CA, by Chao
     		tracking.addCATracking(currentTime);
     }
     
@@ -690,10 +689,8 @@ public class View extends JFrame implements ViewInterface
         if(isTracking)
         	tracking.loadSimModel(simulator.getRootModel());
         
-        //add for CA, by Chao
         if(isTracking)
         	tracking.loadCAModel(simulator.getRootModel());
-        //end adding
         
         for(int i=0; i<ButtonControls.length; i++){
   	   		ButtonControls[i].setVisible(true);

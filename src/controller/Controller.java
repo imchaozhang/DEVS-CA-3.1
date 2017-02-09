@@ -187,6 +187,7 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 				instanceModel = (TwoDimCellSpace) instance;
 				simulator = new FCASimulator((TwoDimCellSpace) instanceModel, SimView.modelView, modelType);
 			}
+			// end of adding
 			
 			simulator.setSimulatorHookListener(this);
 			view.loadSimulator(simulator);
