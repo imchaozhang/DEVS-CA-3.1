@@ -6,7 +6,10 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -45,13 +48,36 @@ public class SpaceView extends Application {
 			for (int j = 0; j < m; j++) {
 
 				// create node
-				CellView node = new CellView(i * gridWidth, j * gridHeight, gridWidth, gridHeight);
+				CellView node = new CellView(i, j, gridWidth, gridHeight);
 
 				// add node to group
 				root.getChildren().add(node);
 
 				// add to playfield for further reference using an array
 				cellView[i][j] = node;
+				
+				
+				node.setOnMousePressed(new EventHandler<MouseEvent>() {
+				     @Override
+				     public void handle(MouseEvent t) {
+				          Node  mynode =(Node)t.getSource();
+				          node.tp.show(mynode, primaryStage.getX()+t.getSceneX(), primaryStage.getY()+t.getSceneY());
+				        }
+				    });
+				
+				node.setOnMouseReleased(new EventHandler<MouseEvent>(){
+
+					@Override
+					public void handle(MouseEvent event) {
+						node.tp.hide();
+						
+					}
+					
+					
+				});
+				
+				
+				
 
 			}
 		}
@@ -73,10 +99,13 @@ public class SpaceView extends Application {
 			for (int aj = 0; aj < m; aj++) {
 				CellView currentnode = cellView[ai][aj];
 				if (!currentnode.isDatalistEmp()) {
-					FillTransition ftA = new FillTransition(Duration.millis(500), currentnode.rectangle,
+					FillTransition ftA = new FillTransition(Duration.millis(600), currentnode.rectangle,
 							currentnode.color, currentnode.step().color);
 					ftA.setAutoReverse(false);
 					parallelTransition.getChildren().add(ftA);
+					
+
+					
 				}
 
 			}
@@ -92,6 +121,10 @@ public class SpaceView extends Application {
 			}
 
 		});
+		
+
+		
+		
 
 	}
 

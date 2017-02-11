@@ -94,7 +94,7 @@ public class Tree extends TwoDimCell {
 		// System.out.println(phase);
 		if (phaseIs("tree")) {
 			// 0.2% chance to catch a fire itself
-			if (new Random().nextInt(1000) < 10) {
+			if (new Random().nextInt(1000) < 5) {
 				holdIn("fire", 10);
 			}
 		} else if (phaseIs("fire")) {

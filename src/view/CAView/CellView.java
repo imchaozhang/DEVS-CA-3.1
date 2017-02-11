@@ -3,10 +3,15 @@ package view.CAView;
 import java.util.LinkedList;
 
 import javafx.beans.property.StringProperty;
+import javafx.event.EventHandler;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import view.timeView.Event;
 
@@ -18,9 +23,12 @@ public class CellView extends StackPane {
 	public Text text;
 	public Color color;
 	public LinkedList<Event> datalistCAView = new LinkedList<Event>();
+	public Tooltip tp = new Tooltip();
+	
+	private int i,j;
 
-	public CellView(double x, double y, double width, double height) {
-
+	public CellView(int x, int y, double width, double height) {
+		
 		// initialize rectangle
 		rectangle = new Rectangle(width, height);
 		//rectangle.setFill(Color.ANTIQUEWHITE);
@@ -28,14 +36,25 @@ public class CellView extends StackPane {
 		
 		rectangle.setFill(color);
 		text = new Text("start");
+		text.setFont(Font.font ("Verdana", 8));
 		
 
 		// set position
-		setTranslateX(x);
-		setTranslateY(y);
+		i = x;
+		j = y;
+		setTranslateX(x*width);
+		setTranslateY(y*height);
 
 		getChildren().add(rectangle);
-		getChildren().add(text);
+		//getChildren().add(text);
+		
+		
+		
+		tp.setText(text.getText());
+
+		
+		
+		
 	}
 
 	public void addEvent(Event e)  {
@@ -66,7 +85,8 @@ public class CellView extends StackPane {
 			color = Color.WHITE;
 		}
 		
-		text.setText(status+":"+current.getTime());
+		text.setText("i: "+ this.i +", j: "+this.j +"\nphase: " + current.getData() +"\ntime: "+current.getTime()+"\n");
+		tp.setText(text.getText());
 		
 		return this;
 
