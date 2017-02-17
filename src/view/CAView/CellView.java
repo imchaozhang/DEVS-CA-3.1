@@ -18,59 +18,71 @@ import view.timeView.Event;
 public class CellView extends StackPane {
 
 	public Rectangle rectangle;
-	public String status = "";
+	public String status = "passive";
 	public StringProperty sstatus;
 	public Text text;
 	public Color color;
 	public LinkedList<Event> datalistCAView = new LinkedList<Event>();
 	public Tooltip tp = new Tooltip();
-	
-	private int i,j;
+	public boolean statusChanged = false;
+
+	private int i, j;
 
 	public CellView(int x, int y, double width, double height) {
-		
+
 		// initialize rectangle
 		rectangle = new Rectangle(width, height);
-		//rectangle.setFill(Color.ANTIQUEWHITE);
-		color = Color.ANTIQUEWHITE;
-		
+		// rectangle.setFill(Color.ANTIQUEWHITE);
+		color = Color.WHITE;
+
 		rectangle.setFill(color);
 		text = new Text("start");
-		text.setFont(Font.font ("Verdana", 8));
-		
+		text.setFont(Font.font("Verdana", 8));
 
 		// set position
 		i = x;
 		j = y;
-		setTranslateX(x*width);
-		setTranslateY(y*height);
+		setTranslateX(x * width);
+		setTranslateY(y * height);
 
 		getChildren().add(rectangle);
-		//getChildren().add(text);
-		
-		
-		
+		// getChildren().add(text);
+
 		tp.setText(text.getText());
 
-		
-		
-		
 	}
 
-	public void addEvent(Event e)  {
+	public void addEvent(Event e) {
 		if (e.getName() == "Phase") {
-			//System.out.println(e);
-			try{datalistCAView.add(e);
-			
+			// System.out.println(e);
+			try {
+				datalistCAView.add(e);
+
+			} catch (Exception e1) {
+				System.out.println("Not added");
 			}
-			catch(Exception e1){
+		}
+
+		else if (e.getName() == "Sigma") {
+			// System.out.println(e);
+			try {
+				datalistCAView.add(e);
+
+			} catch (Exception e1) {
 				System.out.println("Not added");
 			}
 		}
 	}
 
 	public CellView step() {
+		statusChanged = false;
 		Event current = datalistCAView.poll();
+		if (current.getName() == "Phase") {
+			if (status != current.getData())
+				statusChanged = true;
+
+		}
+
 		if (current.getName() == "Phase" && current.getData() == "tree") {
 			status = "tree";
 			color = Color.GREEN;
@@ -81,23 +93,26 @@ public class CellView extends StackPane {
 
 		} else {
 
-			status = "emp";
+			status = "passive";
 			color = Color.WHITE;
 		}
-		
-		text.setText("i: "+ this.i +", j: "+this.j +"\nphase: " + current.getData() +"\ntime: "+current.getTime()+"\n");
+
+		Event currentSigma = datalistCAView.poll();
+
+		text.setText("i: " + this.i + ", j: " + this.j + "\nphase: " + current.getData() + "\ntime: "
+				+ current.getTime() + "\nsigma: " + currentSigma.getData() + "\nStatus Changed: " + statusChanged);
 		tp.setText(text.getText());
-		
+
 		return this;
 
 	}
-	
-	public boolean isDatalistEmp(){
-		if(datalistCAView.isEmpty())
+
+	public boolean isDatalistEmp() {
+		if (datalistCAView.isEmpty())
 			return true;
 		else
 			return false;
-		
+
 	}
 
 }

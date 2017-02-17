@@ -78,6 +78,8 @@ public class CATracker extends Tracker {
 			FCACellModel CACell = (FCACellModel) CAModel;
 			e = new Event("Phase", "STATE", time, CACell.getPhase());
 			CAViewData.add(e);
+			e = new Event("Sigma","SIGMA",time, CACell.getSigma()); 
+			CAViewData.add(e);
 			// e = new Event("X","COORD",time, CACell.getXcoord());
 			// CAViewData.add(e);
 			// e = new Event("Y","COORD",time, CACell.getYcoord());
