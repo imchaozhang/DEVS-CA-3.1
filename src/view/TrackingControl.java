@@ -61,6 +61,7 @@ public class TrackingControl {
 	private List<Event> dataCAView;
 
 	private int XSize, YSize;
+	
 	public void controlTimeView(String control) {
 
 		if (control == "Reset") {
