@@ -48,4 +48,6 @@ public interface Cell
    */
   public boolean isAllCoupled();
 
+  
+
 }

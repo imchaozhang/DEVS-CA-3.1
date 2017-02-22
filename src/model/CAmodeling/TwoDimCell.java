@@ -22,10 +22,11 @@ public abstract class TwoDimCell extends ViewableAtomic implements Cell {
 	protected Pair id; // Unique cell id: equals cell pos in cell space
 	protected boolean coupled; // This is true if a cell has all the couplings
 								// done
+
 	protected rand r;
 	protected int numTransitions, numTransAll;
 	boolean initial;
-	
+
 	protected Pair inpair;
 
 	/**
@@ -73,7 +74,7 @@ public abstract class TwoDimCell extends ViewableAtomic implements Cell {
 
 		// Add test ports
 
-		addTestInput("start",new entity(""));
+		addTestInput("start", new entity(""));
 		addTestInput("inN", new Pair(new Integer(xcoord), new Integer(ycoord + 1)));
 		addTestInput("inNE", new Pair(new Integer(xcoord + 1), new Integer(ycoord + 1)));
 		addTestInput("inE", new Pair(new Integer(xcoord + 1), new Integer(ycoord)));
@@ -87,9 +88,9 @@ public abstract class TwoDimCell extends ViewableAtomic implements Cell {
 
 	public void initialize() {
 		super.initialize();
-//		initial = false;
-//		numTransitions = 0;
-//		passivate();
+		// initial = false;
+		// numTransitions = 0;
+		// passivate();
 	}
 
 	public void deltext(double e, message x) {
@@ -100,7 +101,7 @@ public abstract class TwoDimCell extends ViewableAtomic implements Cell {
 			} else if (somethingOnPort(x, "stop")) {
 				passivate();
 			}
-			
+
 			// Get notification message from neighbor cells
 			if (somethingOnPort(x, "inN")) {
 				inpair = (Pair) x.getValOnPort("inN", i);

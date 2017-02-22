@@ -37,6 +37,8 @@ public class Tree extends TwoDimCell {
 			passivate();
 			// holdIn("passive", INFINITY);
 		}
+		// Define the Phase Color for CA Display
+		TreeUI.setPhaseColor();		
 	}
 
 	/**
@@ -46,7 +48,7 @@ public class Tree extends TwoDimCell {
 	public void deltext(double e, message x) {
 
 		Continue(e);
-		//System.out.println(phase + " on " + xcoord + "," + ycoord);
+		// System.out.println(phase + " on " + xcoord + "," + ycoord);
 		if (phaseIs("tree")) {
 			for (int i = 0; i < x.getLength(); i++) {
 				// if (somethingOnPort(x, "start")) {
@@ -73,12 +75,11 @@ public class Tree extends TwoDimCell {
 				} else if (somethingOnPort(x, "inNW")) {
 					inpair = (Pair) x.getValOnPort("inNW", i);
 				}
-			
 
 				if (inpair != null && inpair.getValue().toString() == "fire") {
 					// System.out.println("Catching fire");
 					if (new Random().nextInt(10) < 5) {
-						holdIn("fire", new Random().nextInt(3)+3);
+						holdIn("fire", new Random().nextInt(3) + 3);
 						System.out.println("Catching fire on " + xcoord + "," + ycoord);
 					}
 				}
@@ -95,18 +96,18 @@ public class Tree extends TwoDimCell {
 		if (phaseIs("tree")) {
 			// 0.2% chance to catch a fire itself
 			if (new Random().nextInt(1000) < 5) {
-				holdIn("fire", new Random().nextInt(5)+3);
+				holdIn("fire", new Random().nextInt(5) + 3);
 			}
 		} else if (phaseIs("fire")) {
 			if (new Random().nextInt(10) < 2) {
-				holdIn("tree", new Random().nextInt(10)+3);
+				holdIn("tree", new Random().nextInt(10) + 3);
 
 			} else if (new Random().nextInt(10) < 3) {
 				passivate();
 				// ? should I do that
 				// holdIn("passive", 10);
 			} else
-				holdIn("fire", new Random().nextInt(15)+3);
+				holdIn("fire", new Random().nextInt(15) + 3);
 		}
 	}
 

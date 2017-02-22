@@ -80,21 +80,8 @@ public class CellView extends StackPane {
 		if (current.getName() == "Phase") {
 			if (status != current.getData())
 				statusChanged = true;
+			color = CAViewUI.getColor(current.getData().toString());
 
-		}
-
-		if (current.getName() == "Phase" && current.getData() == "tree") {
-			status = "tree";
-			color = Color.GREEN;
-
-		} else if (current.getName() == "Phase" && current.getData() == "fire") {
-			status = "fire";
-			color = Color.RED;
-
-		} else {
-
-			status = "passive";
-			color = Color.WHITE;
 		}
 
 		Event currentSigma = datalistCAView.poll();

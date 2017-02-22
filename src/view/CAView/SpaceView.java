@@ -11,11 +11,13 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Hyperlink;
+import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Tooltip;
 import javafx.scene.input.MouseEvent;
@@ -36,9 +38,10 @@ public class SpaceView extends Application {
 	public static CellView[][] cellView;
 	double gridWidth, gridHeight;
 	static int n, m;
-	public static LinkedList<ParallelTransition> lookback = new LinkedList<ParallelTransition>();
-	//public static Slider slider;
-	
+	public static LinkedList<ParallelTransition> playback = new LinkedList<ParallelTransition>();
+	// public static Slider slider;
+	private static int stepSpeed = 1;
+	private int count = 0;
 
 	public static void initial(int i, int j) {
 
@@ -61,7 +64,7 @@ public class SpaceView extends Application {
 	public void start(Stage primaryStage) throws Exception {
 
 		BorderPane border = new BorderPane();
-		
+
 		HBox hbox = addHBox();
 		VBox vbox = addVBox();
 		border.setTop(hbox);
@@ -119,8 +122,8 @@ public class SpaceView extends Application {
 	public void animate() {
 
 		ParallelTransition parallelTransition = new ParallelTransition();
-		
-		ParallelTransition lookbackTransition = new ParallelTransition();
+
+		ParallelTransition playbackTransition = new ParallelTransition();
 
 		for (int ai = 0; ai < n; ai++) {
 			for (int aj = 0; aj < m; aj++) {
@@ -129,36 +132,41 @@ public class SpaceView extends Application {
 					FillTransition ftA = new FillTransition(Duration.millis(500), currentnode.rectangle,
 							currentnode.color, currentnode.step().color);
 					ftA.setAutoReverse(false);
-					if (currentnode.statusChanged) 
-					{
+
+					if (currentnode.statusChanged || stepSpeed != 1) {
 						parallelTransition.getChildren().add(ftA);
 					}
-					
-					lookbackTransition.getChildren().add(ftA);
+
+					playbackTransition.getChildren().add(ftA);
 
 				}
 
 			}
 		}
 
-		if (lookback.size() <= 20) {
-			lookback.add(lookbackTransition);
-		} else {
-			lookback.poll();
-			lookback.add(lookbackTransition);
-		}
+		if (count % stepSpeed == 0) {
+			if (playback.size() <= 20) {
+				playback.add(playbackTransition);
+			} else {
+				playback.poll();
+				playback.add(playbackTransition);
+			}
 
-		parallelTransition.play();
+			parallelTransition.play();
+		}
 
 		parallelTransition.setOnFinished(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				// animate();
-				
 
 			}
 
 		});
+		count++;
+		System.out.println(count % stepSpeed);
+		System.out.println(stepSpeed);
+		System.out.println(count);
 
 	}
 
@@ -197,29 +205,58 @@ public class SpaceView extends Application {
 			vbox.getChildren().add(options[i]);
 		}
 
-		Slider slider = new Slider(0, 20, 0);
-		slider.setLayoutX(10);
-		slider.setLayoutY(95);
-		slider.setShowTickLabels(true);
-		slider.setShowTickMarks(true);
-		slider.setMajorTickUnit(5);
-		slider.setBlockIncrement(1);
+		Slider playbackControl = new Slider(0, 20, 0);
+		playbackControl.setLayoutX(10);
+		playbackControl.setLayoutY(95);
+		playbackControl.setShowTickLabels(true);
+		playbackControl.setShowTickMarks(true);
+		playbackControl.setMajorTickUnit(5);
+		playbackControl.setSnapToTicks(true);
+		playbackControl.setBlockIncrement(1);
 
-		slider.valueProperty().addListener(new ChangeListener<Number>() {
+		playbackControl.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-				lookback.get((int) slider.getValue()).play();
-				if(slider.getMax()<20){
-					//slider.setMax(lookback.size());
+				playback.get((int) playbackControl.getValue()).play();
+				if (playbackControl.getMax() < 20) {
+					// playbackControl.setMax(playback.size());
+					// playbackControl.autosize();
 				}
 
 			}
 		});
 
 		// slider.valueProperty().addListener((ov, curVal, newVal) ->
-		// lookback.get((int)slider.getValue()).play());
+		// playback.get((int)slider.getValue()).play());
 
-		vbox.setMargin(slider, new Insets(10));
-		vbox.getChildren().add(slider);
+		vbox.setMargin(playbackControl, new Insets(10));
+		vbox.getChildren().add(playbackControl);
+
+		Slider stepSpeedControl = new Slider(1, 9, 1);
+		stepSpeedControl.setLayoutX(10);
+		stepSpeedControl.setLayoutY(125);
+		//stepSpeedControl.setCenterShape(true);
+		stepSpeedControl.setShowTickLabels(true);
+		stepSpeedControl.setShowTickMarks(true);
+		stepSpeedControl.setMajorTickUnit(4);
+		stepSpeedControl.setSnapToTicks(true);
+		final Label stepSpeedValue = new Label(
+				"CA Animation Speed: " + Integer.toString((int) stepSpeedControl.getValue()));
+		
+		
+
+		// stepSpeedControl.setBlockIncrement(1);
+
+		stepSpeedControl.valueProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+				stepSpeed = (int) stepSpeedControl.getValue();
+				stepSpeedValue.setText("CA Animation Speed: " + String.format("%.0f", new_val));
+			}
+		});
+
+		vbox.setMargin(stepSpeedControl, new Insets(10,10,0,10));
+		vbox.setMargin(stepSpeedValue, new Insets(0,0,0,40));
+		vbox.getChildren().add(stepSpeedControl);
+		vbox.getChildren().add(stepSpeedValue);
 
 		return vbox;
 	}
