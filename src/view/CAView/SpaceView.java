@@ -16,6 +16,7 @@ import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Hyperlink;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -25,6 +26,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
@@ -41,7 +43,15 @@ public class SpaceView extends Application {
 	public static LinkedList<ParallelTransition> playback = new LinkedList<ParallelTransition>();
 	// public static Slider slider;
 	private static int stepSpeed = 1;
-	private int count = 0;
+	private static long count = 0;
+
+	private static boolean playbackSelected = false;
+	private static boolean playbacked = false;
+	
+	BorderPane border;	
+	HBox hbox;
+	VBox vbox;
+	
 
 	public static void initial(int i, int j) {
 
@@ -63,10 +73,10 @@ public class SpaceView extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 
-		BorderPane border = new BorderPane();
+		border = new BorderPane();
 
-		HBox hbox = addHBox();
-		VBox vbox = addVBox();
+		hbox = addHBox();
+		vbox = addVBox();
 		border.setTop(hbox);
 		border.setLeft(vbox);
 
@@ -120,53 +130,62 @@ public class SpaceView extends Application {
 	}
 
 	public void animate() {
+		// return the states to the lastest one
+		if (playbacked) {
+			playback.get(playback.size() - 1).play();
+			playbacked = false;
+		}
+		
 
-		ParallelTransition parallelTransition = new ParallelTransition();
-
+		// only transition for playback
 		ParallelTransition playbackTransition = new ParallelTransition();
 
 		for (int ai = 0; ai < n; ai++) {
 			for (int aj = 0; aj < m; aj++) {
 				CellView currentnode = cellView[ai][aj];
+				Color previouscolor = currentnode.previouscolor;
 				if (!currentnode.isDatalistEmp()) {
-					FillTransition ftA = new FillTransition(Duration.millis(500), currentnode.rectangle,
-							currentnode.color, currentnode.step().color);
-					ftA.setAutoReverse(false);
+					CellView nextnode = currentnode.step();
+					Color nextcolor = nextnode.currentcolor;
+					if (count % stepSpeed == 0) {
+						if (playbackSelected) { // if animation is selected, all the cells'
+									// transition will be recorded
+							FillTransition ftA = new FillTransition(Duration.millis(500), currentnode.rectangle,
+									previouscolor, nextcolor);
+							ftA.setAutoReverse(false);
 
-					if (currentnode.statusChanged || stepSpeed != 1) {
-						parallelTransition.getChildren().add(ftA);
+							playbackTransition.getChildren().add(ftA);
+						}
+						if (nextcolor != previouscolor) {
+							cellView[ai][aj].rectangle.setFill(nextcolor);
+							cellView[ai][aj].previouscolor = nextcolor;
+						}
+
 					}
-
-					playbackTransition.getChildren().add(ftA);
-
 				}
 
 			}
 		}
+		if (!playbackTransition.getChildren().isEmpty()) {
 
-		if (count % stepSpeed == 0) {
 			if (playback.size() <= 20) {
 				playback.add(playbackTransition);
 			} else {
 				playback.poll();
 				playback.add(playbackTransition);
 			}
-
-			parallelTransition.play();
 		}
-
-		parallelTransition.setOnFinished(new EventHandler<ActionEvent>() {
-			@Override
-			public void handle(ActionEvent event) {
-				// animate();
-
-			}
-
-		});
+		// playbackTransition.play();
+		//
+		// playbackTransition.setOnFinished(new EventHandler<ActionEvent>() {
+		// @Override
+		// public void handle(ActionEvent event) {
+		// // animate();
+		//
+		// }
+		//
+		// });
 		count++;
-		System.out.println(count % stepSpeed);
-		System.out.println(stepSpeed);
-		System.out.println(count);
 
 	}
 
@@ -204,6 +223,9 @@ public class SpaceView extends Application {
 			VBox.setMargin(options[i], new Insets(0, 0, 0, 8));
 			vbox.getChildren().add(options[i]);
 		}
+		
+		
+
 
 		Slider playbackControl = new Slider(0, 20, 0);
 		playbackControl.setLayoutX(10);
@@ -213,10 +235,15 @@ public class SpaceView extends Application {
 		playbackControl.setMajorTickUnit(5);
 		playbackControl.setSnapToTicks(true);
 		playbackControl.setBlockIncrement(1);
+		
+		final Label playbackValue = new Label(
+				"Current Step: " + Long.toString(count - (long)playbackControl.getValue()));
 
 		playbackControl.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
 				playback.get((int) playbackControl.getValue()).play();
+				playbacked = true;
+				playbackValue.setText("Current Step: " + String.format("%.0f", (count - 20 + (double)new_val.longValue())));
 				if (playbackControl.getMax() < 20) {
 					// playbackControl.setMax(playback.size());
 					// playbackControl.autosize();
@@ -224,25 +251,38 @@ public class SpaceView extends Application {
 
 			}
 		});
+		
+		playbackControl.setDisable(true); //disable the playback by default
+		
+		
+		CheckBox cb_playbackSelect = new CheckBox("Playback");
+		cb_playbackSelect.setSelected(false);
+		cb_playbackSelect.selectedProperty().addListener(new ChangeListener<Boolean>() {
+	        public void changed(ObservableValue<? extends Boolean> ov,
+	            Boolean old_val, Boolean new_val) {
+	        	playbackSelected = new_val;
+	        	playbackControl.setDisable(!new_val);
+	        }
+	    });
+		
+		vbox.getChildren().add(cb_playbackSelect);
 
-		// slider.valueProperty().addListener((ov, curVal, newVal) ->
-		// playback.get((int)slider.getValue()).play());
 
 		vbox.setMargin(playbackControl, new Insets(10));
 		vbox.getChildren().add(playbackControl);
+		vbox.getChildren().add(playbackValue);
+		
 
 		Slider stepSpeedControl = new Slider(1, 9, 1);
 		stepSpeedControl.setLayoutX(10);
 		stepSpeedControl.setLayoutY(125);
-		//stepSpeedControl.setCenterShape(true);
+		// stepSpeedControl.setCenterShape(true);
 		stepSpeedControl.setShowTickLabels(true);
 		stepSpeedControl.setShowTickMarks(true);
 		stepSpeedControl.setMajorTickUnit(4);
 		stepSpeedControl.setSnapToTicks(true);
 		final Label stepSpeedValue = new Label(
 				"CA Animation Speed: " + Integer.toString((int) stepSpeedControl.getValue()));
-		
-		
 
 		// stepSpeedControl.setBlockIncrement(1);
 
@@ -253,8 +293,8 @@ public class SpaceView extends Application {
 			}
 		});
 
-		vbox.setMargin(stepSpeedControl, new Insets(10,10,0,10));
-		vbox.setMargin(stepSpeedValue, new Insets(0,0,0,40));
+		vbox.setMargin(stepSpeedControl, new Insets(10, 10, 0, 10));
+		vbox.setMargin(stepSpeedValue, new Insets(0, 0, 0, 40));
 		vbox.getChildren().add(stepSpeedControl);
 		vbox.getChildren().add(stepSpeedValue);
 

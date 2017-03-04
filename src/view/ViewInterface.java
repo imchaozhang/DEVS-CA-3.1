@@ -22,6 +22,7 @@ public interface ViewInterface
     public void synchronizeView();
     public void loadSimulator(FSimulator simulator);
     public void addTrackingColumn(double currentTime);
+    public void addCATrackingColumn(double currentTime);
     public void clearConsole();
     public String getHTMLTrackingLog();
     public String getConsoleLog();

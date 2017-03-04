@@ -21,7 +21,7 @@ public class CellView extends StackPane {
 	public String status = "passive";
 	public StringProperty sstatus;
 	public Text text;
-	public Color color;
+	public Color previouscolor,currentcolor;
 	public LinkedList<Event> datalistCAView = new LinkedList<Event>();
 	public Tooltip tp = new Tooltip();
 	public boolean statusChanged = false;
@@ -33,9 +33,9 @@ public class CellView extends StackPane {
 		// initialize rectangle
 		rectangle = new Rectangle(width, height);
 		// rectangle.setFill(Color.ANTIQUEWHITE);
-		color = Color.WHITE;
+		currentcolor = previouscolor = Color.WHITE;
 
-		rectangle.setFill(color);
+		rectangle.setFill(currentcolor);
 		text = new Text("start");
 		text.setFont(Font.font("Verdana", 8));
 
@@ -76,20 +76,26 @@ public class CellView extends StackPane {
 
 	public CellView step() {
 		statusChanged = false;
-		Event current = datalistCAView.poll();
-		if (current.getName() == "Phase") {
-			if (status != current.getData())
-				statusChanged = true;
-			color = CAViewUI.getColor(current.getData().toString());
+		try {
+			Event current = datalistCAView.poll();
+			if (current.getName() == "Phase") {
+				if (status != current.getData()) {
+					statusChanged = true;
+					status = (String) current.getData();
+					currentcolor = CAViewUI.getColor(current.getData().toString());
+				}
+
+			}
+
+			Event currentSigma = datalistCAView.poll();
+
+			text.setText("i: " + this.i + ", j: " + this.j + "\nphase: " + current.getData() + "\ntime: "
+					+ current.getTime() + "\nsigma: " + currentSigma.getData() + "\nStatus Changed: " + statusChanged);
+			tp.setText(text.getText());
+		} catch (Exception e) {
+			System.out.println("No data in list!");
 
 		}
-
-		Event currentSigma = datalistCAView.poll();
-
-		text.setText("i: " + this.i + ", j: " + this.j + "\nphase: " + current.getData() + "\ntime: "
-				+ current.getTime() + "\nsigma: " + currentSigma.getData() + "\nStatus Changed: " + statusChanged);
-		tp.setText(text.getText());
-
 		return this;
 
 	}

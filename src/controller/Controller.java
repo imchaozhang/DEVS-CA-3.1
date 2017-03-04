@@ -127,6 +127,11 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 			// System.out.println("Tracking@@@@@@@@@@@@@@@@@"
 			// +simulator.getTimeOfNextEvent());
 		}
+		else if(View.isCATracking){
+			view.addCATrackingColumn(simulator.getTimeOfNextEvent());
+			
+		}
+		
 		view.synchronizeView();
 	}
 
