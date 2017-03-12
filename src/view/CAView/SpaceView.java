@@ -48,9 +48,11 @@ public class SpaceView extends Application {
 	private static boolean playbackSelected = false;
 	private static boolean playbacked = false;
 	
-	BorderPane border;	
-	HBox hbox;
-	VBox vbox;
+	private static BorderPane border;	
+	private static HBox hbox;
+	private static VBox vbox;
+	
+	//private static int indexOfPlaybackControl;
 	
 
 	public static void initial(int i, int j) {
@@ -79,6 +81,11 @@ public class SpaceView extends Application {
 		vbox = addVBox();
 		border.setTop(hbox);
 		border.setLeft(vbox);
+		
+
+		
+		
+		
 
 		// Group root = new Group();
 
@@ -118,9 +125,12 @@ public class SpaceView extends Application {
 
 			}
 		}
+		
 
+		
+		
 		Scene scene = new Scene(border, sceneWidth + vbox.getPrefWidth(), sceneHeight + hbox.getPrefHeight());
-		System.out.println("w: " + vbox.getPrefWidth() + ";h: " + hbox.getPrefHeight());
+		//System.out.println("w: " + vbox.getPrefWidth() + ";h: " + hbox.getPrefHeight());
 
 		primaryStage.setScene(scene);
 		primaryStage.show();
@@ -130,7 +140,7 @@ public class SpaceView extends Application {
 	}
 
 	public void animate() {
-		// return the states to the lastest one
+		// return the states to the lastest one to make sure the playback will not interrupt the current animation
 		if (playbacked) {
 			playback.get(playback.size() - 1).play();
 			playbacked = false;
@@ -185,6 +195,17 @@ public class SpaceView extends Application {
 		// }
 		//
 		// });
+
+		for(Node nodeIn: vbox.getChildren()){
+        	if(nodeIn.getId() == "playbackControl"){
+        		
+        	}
+        	
+        
+	}
+
+		
+		
 		count++;
 
 	}
@@ -228,6 +249,7 @@ public class SpaceView extends Application {
 
 
 		Slider playbackControl = new Slider(0, 20, 0);
+		playbackControl.setId("playbackControl");
 		playbackControl.setLayoutX(10);
 		playbackControl.setLayoutY(95);
 		playbackControl.setShowTickLabels(true);
@@ -274,6 +296,7 @@ public class SpaceView extends Application {
 		
 
 		Slider stepSpeedControl = new Slider(1, 9, 1);
+		stepSpeedControl.setId("stepSpeedControl");
 		stepSpeedControl.setLayoutX(10);
 		stepSpeedControl.setLayoutY(125);
 		// stepSpeedControl.setCenterShape(true);

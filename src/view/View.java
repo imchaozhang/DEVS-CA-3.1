@@ -49,6 +49,7 @@ import javax.swing.tree.TreeSelectionModel;
 import model.modeling.*;
 import controller.ControllerInterface;
 import util.WindowUtil;
+import view.CAView.CATrackingControl;
 import view.jwizard.PageFactory;
 import view.jwizard.WizardContainer;
 import view.jwizard.WizardListener;
@@ -69,6 +70,7 @@ public class View extends JFrame implements ViewInterface {
 
 	// private ModelTrackingComponent tracking;
 	private TrackingControl tracking;
+	private CATrackingControl catracking;
 
 	private FModelView modelView; // Tree structured model viewer
 	private FSimulatorView simulatorView; // Controller viewer
@@ -147,6 +149,7 @@ public class View extends JFrame implements ViewInterface {
 		// console panel & tracking control
 		console = new ConsoleComponent();
 		tracking = new TrackingControl();
+		catracking = new CATrackingControl();
 		console.redirectOutAndErrStreams();
 		tabbedPane = new JTabbedPane();
 		tabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
@@ -613,7 +616,7 @@ public class View extends JFrame implements ViewInterface {
 	// added for CA, by Chao
 	public void addCATrackingColumn(double currentTime) {
 
-		tracking.addCATracking(currentTime);
+		catracking.addCATracking(currentTime);
 	}
 
 	/**
@@ -641,7 +644,7 @@ public class View extends JFrame implements ViewInterface {
 
 		// add for CA, by Chao
 		if (isCATracking)
-			tracking.loadCAModel(simulator.getRootModel());
+			catracking.loadCAModel(simulator.getRootModel());
 		// end adding
 
 		for (int i = 0; i < ButtonControls.length; i++) {
@@ -941,10 +944,13 @@ public class View extends JFrame implements ViewInterface {
 					CAButton.setSelected(true);
 					isCATrackingSelected.setEnabled(true);
 					isSimViewSelected.setEnabled(false);
+					isSimViewSelected.setSelected(false);
 					isTrackingSelected.setEnabled(false);
+					isTrackingSelected.setSelected(false);
 				} else {
 					NonCAButton.setSelected(true);
 					isCATrackingSelected.setEnabled(false);
+					isCATrackingSelected.setSelected(false);
 					isSimViewSelected.setEnabled(true);
 					isTrackingSelected.setEnabled(true);
 				}
@@ -989,10 +995,13 @@ public class View extends JFrame implements ViewInterface {
 							isCAModel = true;
 							isCATrackingSelected.setEnabled(true);
 							isSimViewSelected.setEnabled(false);
+							isSimViewSelected.setSelected(false);
 							isTrackingSelected.setEnabled(false);
+							isTrackingSelected.setSelected(false);
 						} else {
 							isCAModel = false;
 							isCATrackingSelected.setEnabled(false);
+							isCATrackingSelected.setSelected(false);
 							isSimViewSelected.setEnabled(true);
 							isTrackingSelected.setEnabled(true);
 						}
