@@ -25,6 +25,7 @@ public class CellView extends StackPane {
 	public LinkedList<Event> datalistCAView = new LinkedList<Event>();
 	public Tooltip tp = new Tooltip();
 	public boolean statusChanged = false;
+	public double currentTime = 0;
 
 	private int i, j;
 
@@ -92,6 +93,8 @@ public class CellView extends StackPane {
 			text.setText("i: " + this.i + ", j: " + this.j + "\nphase: " + current.getData() + "\ntime: "
 					+ current.getTime() + "\nsigma: " + currentSigma.getData() + "\nStatus Changed: " + statusChanged);
 			tp.setText(text.getText());
+			
+			currentTime = current.getTime();
 		} catch (Exception e) {
 			System.out.println("No data in list!");
 

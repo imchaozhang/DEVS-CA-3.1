@@ -4,24 +4,29 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
 import facade.CAmodeling.FCASpaceModel;
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
+import javafx.application.Platform;
+import javafx.embed.swing.JFXPanel;
 import view.timeView.Event;
 
 public class CATrackingControl {
 	private int cntModel = 0;
 	private static String rootModelName;
 	private List allModels;
-	
+
 	private static CATracker[] CAmodelColumn;
 	private static SpaceView caView;
 	private List<Event> dataCAView;
 
+	private static JDialog dialog;
+
 	private int XSize, YSize;
-	
+
 	// adding for CATracker, by Chao
 	public void loadCAModel(FModel rootModel) {
 		cntModel = 0;
@@ -37,15 +42,8 @@ public class CATrackingControl {
 		if (XSize != -1) {
 			SpaceView.initial(XSize, YSize);
 			caView = new SpaceView();
-
-			SwingUtilities.invokeLater(new Runnable() {
-				@Override
-				public void run() {
-					initAndRunFX();
-
-				}
-			});
-
+			// start a JavaFX Panel
+			initAndRunFX();
 		}
 
 		dataCAView = new ArrayList(1);
@@ -53,15 +51,41 @@ public class CATrackingControl {
 
 	private static void initAndRunFX() {
 
-		new Thread() {
+		// new Thread() {
+		// @Override
+		// public void run() {
+		// javafx.application.Application.launch(SpaceView.class);
+		//
+		// }
+		// }.start();
+		try {
+			dialog.setVisible(false);;
+		} catch (Exception e) {
+
+		}
+		dialog = new JDialog();
+		final JFXPanel contentPane = new JFXPanel();
+		dialog.setContentPane(contentPane);
+		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+
+		// building the scene graph must be done on the javafx thread
+		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
-				javafx.application.Application.launch(SpaceView.class);
+
+				contentPane.setScene(caView.createScene());
+
+				SwingUtilities.invokeLater(new Runnable() {
+					@Override
+					public void run() {
+						dialog.pack();
+						dialog.setVisible(true);
+					}
+				});
 			}
-		}.start();
+		});
 
 	}
-
 
 	private List getAllCAModels(FCASpaceModel rootModel) {
 		List list = new ArrayList();
@@ -85,11 +109,12 @@ public class CATrackingControl {
 			dataCAView = CAmodelColumn[i].getCurrentCAViewData(currTime);
 			int x = CAmodelColumn[i].getX();
 			int y = CAmodelColumn[i].getY();
-//			System.out.println("x=" + x + ";y=" + y);
-//			System.out.println(CAmodelColumn.length);
+			// System.out.println("x=" + x + ";y=" + y);
+			// System.out.println(CAmodelColumn.length);
 			if (x != -1 && y != -1) {
 				for (int j = 0; j < dataCAView.size(); j++) {
-					//System.out.println("X=" + x + ", Y=" + y + ": " + dataCAView.get(j));
+					// System.out.println("X=" + x + ", Y=" + y + ": " +
+					// dataCAView.get(j));
 					caView.cellView[x][y].addEvent(dataCAView.get(j));
 
 				}
@@ -99,7 +124,5 @@ public class CATrackingControl {
 		caView.animate();
 
 	}
-	
-	
 
 }
