@@ -67,13 +67,19 @@ public class CATrackingControl {
 		final JFXPanel contentPane = new JFXPanel();
 		dialog.setContentPane(contentPane);
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+		dialog.setTitle("DEVS-CA Simulation");
 
 		// building the scene graph must be done on the javafx thread
 		Platform.runLater(new Runnable() {
 			@Override
 			public void run() {
 
-				contentPane.setScene(caView.createScene());
+				try {
+					contentPane.setScene(caView.createScene());
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 
 				SwingUtilities.invokeLater(new Runnable() {
 					@Override

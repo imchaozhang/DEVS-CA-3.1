@@ -78,7 +78,7 @@ public class Tree extends TwoDimCell {
 
 				if (inpair != null && inpair.getValue().toString() == "fire") {
 					// System.out.println("Catching fire");
-					if (new Random().nextInt(10) < 5) {
+					if (new Random().nextInt(10) < 1) {
 						holdIn("fire", new Random().nextInt(3) + 3);
 						System.out.println("Catching fire on " + xcoord + "," + ycoord);
 					}
@@ -102,7 +102,7 @@ public class Tree extends TwoDimCell {
 			if (new Random().nextInt(10) < 2) {
 				holdIn("tree", new Random().nextInt(10) + 3);
 
-			} else if (new Random().nextInt(10) < 3) {
+			} else if (new Random().nextInt(10) < 1) {
 				passivate();
 				// ? should I do that
 				// holdIn("passive", 10);

@@ -26,6 +26,8 @@ public class CellView extends StackPane {
 	public Tooltip tp = new Tooltip();
 	public boolean statusChanged = false;
 	public double currentTime = 0;
+	
+	private String tp_Sigma, tp_State, tp_TL, tp_StatusChanged;
 
 	private int i, j;
 
@@ -82,17 +84,22 @@ public class CellView extends StackPane {
 			if (current.getName() == "Phase") {
 				if (status != current.getData()) {
 					statusChanged = true;
+				}
 					status = (String) current.getData();
 					currentcolor = CAViewUI.getColor(current.getData().toString());
-				}
+				
 
 			}
 
 			Event currentSigma = datalistCAView.poll();
 
-			text.setText("i: " + this.i + ", j: " + this.j + "\nphase: " + current.getData() + "\ntime: "
-					+ current.getTime() + "\nsigma: " + currentSigma.getData() + "\nStatus Changed: " + statusChanged);
-			tp.setText(text.getText());
+			tp_State = "\nphase: " + current.getData();
+			
+			tp_Sigma = "\nsigma: " + currentSigma.getData();
+			
+			tp_TL = "\nCurrent time: "+ current.getTime();
+			
+			tp_StatusChanged = "\nStatus Changed: " + statusChanged;
 			
 			currentTime = current.getTime();
 		} catch (Exception e) {
@@ -109,6 +116,12 @@ public class CellView extends StackPane {
 		else
 			return false;
 
+	}
+	public void setTPText(boolean isState, boolean isTL, boolean isSigma, boolean isStatusChanged){
+		
+		text.setText("i: " + this.i + ", j: " + this.j + ((isState)?tp_State:"" ) + ((isTL)?tp_TL:"") + ((isSigma)?tp_Sigma:"") + ((isStatusChanged)?tp_StatusChanged:""));
+		tp.setText(text.getText());		
+		
 	}
 
 }

@@ -33,11 +33,11 @@ public efp (){
    //  ViewableDigraph  sp  = new pipe3("p",30);
    // ViewableDigraph  sp  = new pipeLine("p",30,3);
    //ViewableDigraph  sp  = new Multi3("m",3);
- ViewableDigraph  sp  = new multiServer("m",10,4);
+ ViewableDigraph  sp  = new multiServer("m",10,40);
 
 
 
-    ViewableDigraph  expf = new ef("ExpFrame",10,110);
+    ViewableDigraph  expf = new ef("ExpFrame",10,20000);
  
 
 
