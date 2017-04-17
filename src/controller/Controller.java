@@ -34,6 +34,7 @@ import GenCol.entity;
 import model.CAmodeling.TwoDimCellSpace;
 import model.modeling.*;
 import view.*;
+import view.CAView.SpaceView;
 import view.modeling.ViewableDigraph;
 import view.modeling.ViewableAtomic;
 import view.simView.*;
@@ -53,6 +54,7 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 
 	public Controller() {
 		view = new View(this);
+		view.createLoadPage();
 	}
 
 	public void injectInputGesture(FModel model, String portName, entity input) {
@@ -82,6 +84,9 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 				view.synchronizeView();
 				Governor.reset();
 				view.removeExternalWindows();
+				//add by Chao for CAView
+				SpaceView.reset();
+				
 			} else if (gesture.equals(SIM_SET_RT_GESTURE))
 				simulator.setRTMultiplier(((Double) params).doubleValue());
 			else if (gesture.equals(SIM_SET_TV_GESTURE))
@@ -144,6 +149,12 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 	// Model is loaded using a URLClassLoader
 	private void loadModel(String[] params) {
 		try {
+			if(View.isCAModel != true){
+				view.setSwingVisible(true);
+			}
+			else
+				view.setSwingVisible(false);
+			
 			Object instance;
 
 			try {

@@ -27,7 +27,7 @@ public class CellView extends StackPane {
 	public boolean statusChanged = false;
 	public double currentTime = 0;
 	
-	private String tp_Sigma, tp_State, tp_TL, tp_StatusChanged;
+	private String tp_Sigma="", tp_State="", tp_TL="", tp_StatusChanged="";
 
 	private int i, j;
 
@@ -52,6 +52,7 @@ public class CellView extends StackPane {
 		// getChildren().add(text);
 
 		tp.setText(text.getText());
+		tp.setAutoHide(true);
 
 	}
 
@@ -109,6 +110,11 @@ public class CellView extends StackPane {
 		return this;
 
 	}
+	
+	public void refreshNodeColor(){
+		currentcolor = CAViewUI.getColor(status);
+		rectangle.setFill(currentcolor);	
+	}
 
 	public boolean isDatalistEmp() {
 		if (datalistCAView.isEmpty())
@@ -121,6 +127,19 @@ public class CellView extends StackPane {
 		
 		text.setText("i: " + this.i + ", j: " + this.j + ((isState)?tp_State:"" ) + ((isTL)?tp_TL:"") + ((isSigma)?tp_Sigma:"") + ((isStatusChanged)?tp_StatusChanged:""));
 		tp.setText(text.getText());		
+		
+	}
+	
+	
+	public void changeWidth(double new_width){
+		
+		rectangle.setWidth(new_width);
+		
+	}
+	
+	public void changeHeight(double new_height){
+		
+		rectangle.setWidth(new_height);
 		
 	}
 

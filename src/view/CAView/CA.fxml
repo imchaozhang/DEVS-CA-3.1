@@ -197,11 +197,6 @@
                                     <Insets bottom="10.0" left="5.0" right="10.0" top="10.0" />
                                  </GridPane.margin>
                               </Label>
-                              <Slider fx:id="PBTracking" blockIncrement="1.0" disable="true" majorTickUnit="100.0" max="10.0" minorTickCount="0" showTickLabels="true" showTickMarks="true" snapToTicks="true" GridPane.columnSpan="4" GridPane.rowIndex="6" GridPane.rowSpan="2">
-                                 <GridPane.margin>
-                                    <Insets right="-5.0" top="-40.0" />
-                                 </GridPane.margin>
-                              </Slider>
                               <Label text="Current Step" GridPane.columnSpan="2" GridPane.rowIndex="7">
                                  <GridPane.margin>
                                     <Insets bottom="10.0" left="5.0" right="10.0" />
@@ -228,6 +223,7 @@
                                  </GridPane.margin>
                               </Label>
                               <TextField fx:id="PBInterval" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                              <AnchorPane fx:id="PlaybackPositioned" prefHeight="200.0" prefWidth="200.0" GridPane.columnSpan="4" GridPane.rowIndex="6" />
                            </children>
                         </GridPane>
                      </children>

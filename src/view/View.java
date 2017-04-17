@@ -138,6 +138,17 @@ public class View extends JFrame implements ViewInterface {
 		splashScreen.endSplashScreen(this);
 	}
 
+	public void createLoadPage() {
+		this.setVisible(false);
+		new LoadWizard();
+
+	}
+	
+	public void setSwingVisible(boolean b){
+		
+		this.setVisible(b);
+	}
+
 	/**
 	 * this method create the UI for the DEVSSuite
 	 */
@@ -643,8 +654,11 @@ public class View extends JFrame implements ViewInterface {
 			tracking.loadSimModel(simulator.getRootModel());
 
 		// add for CA, by Chao
-		if (isCATracking)
-			catracking.loadCAModel(simulator.getRootModel());
+		if (isCATracking) {
+			catracking.loadCAModel(simulator.getRootModel(),controller);
+			// this.hide();
+		}
+
 		// end adding
 
 		for (int i = 0; i < ButtonControls.length; i++) {
@@ -1463,7 +1477,10 @@ public class View extends JFrame implements ViewInterface {
 						// new page:
 						trackPanel.removeAll();
 						lastModelViewed = modelName;
-						loadModelAction();
+						//changed by Chao, only load the model when second page next is selected.
+						if (insecondPage) {
+							loadModelAction();
+						}
 						saveSettings();
 
 						// panel for JTree

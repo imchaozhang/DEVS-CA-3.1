@@ -32,4 +32,6 @@ public interface ViewInterface
     public SimView getSim();
     public JPanel getConsole();
     public void removeExternalWindows();
+	public void createLoadPage();
+	public void setSwingVisible(boolean b);
 }

@@ -1,5 +1,6 @@
 package view.CAView;
 
+import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -7,6 +8,7 @@ import java.util.List;
 import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
+import controller.ControllerInterface;
 import facade.CAmodeling.FCASpaceModel;
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
@@ -19,6 +21,8 @@ public class CATrackingControl {
 	private static String rootModelName;
 	private List allModels;
 
+	private ControllerInterface controller;
+
 	private static CATracker[] CAmodelColumn;
 	private static SpaceView caView;
 	private List<Event> dataCAView;
@@ -28,7 +32,9 @@ public class CATrackingControl {
 	private int XSize, YSize;
 
 	// adding for CATracker, by Chao
-	public void loadCAModel(FModel rootModel) {
+	public void loadCAModel(FModel rootModel, ControllerInterface controller) {
+		this.controller = controller;
+
 		cntModel = 0;
 		rootModelName = rootModel.getName();
 		allModels = getAllCAModels((FCASpaceModel) rootModel);
@@ -40,13 +46,13 @@ public class CATrackingControl {
 		YSize = CAmodelColumn[0].getYSize();
 
 		if (XSize != -1) {
-			SpaceView.initial(XSize, YSize);
+			SpaceView.initial(XSize, YSize, controller);
 			caView = new SpaceView();
 			// start a JavaFX Panel
 			initAndRunFX();
 		}
 
-		dataCAView = new ArrayList(1);
+		dataCAView = new ArrayList<Event>(1);
 	}
 
 	private static void initAndRunFX() {
@@ -59,7 +65,8 @@ public class CATrackingControl {
 		// }
 		// }.start();
 		try {
-			dialog.setVisible(false);;
+			dialog.setVisible(false);
+			;
 		} catch (Exception e) {
 
 		}
@@ -68,6 +75,12 @@ public class CATrackingControl {
 		dialog.setContentPane(contentPane);
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
 		dialog.setTitle("DEVS-CA Simulation");
+
+		dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+			public void windowClosing(WindowEvent evt) {
+				System.exit(0);
+			}
+		});
 
 		// building the scene graph must be done on the javafx thread
 		Platform.runLater(new Runnable() {
