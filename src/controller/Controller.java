@@ -77,16 +77,16 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 				view.simlationControl(SIM_PAUSE_GESTURE);
 				simulator.requestPause();
 			} else if (gesture.equals(SIM_RESET_GESTURE)) {
+				// add by Chao for CAView
+				SpaceView.reset();
 				view.simlationControl(SIM_RESET_GESTURE);
 				simulator.reset();
 				tabbedPanel();
 				view.loadSimulator(simulator);
 				view.synchronizeView();
 				Governor.reset();
-				view.removeExternalWindows();
-				//add by Chao for CAView
-				SpaceView.reset();
-				
+				view.removeExternalWindows();	
+
 			} else if (gesture.equals(SIM_SET_RT_GESTURE))
 				simulator.setRTMultiplier(((Double) params).doubleValue());
 			else if (gesture.equals(SIM_SET_TV_GESTURE))
@@ -131,17 +131,18 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 			view.addTrackingColumn(simulator.getTimeOfNextEvent());
 			// System.out.println("Tracking@@@@@@@@@@@@@@@@@"
 			// +simulator.getTimeOfNextEvent());
-		}
-		else if(View.isCATracking){
+		} else if (View.isCATracking) {
 			view.addCATrackingColumn(simulator.getTimeOfNextEvent());
-			
+
 		}
-		
+
 		view.synchronizeView();
+		view.synchronizeCAView();
 	}
 
 	public void simulatorStateChangeHook() {
 		view.synchronizeView();
+		view.synchronizeCAView();
 	}
 
 	// Params[0] = Model Package
@@ -149,12 +150,14 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 	// Model is loaded using a URLClassLoader
 	private void loadModel(String[] params) {
 		try {
-			if(View.isCAModel != true){
+			
+			//adding by Chao, if it is CA View Tracking Mode, do not display Swing
+			if (View.isCAModel != true) {
+				view.setSwingVisible(true);
+			} else {
 				view.setSwingVisible(true);
 			}
-			else
-				view.setSwingVisible(false);
-			
+
 			Object instance;
 
 			try {
@@ -197,14 +200,14 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 			}
 
 			simulator = new FCoupledSimulator(instanceModel, SimView.modelView, modelType);
-			
+
 			// add by Chao
 			if (instance instanceof TwoDimCellSpace) {
 				instanceModel = (TwoDimCellSpace) instance;
 				simulator = new FCASimulator((TwoDimCellSpace) instanceModel, SimView.modelView, modelType);
 			}
 			// end of adding
-			
+
 			simulator.setSimulatorHookListener(this);
 			view.loadSimulator(simulator);
 		} catch (Exception e) {
@@ -222,5 +225,10 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 			System.err.println("An Error Occured While Writing: " + path);
 			System.err.println(e);
 		}
+	}
+
+	public FSimulator getSimulator() {
+
+		return this.simulator;
 	}
 }

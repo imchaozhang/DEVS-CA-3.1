@@ -22,7 +22,7 @@ import javax.swing.text.*;
 
 import controller.ControllerInterface;
 import controller.Governor;
-
+import view.CAView.SpaceView;
 import view.simView.*;
 
 public class FSimulatorView extends JPanel
@@ -346,6 +346,8 @@ public class FSimulatorView extends JPanel
         writeSimulatorInfo("\nTime of Next Event: ",attrSets[HEADER_ATTR]);
         writeSimulatorInfo(""+Round(simulator.getTimeOfNextEvent(), 4),attrSets[TIME_ATTR]);
       //  System.out.println("SimView%%%%%%%%%%%%%%%"+ simulator.getTimeOfNextEvent());
+        
+        
     }
     
     /**

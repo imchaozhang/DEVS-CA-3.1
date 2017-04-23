@@ -66,7 +66,6 @@ public class CATrackingControl {
 		// }.start();
 		try {
 			dialog.setVisible(false);
-			;
 		} catch (Exception e) {
 
 		}
@@ -142,6 +141,10 @@ public class CATrackingControl {
 		}
 		caView.animate();
 
+	}
+	
+	public SpaceView getCAView(){
+		return caView;
 	}
 
 }

@@ -14,6 +14,7 @@ import facade.modeling.FAtomicModel;
 import facade.modeling.FCoupledModel;
 import facade.modeling.FModel;
 import facade.simulation.*;
+import javafx.application.Platform;
 
 //Standard API Imports
 import java.awt.*;
@@ -50,6 +51,7 @@ import model.modeling.*;
 import controller.ControllerInterface;
 import util.WindowUtil;
 import view.CAView.CATrackingControl;
+import view.CAView.SpaceView;
 import view.jwizard.PageFactory;
 import view.jwizard.WizardContainer;
 import view.jwizard.WizardListener;
@@ -138,14 +140,17 @@ public class View extends JFrame implements ViewInterface {
 		splashScreen.endSplashScreen(this);
 	}
 
+	// adding by Chao, first loaded page will be load model and the original
+	// Swing page will be disabled.
 	public void createLoadPage() {
 		this.setVisible(false);
 		new LoadWizard();
 
 	}
-	
-	public void setSwingVisible(boolean b){
-		
+
+	// adding by Chao, disable Swing display by default
+	public void setSwingVisible(boolean b) {
+
 		this.setVisible(b);
 	}
 
@@ -655,7 +660,8 @@ public class View extends JFrame implements ViewInterface {
 
 		// add for CA, by Chao
 		if (isCATracking) {
-			catracking.loadCAModel(simulator.getRootModel(),controller);
+			catracking.loadCAModel(simulator.getRootModel(), controller);
+			// catracking.getCAView().synchronizeView();
 			// this.hide();
 		}
 
@@ -675,6 +681,22 @@ public class View extends JFrame implements ViewInterface {
 		modelView.synchronizeView();
 		simulatorView.synchronizeView();
 		simSCView.synchronizeView();
+		// catracking.getCAView().synchronizeView();
+
+	}
+
+	public void synchronizeCAView() {
+		//after the simulation starts, use platform runlater to avoid refreshing text too quickly to kill the javafx application
+		if (!SpaceView.atStartPoint) {
+			Platform.runLater(new Runnable() {
+				@Override
+				public void run() {
+					catracking.getCAView().synchronizeView();
+				}
+			});
+		} else {
+			catracking.getCAView().synchronizeView();
+		}
 	}
 
 	public String getConsoleLog() {
@@ -1477,7 +1499,8 @@ public class View extends JFrame implements ViewInterface {
 						// new page:
 						trackPanel.removeAll();
 						lastModelViewed = modelName;
-						//changed by Chao, only load the model when second page next is selected.
+						// changed by Chao, only load the model when second page
+						// next is selected.
 						if (insecondPage) {
 							loadModelAction();
 						}

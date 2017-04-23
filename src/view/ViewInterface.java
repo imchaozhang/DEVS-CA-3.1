@@ -34,4 +34,5 @@ public interface ViewInterface
     public void removeExternalWindows();
 	public void createLoadPage();
 	public void setSwingVisible(boolean b);
+	public void synchronizeCAView();
 }

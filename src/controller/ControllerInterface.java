@@ -9,6 +9,7 @@ package controller;
 
 import GenCol.entity;
 import facade.modeling.FModel;
+import facade.simulation.FSimulator;
 
 /**
  * Controller Interface
@@ -33,5 +34,6 @@ public interface ControllerInterface
     public void userGesture(String gesture, Object params);
     public void injectInputGesture(FModel model, String portName, entity value);
     public void systemExitGesture();
+	public FSimulator getSimulator();
     
 }
