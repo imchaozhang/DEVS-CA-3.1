@@ -56,8 +56,6 @@ public class TrackingControl {
 
 	protected static ArrayList<ExternalTimeView> windowHandles = new ArrayList<ExternalTimeView>(0);
 
-
-	
 	public void controlTimeView(String control) {
 
 		if (control == "Reset") {
@@ -128,8 +126,6 @@ public class TrackingControl {
 		}
 		return list;
 	}
-
-
 
 	public void trackingLogOption(Component owner, String option) {
 		if (option.equalsIgnoreCase("Tracking Log Settings...")) {
@@ -209,6 +205,7 @@ public class TrackingControl {
 		}
 		graphList = graphs;
 	}
+
 
 	public void clearWindows() {
 		while (windowHandles.size() > 0)

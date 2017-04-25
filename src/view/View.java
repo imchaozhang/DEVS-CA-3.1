@@ -631,7 +631,6 @@ public class View extends JFrame implements ViewInterface {
 
 	// added for CA, by Chao
 	public void addCATrackingColumn(double currentTime) {
-
 		catracking.addCATracking(currentTime);
 	}
 
@@ -661,8 +660,6 @@ public class View extends JFrame implements ViewInterface {
 		// add for CA, by Chao
 		if (isCATracking) {
 			catracking.loadCAModel(simulator.getRootModel(), controller);
-			// catracking.getCAView().synchronizeView();
-			// this.hide();
 		}
 
 		// end adding
@@ -681,12 +678,13 @@ public class View extends JFrame implements ViewInterface {
 		modelView.synchronizeView();
 		simulatorView.synchronizeView();
 		simSCView.synchronizeView();
-		// catracking.getCAView().synchronizeView();
 
 	}
 
+	// adding by Chao. Updating the Contorl Buttons and Simulation Status Text
 	public void synchronizeCAView() {
-		//after the simulation starts, use platform runlater to avoid refreshing text too quickly to kill the javafx application
+		// after the simulation starts, use platform runlater to avoid
+		// refreshing text too quickly to kill the javafx application
 		if (!SpaceView.atStartPoint) {
 			Platform.runLater(new Runnable() {
 				@Override
@@ -731,7 +729,11 @@ public class View extends JFrame implements ViewInterface {
 				SimView.modelView.runToOccur();
 			else if (gesture.equals(ControllerInterface.SIM_STEP_GESTURE))
 				SimView.modelView.stepToBeTaken();
+		if(isCATracking){
+			catracking.controlCATimeView(gesture);
+		}
 	}
+
 
 	public SimView getSim() {
 		return sim;
@@ -1500,7 +1502,8 @@ public class View extends JFrame implements ViewInterface {
 						trackPanel.removeAll();
 						lastModelViewed = modelName;
 						// changed by Chao, only load the model when second page
-						// next is selected.
+						// next is selected. This will accelerate the speed of
+						// starting the software.
 						if (insecondPage) {
 							loadModelAction();
 						}

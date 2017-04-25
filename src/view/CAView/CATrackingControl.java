@@ -14,7 +14,9 @@ import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
+import view.ExternalTimeView;
 import view.timeView.Event;
+import view.timeView.TimeView;
 
 public class CATrackingControl {
 	private int cntModel = 0;
@@ -26,6 +28,11 @@ public class CATrackingControl {
 	private static CATracker[] CAmodelColumn;
 	private static SpaceView caView;
 	private List<Event> dataCAView;
+
+	private List<Event> dataTimeView;
+	protected static TimeView[] timeView;
+
+	protected static ArrayList<ExternalTimeView> windowHandles = new ArrayList<ExternalTimeView>(0);
 
 	private static JDialog dialog;
 
@@ -52,7 +59,26 @@ public class CATrackingControl {
 			initAndRunFX();
 		}
 
+		for (int i = 0; i < CAmodelColumn.length; i++) {
+			int x = CAmodelColumn[i].getX();
+			int y = CAmodelColumn[i].getY();
+			CATracker catrack = CAmodelColumn[i];
+
+			// System.out.println("x=" + x + ";y=" + y);
+			// System.out.println(CAmodelColumn.length);
+			if (x != -1 && y != -1) {
+				Platform.runLater(new Runnable() {
+					@Override
+					public void run() {
+						SpaceView.cellView[x][y].setCATracker(catrack);
+					}
+				});
+			}
+		}
+
+		timeView = new TimeView[cntModel];
 		dataCAView = new ArrayList<Event>(1);
+		dataTimeView = new ArrayList(1);
 	}
 
 	private static void initAndRunFX() {
@@ -125,8 +151,10 @@ public class CATrackingControl {
 	public void addCATracking(double currTime) {
 		for (int i = 0; i < CAmodelColumn.length; i++) {
 			dataCAView = CAmodelColumn[i].getCurrentCAViewData(currTime);
+			dataTimeView = CAmodelColumn[i].getCurrentTimeViewData(currTime);
 			int x = CAmodelColumn[i].getX();
 			int y = CAmodelColumn[i].getY();
+
 			// System.out.println("x=" + x + ";y=" + y);
 			// System.out.println(CAmodelColumn.length);
 			if (x != -1 && y != -1) {
@@ -134,7 +162,14 @@ public class CATrackingControl {
 					// System.out.println("X=" + x + ", Y=" + y + ": " +
 					// dataCAView.get(j));
 					caView.cellView[x][y].addEvent(dataCAView.get(j));
+				}
 
+				if (timeView[i] != null) {
+					for (int j = 0; j < dataTimeView.size(); j++) {
+						// System.out.println("addingevents^^^^^^^^^^"+(dataTimeView.get(j)));
+						timeView[i].addEvent(dataTimeView.get(j));
+					}
+					timeView[i].endTime(currTime);
 				}
 
 			}
@@ -142,9 +177,31 @@ public class CATrackingControl {
 		caView.animate();
 
 	}
-	
-	public SpaceView getCAView(){
+
+	public SpaceView getCAView() {
 		return caView;
+	}
+
+	// adding by Chao. For the CA Timeview Tracking
+	public void registerCATimeView(ArrayList graphs, final int num, String XLabel, String TimeIncre) {
+		timeView[num] = new TimeView(graphs, CAmodelColumn[num].getAttachedModel().getName(), XLabel, TimeIncre);
+
+		ExternalTimeView ETV = new ExternalTimeView(CAmodelColumn[num].getAttachedModel().getName(),
+				timeView[num].retTG());
+		windowHandles.add(ETV);
+		javax.swing.SwingUtilities.invokeLater(ETV);
+	}
+
+	public void controlCATimeView(String control) {
+		if (control == "Reset") {
+
+		} else {
+			for (int i = 0; i < CAmodelColumn.length; i++) {
+				if (timeView[i] != null)
+					timeView[i].clock.start();
+			}
+		}
+
 	}
 
 }

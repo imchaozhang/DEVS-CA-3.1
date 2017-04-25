@@ -9,6 +9,7 @@ import facade.CAmodeling.FCASpaceModel;
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
 import view.Tracker;
+import view.TrackingControl;
 import view.timeView.Event;
 
 public class CATracker extends Tracker {
@@ -18,13 +19,18 @@ public class CATracker extends Tracker {
 	private boolean isCACell;
 	private boolean isCASpace;
 	private double time;
+	
+    private CATrackingControl caTrackingControl;  
+	
 	private Event e;
 
 	private FModel CAModel;
 
 	public CATracker(FModel model, int num) {
 		super(model, num);
-		// TODO Auto-generated constructor stub
+	
+		caTrackingControl = new CATrackingControl();
+		
 		CAModel = model;
 		isCACell = model instanceof FCACellModel;
 		isCASpace = model instanceof FCASpaceModel;
@@ -78,8 +84,13 @@ public class CATracker extends Tracker {
 			FCACellModel CACell = (FCACellModel) CAModel;
 			e = new Event("Phase", "STATE", time, CACell.getPhase());
 			CAViewData.add(e);
-			e = new Event("Sigma","SIGMA",time, CACell.getSigma()); 
+			e = new Event("Sigma", "SIGMA", time, String.valueOf(CACell.getSigma()));
 			CAViewData.add(e);
+			e = new Event("tL", "STATEVARIABLE", time, String.valueOf(CACell.getTimeOfLastEvent()));
+			CAViewData.add(e);
+			e = new Event("tN", "STATEVARIABLE", time, String.valueOf(CACell.getTimeOfNextEvent()));
+			CAViewData.add(e);
+
 			// e = new Event("X","COORD",time, CACell.getXcoord());
 			// CAViewData.add(e);
 			// e = new Event("Y","COORD",time, CACell.getYcoord());
@@ -88,5 +99,11 @@ public class CATracker extends Tracker {
 
 		return CAViewData;
 	}
+	
+    public CATrackingControl getCATrackingControl()
+    {
+    	return caTrackingControl;
+    }
+	
 
 }

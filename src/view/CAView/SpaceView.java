@@ -637,9 +637,9 @@ public class SpaceView {
 		MenuItem colorPickerItem = new MenuItem(currentPhase, color4phase);
 
 		changeColorSubMenu.getItems().add(colorPickerItem);
-		MenuItem copy = new MenuItem("Copy");
+		MenuItem caTimeView = new MenuItem("CA Time View");
 		MenuItem paste = new MenuItem("Paste");
-		contextMenu.getItems().addAll(changeColorSubMenu, copy, paste);
+		contextMenu.getItems().addAll(changeColorSubMenu, caTimeView, paste);
 		contextMenu.setAutoFix(true);
 		contextMenu.setAutoHide(true);
 
@@ -678,6 +678,15 @@ public class SpaceView {
 									refreshCAColor();
 								}
 							});
+							
+							caTimeView.setOnAction(new EventHandler() {
+								@Override
+								public void handle(Event event) {
+									node.setCATimeViewGraphs();
+								}
+							});	
+							
+							
 
 						} else {
 							// node.tp.setText(""+node.getWidth());

@@ -85,7 +85,7 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 				view.loadSimulator(simulator);
 				view.synchronizeView();
 				Governor.reset();
-				view.removeExternalWindows();	
+				view.removeExternalWindows();
 
 			} else if (gesture.equals(SIM_SET_RT_GESTURE))
 				simulator.setRTMultiplier(((Double) params).doubleValue());
@@ -129,20 +129,26 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 		// This prevent the slow of the simulation
 		if (View.isTracking) {
 			view.addTrackingColumn(simulator.getTimeOfNextEvent());
+			view.synchronizeView();
 			// System.out.println("Tracking@@@@@@@@@@@@@@@@@"
 			// +simulator.getTimeOfNextEvent());
 		} else if (View.isCATracking) {
 			view.addCATrackingColumn(simulator.getTimeOfNextEvent());
+			//view.synchronizeView();
+			view.synchronizeCAView();
 
 		}
 
-		view.synchronizeView();
-		view.synchronizeCAView();
 	}
 
 	public void simulatorStateChangeHook() {
-		view.synchronizeView();
-		view.synchronizeCAView();
+		// This prevent the slow of the simulation
+		if (View.isTracking) {
+			view.synchronizeView();
+		} else if (View.isCATracking) {
+			//view.synchronizeView();
+			view.synchronizeCAView();
+		}
 	}
 
 	// Params[0] = Model Package
@@ -150,12 +156,13 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 	// Model is loaded using a URLClassLoader
 	private void loadModel(String[] params) {
 		try {
-			
-			//adding by Chao, if it is CA View Tracking Mode, do not display Swing
+
+			// adding by Chao, if it is CA View Tracking Mode, do not display
+			// Swing
 			if (View.isCAModel != true) {
 				view.setSwingVisible(true);
 			} else {
-				view.setSwingVisible(true);
+				view.setSwingVisible(false);
 			}
 
 			Object instance;

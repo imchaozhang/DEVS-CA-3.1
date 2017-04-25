@@ -1,5 +1,6 @@
 package view.CAView;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import javafx.beans.property.StringProperty;
@@ -14,6 +15,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import view.timeView.Event;
+import view.timeView.Graph;
+import view.timeView.GraphFactory;
 
 public class CellView extends StackPane {
 
@@ -26,6 +29,7 @@ public class CellView extends StackPane {
 	public Tooltip tp = new Tooltip();
 	public boolean statusChanged = false;
 	public double currentTime = 0;
+	public CATracker catracker;
 	
 	private String tp_Sigma="", tp_State="", tp_TL="", tp_StatusChanged="";
 
@@ -140,6 +144,30 @@ public class CellView extends StackPane {
 	public void changeHeight(double new_height){
 		
 		rectangle.setWidth(new_height);
+		
+	}
+	
+	public void setCATracker(CATracker _CAtracker){
+		catracker = _CAtracker;		
+	}
+	
+	public void setCATimeViewGraphs(){
+		catracker.setTrackPhase(true);
+		catracker.settimeIncrement("10");
+		catracker.setxUnit("sec");
+		catracker.setisBreakout(true);
+		ArrayList graphs = new ArrayList();
+		GraphFactory graphFactory = new GraphFactory();
+		Graph phase = graphFactory.createChart("STATE");
+		phase.setName("Phase");
+		phase.setUnit("sec");
+		phase.setCategory("STATE");
+		phase.setZeroTimeAdvance(true);
+		graphs.add(phase);
+		this.catracker.setGraphs(graphs);	
+		
+		catracker.getCATrackingControl().registerCATimeView(catracker.getGraphs(),
+				catracker.getModelNum(), catracker.getxUnit(), catracker.gettimeIncrement());
 		
 	}
 
