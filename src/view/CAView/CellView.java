@@ -31,6 +31,28 @@ public class CellView extends StackPane {
 	public double currentTime = 0;
 	public CATracker catracker;
 	
+	//parameters for TimeView
+	public boolean isTimeViewWindowOpen;
+	public boolean trackPhase;
+	public boolean trackSigma;
+	public boolean trackTL;
+	public boolean trackTN;
+    
+	public boolean isCATimeViewSelected;
+	public boolean istrackinglogselected;   //to make one tracking log panel
+    
+	public boolean isZeroTimeSelected;
+	
+   
+    //private boolean isBreakout = false;
+    public String xUnit = "sec";
+    public String timeIncr = "10";
+    public String tlUnit = "";
+    public String tnUnit = "";
+    public String phaseUnit = "";
+    public String sigmaUnit = "";
+    
+	
 	private String tp_Sigma="", tp_State="", tp_TL="", tp_StatusChanged="";
 
 	private int i, j;
@@ -57,6 +79,15 @@ public class CellView extends StackPane {
 
 		tp.setText(text.getText());
 		tp.setAutoHide(true);
+		
+		//setting for CA TimeView
+        trackPhase = false;
+        trackSigma = false;
+        trackTL    = false;
+        trackTN    = false;
+        isCATimeViewSelected = false;
+        istrackinglogselected = false;
+        isZeroTimeSelected = false;
 
 	}
 
@@ -152,23 +183,66 @@ public class CellView extends StackPane {
 	}
 	
 	public void setCATimeViewGraphs(){
-		catracker.setTrackPhase(true);
-		catracker.settimeIncrement("10");
-		catracker.setxUnit("sec");
+		catracker.setTrackPhase(trackPhase);
+		catracker.setTrackSigma(trackSigma);
+		catracker.setTrackTL(trackTL);
+		catracker.setTrackTN(trackTN);
+		catracker.settimeIncrement(timeIncr);
+		catracker.setxUnit(xUnit);
 		catracker.setisBreakout(true);
-		ArrayList graphs = new ArrayList();
+		ArrayList<Graph> graphs = new ArrayList<Graph>();
 		GraphFactory graphFactory = new GraphFactory();
-		Graph phase = graphFactory.createChart("STATE");
-		phase.setName("Phase");
-		phase.setUnit("sec");
-		phase.setCategory("STATE");
-		phase.setZeroTimeAdvance(true);
-		graphs.add(phase);
+		if (trackTL) {
+			Graph tl = graphFactory.createChart("STATEVARIABLE");
+			tl.setCategory("STATEVARIABLE");
+			tl.setUnit(tlUnit);
+			tl.setName("tl");
+			tl.setZeroTimeAdvance(isZeroTimeSelected);
+			graphs.add(tl);
+		}
+		if (trackTN) {
+			Graph tn = graphFactory.createChart("STATEVARIABLE");
+			tn.setName("tN");
+			tn.setUnit(tnUnit);
+			tn.setCategory("STATEVARIABLE");
+			tn.setZeroTimeAdvance(isZeroTimeSelected);
+			graphs.add(tn);
+
+		}
+		if (trackPhase) {
+			Graph phase = graphFactory.createChart("STATE");
+			phase.setName("Phase");
+			phase.setUnit(phaseUnit);
+			phase.setCategory("STATE");
+			phase.setZeroTimeAdvance(isZeroTimeSelected);
+			graphs.add(phase);
+		}
+		if (trackSigma) {
+			Graph sigma = graphFactory.createChart("SIGMA");
+			sigma.setName("Sigma");
+			sigma.setUnit(sigmaUnit);
+			sigma.setCategory("SIGMA");
+			sigma.setZeroTimeAdvance(isZeroTimeSelected);
+			graphs.add(sigma);
+		}
+		
 		this.catracker.setGraphs(graphs);	
 		
+		
 		catracker.getCATrackingControl().registerCATimeView(catracker.getGraphs(),
-				catracker.getModelNum(), catracker.getxUnit(), catracker.gettimeIncrement());
+				catracker.getModelNum(), catracker.getxUnit(), catracker.gettimeIncrement(), isTimeViewWindowOpen);
 		
 	}
+	
+	public int getI(){
+		return i;
+		
+	}
+	
+	public int getJ(){
+		return j;
+		
+	}
+	
 
 }

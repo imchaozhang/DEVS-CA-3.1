@@ -162,7 +162,7 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 			if (View.isCAModel != true) {
 				view.setSwingVisible(true);
 			} else {
-				view.setSwingVisible(false);
+				view.setSwingVisible(true);
 			}
 
 			Object instance;

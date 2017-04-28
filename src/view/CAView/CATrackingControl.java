@@ -183,13 +183,23 @@ public class CATrackingControl {
 	}
 
 	// adding by Chao. For the CA Timeview Tracking
-	public void registerCATimeView(ArrayList graphs, final int num, String XLabel, String TimeIncre) {
+	public void registerCATimeView(ArrayList graphs, final int num, String XLabel, String TimeIncre,
+			boolean isTimeViewWindowOpen) {
 		timeView[num] = new TimeView(graphs, CAmodelColumn[num].getAttachedModel().getName(), XLabel, TimeIncre);
+		if (isTimeViewWindowOpen) {
+			for (ExternalTimeView etv : windowHandles) {
+				if (etv.getName() == CAmodelColumn[num].getAttachedModel().getName()) {
+					etv.setInvisible();
+					// windowHandles.remove(etv);
+				}
+			}
+		}
 
 		ExternalTimeView ETV = new ExternalTimeView(CAmodelColumn[num].getAttachedModel().getName(),
 				timeView[num].retTG());
 		windowHandles.add(ETV);
 		javax.swing.SwingUtilities.invokeLater(ETV);
+
 	}
 
 	public void controlCATimeView(String control) {
@@ -202,6 +212,13 @@ public class CATrackingControl {
 			}
 		}
 
+	}
+
+	public void clearWindows() {
+		for (ExternalTimeView etv : windowHandles) {
+			etv.setInvisible();
+		}
+		windowHandles = new ArrayList<ExternalTimeView>(0);
 	}
 
 }

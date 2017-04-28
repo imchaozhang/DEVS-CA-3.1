@@ -2109,6 +2109,7 @@ public class View extends JFrame implements ViewInterface {
 
 	public void removeExternalWindows() {
 		tracking.clearWindows();
+		catracking.clearWindows();
 	}
 
 }

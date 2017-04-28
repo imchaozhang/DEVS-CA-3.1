@@ -1,5 +1,6 @@
 package view.CAView;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,7 +11,6 @@ import java.util.concurrent.Executors;
 
 import javax.swing.JOptionPane;
 import javax.swing.text.MutableAttributeSet;
-
 import controller.ControllerInterface;
 import facade.simulation.FSimulator;
 import javafx.animation.FadeTransition;
@@ -53,12 +53,16 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
 import javafx.scene.text.Text;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import view.View;
+import view.CAView.FXMLComponents.CATimeViewControlMenuController;
 
 public class SpaceView {
 
@@ -80,9 +84,9 @@ public class SpaceView {
 	private static boolean playbacked = false;
 	private static boolean sizechanged = false;
 	private static boolean animationPaused = false;
-	//atStartPoint is used to check if the simulation just start.
+	// atStartPoint is used to check if the simulation just start.
 	public static boolean atStartPoint = true;
-	
+
 	private static boolean isState = true, isTL = true, isSigma = true, isStatusChanged = true;
 
 	private static int playbackSize = 50;
@@ -97,7 +101,7 @@ public class SpaceView {
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private Text simulatorStateDoc;
-	private Button btn_run,btn_step, btn_stepn, btn_pause, btn_reset;
+	private Button btn_run, btn_step, btn_stepn, btn_pause, btn_reset;
 
 	@FXML
 	private CheckBox PSelect, cb_State, cb_Sigma, cb_TL, cb_StatusChanged;
@@ -164,13 +168,12 @@ public class SpaceView {
 		ui = FXMLLoader.load(getClass().getResource("ComplexCA.fxml"));
 
 		playbackControl = addPlaybackSilder();
-		
+
 		addControlButtons();
 		simulatorStateDoc = new Text();
 		simulatorStateDoc.setLineSpacing(8);
 		simulatorStateDoc.prefHeight(60);
 
-		
 		synchronizeView();
 
 		// Put playbackControl Slider to the right position
@@ -189,21 +192,20 @@ public class SpaceView {
 				Node nodeIn8 = ((TitledPane) nodeIn7).getContent();
 				Node nodeIn9 = ((AnchorPane) nodeIn8).getChildren().get(0);
 				((GridPane) nodeIn9).add(btn_run, 0, 0, 1, 1);
-				((GridPane) nodeIn9).add(btn_step, 1,0, 2, 1);
-				((GridPane) nodeIn9).add(btn_stepn, 0,1, 1, 1);
+				((GridPane) nodeIn9).add(btn_step, 1, 0, 2, 1);
+				((GridPane) nodeIn9).add(btn_stepn, 0, 1, 1, 1);
 				((GridPane) nodeIn9).add(btn_pause, 1, 1, 1, 1);
-				((GridPane) nodeIn9).add(btn_reset, 2,1, 1, 1);
+				((GridPane) nodeIn9).add(btn_reset, 2, 1, 1, 1);
 				((GridPane) nodeIn9).add(simulatorStateDoc, 0, 2, 3, 2);
-				
+
 				GridPane.setMargin(btn_run, new Insets(5));
 				GridPane.setMargin(btn_step, new Insets(5));
 				GridPane.setMargin(btn_stepn, new Insets(5));
 				GridPane.setMargin(btn_pause, new Insets(5));
 				GridPane.setMargin(btn_reset, new Insets(5));
-				GridPane.setMargin(simulatorStateDoc, new Insets(0,0,0,10));
-				
+				GridPane.setMargin(simulatorStateDoc, new Insets(0, 0, 0, 10));
 
-				//((AnchorPane) nodeIn7).getChildren().add(simulatorStateDoc);
+				// ((AnchorPane) nodeIn7).getChildren().add(simulatorStateDoc);
 
 				// Node nodeIn7 = ((GridPane) nodeIn6).getChildren().get(14);
 				//
@@ -232,9 +234,9 @@ public class SpaceView {
 	}
 
 	public void animate() {
-		
+
 		atStartPoint = false;
-		
+
 		// return the states to the lastest one to make sure the playback will
 		// not interrupt the current animation
 		if (playbacked) {
@@ -366,47 +368,47 @@ public class SpaceView {
 		}
 
 	}
-	
-	
-	private void addControlButtons(){
+
+	private void addControlButtons() {
 		btn_run = new Button("Run");
 		btn_step = new Button("Step");
 		btn_stepn = new Button("Step(n)");
 		btn_pause = new Button("Pause");
 		btn_reset = new Button("Reset");
-		
+
 		btn_run.setPrefWidth(100);
 		btn_run.setPrefHeight(33);
-		
+
 		btn_step.setPrefWidth(180);
 		btn_step.setPrefHeight(33);
-		
+
 		btn_stepn.setPrefWidth(100);
 		btn_stepn.setPrefHeight(33);
-		
+
 		btn_pause.setPrefWidth(100);
 		btn_pause.setPrefHeight(33);
-		
+
 		btn_reset.setPrefWidth(100);
 		btn_reset.setPrefHeight(33);
-		
-		
-		
+
 		btn_run.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override public void handle(ActionEvent e) {
-		    	controller.userGesture(controller.SIM_RUN_GESTURE, null);
-		    }
+			@Override
+			public void handle(ActionEvent e) {
+				controller.userGesture(controller.SIM_RUN_GESTURE, null);
+			}
 		});
-		
+
 		btn_step.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override public void handle(ActionEvent e) {
-		    	controller.userGesture(controller.SIM_STEP_GESTURE, null);
-		    }
+			@Override
+			public void handle(ActionEvent e) {
+				controller.userGesture(controller.SIM_STEP_GESTURE, null);
+			}
 		});
-		
+
 		btn_stepn.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override public void handle(ActionEvent e) {
-		    	TextInputDialog stepSizeInput = new TextInputDialog();
+			@Override
+			public void handle(ActionEvent e) {
+				TextInputDialog stepSizeInput = new TextInputDialog();
 				stepSizeInput.setTitle("Step N");
 				stepSizeInput.setHeaderText(null);
 				stepSizeInput.setContentText("Number of steps to iterate: ");
@@ -420,18 +422,19 @@ public class SpaceView {
 						System.err.println(exp);
 					}
 				}
-		    }
+			}
 		});
-		
+
 		btn_pause.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override public void handle(ActionEvent e) {
-		    	controller.userGesture(controller.SIM_PAUSE_GESTURE, null);
-		    }
+			@Override
+			public void handle(ActionEvent e) {
+				controller.userGesture(controller.SIM_PAUSE_GESTURE, null);
+			}
 		});
-		
-		
+
 		btn_reset.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override public void handle(ActionEvent e) {
+			@Override
+			public void handle(ActionEvent e) {
 				Alert alert = new Alert(AlertType.CONFIRMATION);
 				alert.setTitle("Reset Everything");
 				alert.setHeaderText("Reset this Model?");
@@ -442,13 +445,10 @@ public class SpaceView {
 					controller.userGesture(controller.SIM_RESET_GESTURE, null);
 
 				}
-		    }
+			}
 		});
-		
+
 	}
-	
-	
-	
 
 	private Slider addPlaybackSilder() {
 		Slider playbackControl = new Slider(0, 0, 0);
@@ -495,7 +495,7 @@ public class SpaceView {
 		final boolean[] INITIAL_PAUSE = { false, false, false, true, false };
 		final boolean[] SIMULATING = { true, true, true, false, true };
 		final boolean[] END = { true, true, true, true, false };
-		final Button[] ctrlButtons = {btn_run, btn_step, btn_stepn, btn_pause, btn_reset};
+		final Button[] ctrlButtons = { btn_run, btn_step, btn_stepn, btn_pause, btn_reset };
 
 		boolean[] legalBehavior = INITIAL_PAUSE;
 		short state = controller.getSimulator().getCurrentState();
@@ -533,14 +533,15 @@ public class SpaceView {
 			break;
 		}
 
-		 for (int i = 0; i < legalBehavior.length; i++){
-		 ctrlButtons[i].setDisable(legalBehavior[i]);
-		 //View.ButtonControls[i].setEnabled(legalBehavior[i]);
-		 //View.controlMenus[i].setEnabled(legalBehavior[i]);
-		 }
+		for (int i = 0; i < legalBehavior.length; i++) {
+			ctrlButtons[i].setDisable(legalBehavior[i]);
+			// View.ButtonControls[i].setEnabled(legalBehavior[i]);
+			// View.controlMenus[i].setEnabled(legalBehavior[i]);
+		}
 
-		stateValue.set("Simulator State: " + stateLabel + "\nTime of Last Event: " + +Round(controller.getSimulator().getTimeOfLastEvent(),
-				4) + "\nTime of Next Event: " + Round(controller.getSimulator().getTimeOfNextEvent(), 4));
+		stateValue.set("Simulator State: " + stateLabel + "\nTime of Last Event: "
+				+ +Round(controller.getSimulator().getTimeOfLastEvent(), 4) + "\nTime of Next Event: "
+				+ Round(controller.getSimulator().getTimeOfNextEvent(), 4));
 
 		// writeSimulatorInfo("Simulator State: ",attrSets[HEADER_ATTR]);
 		// writeSimulatorInfo(stateLabel,stateAttr);
@@ -553,23 +554,21 @@ public class SpaceView {
 		// System.out.println("SimView%%%%%%%%%%%%%%%"+
 		// simulator.getTimeOfNextEvent());
 	}
-	
-    /**
-     * Return double value with two decimal points
-     */
-    
-    protected double Round(double Rval, int Rpl) {
-    	if(Rval > Double.MAX_VALUE){//Infinity
-    		return Rval;
-    	}
-    	else{
-    	  double p = (double)Math.pow(10,Rpl);
-    	  Rval = Rval * p;
-    	  double tmp = Math.round(Rval);
-    	  return (double)tmp/p;
-    	}
-    }
-	
+
+	/**
+	 * Return double value with two decimal points
+	 */
+
+	protected double Round(double Rval, int Rpl) {
+		if (Rval > Double.MAX_VALUE) {// Infinity
+			return Rval;
+		} else {
+			double p = (double) Math.pow(10, Rpl);
+			Rval = Rval * p;
+			double tmp = Math.round(Rval);
+			return (double) tmp / p;
+		}
+	}
 
 	// FXML Controller
 
@@ -678,15 +677,17 @@ public class SpaceView {
 									refreshCAColor();
 								}
 							});
-							
+
 							caTimeView.setOnAction(new EventHandler() {
 								@Override
 								public void handle(Event event) {
-									node.setCATimeViewGraphs();
+									boolean okClicked = showCATimeViewControlDialog(node);
+									if (okClicked && node.isCATimeViewSelected) {
+										node.setCATimeViewGraphs();
+										node.isTimeViewWindowOpen = true;
+									}
 								}
-							});	
-							
-							
+							});
 
 						} else {
 							// node.tp.setText(""+node.getWidth());
@@ -702,12 +703,36 @@ public class SpaceView {
 					@Override
 					public void handle(MouseEvent event) {
 						// node.tp.hide();
-
 					}
-
 				});
-
 			}
+		}
+	}
+
+	public boolean showCATimeViewControlDialog(CellView node) {
+		try {
+			FXMLLoader loader = new FXMLLoader();
+			loader.setLocation(getClass().getResource("./FXMLComponents/CATimeViewControlMenu.fxml"));
+			// initializing the controller
+			CATimeViewControlMenuController popupController = new CATimeViewControlMenuController(node);
+			loader.setController(popupController);
+			VBox layout = (VBox) loader.load();
+			Scene innerScene = new Scene(layout);
+			// this is the popup stage
+			Stage popupStage = popupController.getDialogStage();
+
+			if (scene.getWindow() != null) {
+				popupStage.initOwner(scene.getWindow());
+			}
+			popupStage.initModality(Modality.WINDOW_MODAL);
+			popupStage.setScene(innerScene);
+			popupStage.showAndWait();
+
+			return popupController.isOkClicked();
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
 		}
 
 	}
@@ -718,8 +743,6 @@ public class SpaceView {
 		// addHBox();
 
 		addGroup();
-
-		// synchronizeView();
 
 		// resize the cell node
 		centerP.widthProperty().addListener((observable, oldValue, newValue) -> {
@@ -798,8 +821,6 @@ public class SpaceView {
 		// });
 
 	}
-
-
 
 	@FXML
 	protected void hideAndShowControl(ActionEvent event) {

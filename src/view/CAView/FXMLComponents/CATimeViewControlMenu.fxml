@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+   <children>
+   	<HBox>
+   		<children>
+   			<TitledPane animated="false" collapsible="false" text="View Option">
+   				<content>
+   					<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="140.0" prefWidth="120.0">
+   						<children>
+   							<GridPane layoutX="1.0" layoutY="1.0" prefHeight="101.5" prefWidth="140.0">
+   								<columnConstraints>
+   									<ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+   								</columnConstraints>
+   								<rowConstraints>
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   								</rowConstraints>
+   								<padding>
+   									<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   								</padding>
+   								<children>
+   									<CheckBox fx:id="ck_timeview" mnemonicParsing="false" text="Time View" />
+   									<CheckBox fx:id="ck_trackinglog" mnemonicParsing="false" text="Tracking Log" GridPane.rowIndex="1" />
+   								</children>
+   							</GridPane>
+   						</children>
+   						<padding>
+   							<Insets bottom="10.0" />
+   						</padding>
+   					</AnchorPane>
+   				</content>
+   				<HBox.margin>
+   					<Insets bottom="5.0" left="5.0" top="5.0" />
+   				</HBox.margin>
+   			</TitledPane>
+   			<TitledPane animated="false" collapsible="false" text="State/Unit">
+   				<content>
+   					<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="140.0" prefWidth="175.0">
+   						<children>
+   							<GridPane layoutX="1.0" layoutY="1.0" prefHeight="142.0" prefWidth="185.0">
+   								<columnConstraints>
+   									<ColumnConstraints hgrow="SOMETIMES" maxWidth="96.0" minWidth="10.0" prefWidth="85.0" />
+   									<ColumnConstraints hgrow="SOMETIMES" maxWidth="129.0" minWidth="10.0" prefWidth="115.0" />
+   								</columnConstraints>
+   								<rowConstraints>
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   								</rowConstraints>
+   								<children>
+   									<CheckBox fx:id="ck_phase" mnemonicParsing="false" text="Phase" />
+   									<CheckBox fx:id="ck_sigma" mnemonicParsing="false" text="Sigma" GridPane.rowIndex="1" />
+   									<CheckBox fx:id="ck_tl" mnemonicParsing="false" text="TL" GridPane.rowIndex="2" />
+   									<CheckBox fx:id="ck_tn" mnemonicParsing="false" text="TN" GridPane.rowIndex="3" />
+   									<TextField fx:id="tx_phase" GridPane.columnIndex="1">
+   										<GridPane.margin>
+   											<Insets bottom="10.0" right="20.0" top="10.0" />
+   										</GridPane.margin>
+   									</TextField>
+   									<TextField fx:id="tx_sigma" GridPane.columnIndex="1" GridPane.rowIndex="1">
+   										<GridPane.margin>
+   											<Insets bottom="10.0" right="20.0" top="10.0" />
+   										</GridPane.margin>
+   									</TextField>
+   									<TextField fx:id="tx_tl" GridPane.columnIndex="1" GridPane.rowIndex="2">
+   										<GridPane.margin>
+   											<Insets bottom="10.0" right="20.0" top="10.0" />
+   										</GridPane.margin>
+   									</TextField>
+   									<TextField fx:id="tx_tn" GridPane.columnIndex="1" GridPane.rowIndex="3">
+   										<GridPane.margin>
+   											<Insets bottom="10.0" right="20.0" top="10.0" />
+   										</GridPane.margin>
+   									</TextField>
+   								</children>
+   								<padding>
+   									<Insets bottom="5.0" left="5.0" right="5.0" />
+   								</padding>
+   							</GridPane>
+   						</children>
+   					</AnchorPane>
+   				</content>
+   				<HBox.margin>
+   					<Insets bottom="5.0" left="5.0" top="5.0" />
+   				</HBox.margin>
+   			</TitledPane>
+   			<TitledPane animated="false" collapsible="false" text="X-AXis/Unit">
+   				<content>
+   					<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="140.0" prefWidth="190.0">
+   						<children>
+   							<GridPane prefHeight="140.0" prefWidth="185.0">
+   								<children>
+   									<CheckBox fx:id="ck_zero" mnemonicParsing="false" text="ZeroTimeAdvance Plots" GridPane.columnSpan="2" GridPane.rowIndex="2">
+   										<GridPane.margin>
+   											<Insets bottom="5.0" left="5.0" right="-10.0" top="5.0" />
+   										</GridPane.margin>
+   									</CheckBox>
+   									<TextField fx:id="tx_x" GridPane.columnIndex="1">
+   										<GridPane.margin>
+   											<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   										</GridPane.margin>
+   									</TextField>
+   									<TextField fx:id="tx_inc" promptText="10" GridPane.columnIndex="1" GridPane.rowIndex="1">
+   										<GridPane.margin>
+   											<Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+   										</GridPane.margin>
+   									</TextField>
+   									<Label text="X-AXis">
+   										<GridPane.margin>
+   											<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   										</GridPane.margin>
+   									</Label>
+   									<Label text="Increment" GridPane.rowIndex="1">
+   										<GridPane.margin>
+   											<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   										</GridPane.margin>
+   									</Label>
+   								</children>
+   								<columnConstraints>
+   									<ColumnConstraints hgrow="SOMETIMES" maxWidth="96.0" minWidth="10.0" prefWidth="85.0" />
+   									<ColumnConstraints hgrow="SOMETIMES" maxWidth="129.0" minWidth="10.0" prefWidth="115.0" />
+   								</columnConstraints>
+   								<padding>
+   									<Insets bottom="5.0" left="5.0" right="5.0" />
+   								</padding>
+   								<rowConstraints>
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   									<RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+   								</rowConstraints>
+   							</GridPane>
+   						</children>
+   					</AnchorPane>
+   				</content>
+   				<HBox.margin>
+   					<Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+   				</HBox.margin>
+   			</TitledPane>
+   		</children>
+   	</HBox>
+      <AnchorPane prefHeight="34.0">
+         <children>
+            <Button fx:id="btn_ok" layoutX="350.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleOk" prefWidth="65.0" text="OK" />
+            <Button fx:id="btn_cancel" layoutX="425.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleCancel" prefWidth="65.0" text="Cancel" />
+         </children>
+      </AnchorPane>
+   </children>
+</VBox>
