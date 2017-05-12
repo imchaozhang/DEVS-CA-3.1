@@ -4,15 +4,14 @@
  *  Version    : DEVSJAVA 2.7 
  *  Date       : 08-15-02 
  */
-package SimpArcMod;
+package CAMod;
 
 
 
 import java.lang.*;
 
 import GenCol.*;
-
-
+import model.CAmodeling.TwoDimCell;
 import model.modeling.*;
 import model.simulation.*;
 
@@ -20,16 +19,16 @@ import view.modeling.ViewableAtomic;
 import view.simView.*;
 
 
-public class genr extends ViewableAtomic{
+public class clock extends TwoDimCell{
 
 
   protected double int_arr_time;
   protected int count;
   static int c= 0; 
-  public genr() {this("genr", 0);}
+  public clock() {this("clock", 0);}
 
-public genr(String name,double Int_arr_time){
-   super(name);
+public clock(String name,double Int_arr_time){
+   super(-1,-1);
    addInport("in");
    addOutport("out");
    addInport("stop");
@@ -41,7 +40,7 @@ public genr(String name,double Int_arr_time){
 }
 
 public void initialize(){
-   holdIn("active", 0);
+   holdIn("active", 1);
 
     //  phase = "passive";
    //  sigma = INFINITY;
@@ -80,7 +79,7 @@ System.out.println(name+" deltint tN "+tN);
 if(phaseIs("active")){
    count = count +1;
    
-   holdIn("active",10);
+   holdIn("active",1);
 }
 else passivate();
 }

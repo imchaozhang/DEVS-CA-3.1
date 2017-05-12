@@ -103,6 +103,10 @@ public class TwoDimCellSpace
   public Cell withId(int xcoord, int ycoord) {
     return withId(new Pair(new Integer(xcoord), new Integer(ycoord)));
   }
+  
+  public TwoDimCell getCell(int xcoord, int ycoord) {
+	  return (TwoDimCell) this.withId( xcoord, ycoord);
+  }
 
   public Cell neighborOf(Cell c, int i, int j) {
     return withId(c.neighborId(i, j));

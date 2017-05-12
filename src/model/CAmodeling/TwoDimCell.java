@@ -35,6 +35,10 @@ public abstract class TwoDimCell extends ViewableAtomic implements Cell {
 	public TwoDimCell() {
 		this(new Pair(new Integer(0), new Integer(0)));
 	}
+	
+	public TwoDimCell(int xcoord, int ycoord){
+		this(new Pair(new Integer(xcoord), new Integer(ycoord)));
+	}
 
 	/**
 	 * Default constructor
