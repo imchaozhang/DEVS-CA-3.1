@@ -1,10 +1,10 @@
-package facade.CAsimulation;
+package facade.simulation.CA;
 
-import facade.CAmodeling.FCASpaceModel;
 import facade.modeling.FCoupledModel;
 import facade.modeling.FModel;
+import facade.modeling.CA.FCASpaceModel;
 import facade.simulation.FCoupledSimulator;
-import model.CAmodeling.TwoDimCellSpace;
+import model.modeling.CAModels.TwoDimCellSpace;
 import model.simulation.realTime.TunableCoordinator.Listener;
 import view.modeling.ViewableDigraph;
 

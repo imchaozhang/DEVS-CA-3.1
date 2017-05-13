@@ -6,8 +6,6 @@
  */
 package controller;
 
-import facade.CAsimulation.FCASimulator;
-
 /**
  * Controller.java
  * This class provides control function for the Tracking Environment	
@@ -19,6 +17,7 @@ import facade.CAsimulation.FCASimulator;
 import facade.modeling.FModel;
 import facade.simulation.FCoupledSimulator;
 import facade.simulation.FSimulator;
+import facade.simulation.CA.FCASimulator;
 import facade.simulation.hooks.SimulatorHookListener;
 
 //Collections Connections
@@ -31,8 +30,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import GenCol.entity;
-import model.CAmodeling.TwoDimCellSpace;
 import model.modeling.*;
+import model.modeling.CAModels.TwoDimCellSpace;
 import view.*;
 import view.CAView.SpaceView;
 import view.modeling.ViewableDigraph;

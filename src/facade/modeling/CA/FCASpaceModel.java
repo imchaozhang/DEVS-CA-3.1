@@ -1,4 +1,4 @@
-package facade.CAmodeling;
+package facade.modeling.CA;
 
 import java.util.List;
 import java.util.Vector;
@@ -9,11 +9,11 @@ import facade.modeling.FCoupledModel;
 import facade.modeling.FModel;
 import facade.modeling.FModelException;
 import facade.simulation.FSimulator;
-import model.CAmodeling.TwoDimCell;
-import model.CAmodeling.TwoDimCellSpace;
 import model.modeling.IOBasicDevs;
 import model.modeling.componentIterator;
 import model.modeling.digraph;
+import model.modeling.CAModels.TwoDimCell;
+import model.modeling.CAModels.TwoDimCellSpace;
 import view.modeling.ViewableAtomic;
 import view.modeling.ViewableDigraph;
 

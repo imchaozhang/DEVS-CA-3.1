@@ -8,12 +8,12 @@
 
 package view;
 
-import facade.CAsimulation.FCASimulator;
 //Facade Connections
 import facade.modeling.FAtomicModel;
 import facade.modeling.FCoupledModel;
 import facade.modeling.FModel;
 import facade.simulation.*;
+import facade.simulation.CA.FCASimulator;
 import javafx.application.Platform;
 
 //Standard API Imports

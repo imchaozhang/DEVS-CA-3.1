@@ -9,9 +9,9 @@ import javax.swing.JDialog;
 import javax.swing.SwingUtilities;
 
 import controller.ControllerInterface;
-import facade.CAmodeling.FCASpaceModel;
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
+import facade.modeling.CA.FCASpaceModel;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import view.ExternalTimeView;

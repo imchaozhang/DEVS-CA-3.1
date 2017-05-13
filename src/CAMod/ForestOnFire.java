@@ -5,7 +5,7 @@ import java.awt.Point;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import model.CAmodeling.TwoDimCellSpace;
+import model.modeling.CAModels.TwoDimCellSpace;
 import view.modeling.ViewableComponent;
 import view.modeling.ViewableComponentUtil;
 

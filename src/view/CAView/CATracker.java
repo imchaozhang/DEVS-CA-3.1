@@ -4,10 +4,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import facade.CAmodeling.FCACellModel;
-import facade.CAmodeling.FCASpaceModel;
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
+import facade.modeling.CA.FCACellModel;
+import facade.modeling.CA.FCASpaceModel;
 import view.Tracker;
 import view.TrackingControl;
 import view.timeView.Event;

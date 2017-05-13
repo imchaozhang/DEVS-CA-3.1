@@ -1,10 +1,10 @@
-package facade.CAmodeling;
+package facade.modeling.CA;
 
 import GenCol.Pair;
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
 import facade.simulation.FSimulator;
-import model.CAmodeling.TwoDimCell;
+import model.modeling.CAModels.TwoDimCell;
 import view.modeling.ViewableAtomic;
 
 public class FCACellModel extends FAtomicModel {

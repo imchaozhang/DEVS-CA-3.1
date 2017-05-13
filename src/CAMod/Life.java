@@ -1,7 +1,7 @@
 package CAMod;
 
-import model.CAmodeling.TwoDimCell;
 import model.modeling.message;
+import model.modeling.CAModels.TwoDimCell;
 import model.plots.DrawCellEntity;
 import util.rand;
 
@@ -135,7 +135,7 @@ public class Life extends TwoDimCell {
 
 		message m = new message();
 
-		if (phaseIs("life")) {
+		if (phaseIs("life") || phaseIs("die")) {
 			m.add(makeContent("outN", new entity(phase)));
 
 			m.add(makeContent("outNE", new entity(phase)));

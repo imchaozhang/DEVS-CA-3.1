@@ -8,7 +8,7 @@
  *            Date: April 16, 2003
  */
 
-package model.CAmodeling;
+package model.modeling.CAModels;
 
 import model.modeling.IODevs;
 import GenCol.Pair;

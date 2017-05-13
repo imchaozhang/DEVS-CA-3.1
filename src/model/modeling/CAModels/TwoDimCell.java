@@ -6,7 +6,7 @@
  * Revision:
  *
  */
-package model.CAmodeling;
+package model.modeling.CAModels;
 
 import GenCol.*;
 import model.modeling.*;

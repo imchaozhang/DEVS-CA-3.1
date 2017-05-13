@@ -11,8 +11,8 @@ package CAMod;
 import java.lang.*;
 
 import GenCol.*;
-import model.CAmodeling.TwoDimCell;
 import model.modeling.*;
+import model.modeling.CAModels.TwoDimCell;
 import model.simulation.*;
 
 import view.modeling.ViewableAtomic;

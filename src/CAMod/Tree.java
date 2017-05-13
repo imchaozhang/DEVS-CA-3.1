@@ -1,7 +1,7 @@
 package CAMod;
 
-import model.CAmodeling.TwoDimCell;
 import model.modeling.message;
+import model.modeling.CAModels.TwoDimCell;
 import model.plots.DrawCellEntity;
 import util.rand;
 

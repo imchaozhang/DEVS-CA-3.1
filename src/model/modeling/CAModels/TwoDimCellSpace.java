@@ -5,7 +5,7 @@
  * Revision: , 2003
  *
  */
-package model.CAmodeling;
+package model.modeling.CAModels;
 
 import java.awt.*;
 
