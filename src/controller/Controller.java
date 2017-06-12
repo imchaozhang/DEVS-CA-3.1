@@ -17,7 +17,7 @@ package controller;
 import facade.modeling.FModel;
 import facade.simulation.FCoupledSimulator;
 import facade.simulation.FSimulator;
-import facade.simulation.CA.FCASimulator;
+import facade.simulation.CAsimulation.FCASimulator;
 import facade.simulation.hooks.SimulatorHookListener;
 
 //Collections Connections
@@ -133,7 +133,7 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 			// +simulator.getTimeOfNextEvent());
 		} else if (View.isCATracking) {
 			view.addCATrackingColumn(simulator.getTimeOfNextEvent());
-			//view.synchronizeView();
+			// view.synchronizeView();
 			view.synchronizeCAView();
 
 		}
@@ -145,7 +145,7 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 		if (View.isTracking) {
 			view.synchronizeView();
 		} else if (View.isCATracking) {
-			//view.synchronizeView();
+			// view.synchronizeView();
 			view.synchronizeCAView();
 		}
 	}

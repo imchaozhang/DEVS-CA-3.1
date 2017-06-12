@@ -1,8 +1,8 @@
-package facade.simulation.CA;
+package facade.simulation.CAsimulation;
 
 import facade.modeling.FCoupledModel;
 import facade.modeling.FModel;
-import facade.modeling.CA.FCASpaceModel;
+import facade.modeling.CAmodeling.FCASpaceModel;
 import facade.simulation.FCoupledSimulator;
 import model.modeling.CAModels.TwoDimCellSpace;
 import model.simulation.realTime.TunableCoordinator.Listener;

@@ -6,8 +6,8 @@ import java.util.List;
 
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
-import facade.modeling.CA.FCACellModel;
-import facade.modeling.CA.FCASpaceModel;
+import facade.modeling.CAmodeling.FCACellModel;
+import facade.modeling.CAmodeling.FCASpaceModel;
 import view.Tracker;
 import view.TrackingControl;
 import view.timeView.Event;

@@ -1,4 +1,4 @@
-package facade.modeling.CA;
+package facade.modeling.CAmodeling;
 
 import GenCol.Pair;
 import facade.modeling.FAtomicModel;

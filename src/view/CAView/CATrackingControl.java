@@ -11,7 +11,7 @@ import javax.swing.SwingUtilities;
 import controller.ControllerInterface;
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
-import facade.modeling.CA.FCASpaceModel;
+import facade.modeling.CAmodeling.FCASpaceModel;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import view.ExternalTimeView;

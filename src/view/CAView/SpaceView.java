@@ -1,6 +1,7 @@
 package view.CAView;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -16,6 +17,7 @@ import facade.simulation.FSimulator;
 import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
@@ -69,11 +71,13 @@ public class SpaceView {
 	private static ControllerInterface controller;
 
 	private static double sceneWidth = 729;
-	private static double sceneHeight = 749;
+	private static double sceneHeight = 700;
 	public static CellView[][] cellView;
 	static double gridWidth, gridHeight;
 	static int n, m;
 	public static LinkedList<ParallelTransition> playback = new LinkedList<ParallelTransition>();
+
+	public static LinkedList<Double> PBStatusIndex = new LinkedList<Double>();
 	// public static Slider slider;
 	private static int stepSpeed = 1;
 	private static long count = 0;
@@ -96,11 +100,16 @@ public class SpaceView {
 	private static VBox vbox;
 	private static Slider playbackControl;
 
-	private double currentTime = 0;
+	private double CAcurrentTime = 0;
 
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private Text simulatorStateDoc;
+
+	private Label playbackValue;
+	
+	private StringProperty playbackValueString;
+	
 	private Button btn_run, btn_step, btn_stepn, btn_pause, btn_reset;
 
 	@FXML
@@ -159,6 +168,7 @@ public class SpaceView {
 		atStartPoint = true;
 
 		playback.clear();
+		PBStatusIndex.clear();
 
 	}
 
@@ -186,6 +196,8 @@ public class SpaceView {
 				Node nodeIn6 = ((AnchorPane) nodeIn5).getChildren().get(0);
 				((GridPane) nodeIn6).add(playbackControl, 0, 6, 4, 1);
 				GridPane.setMargin(playbackControl, new Insets(-6, 0, 0, 0));
+
+				((GridPane) nodeIn6).add(playbackValue, 3, 7);
 
 				// add Control Buttons and Simulation Doc
 				Node nodeIn7 = ((VBox) nodeIn3).getChildren().get(2);
@@ -262,7 +274,11 @@ public class SpaceView {
 				Color previouscolor = currentnode.previouscolor;
 				if (!currentnode.isDatalistEmp()) {
 					CellView nextnode = currentnode.step();
-					currentTime = nextnode.currentTime;
+					// CACurrentTime is the current time for the CA system. It
+					// is the newest time for the system.
+					if (nextnode.currentTime > CAcurrentTime) {
+						CAcurrentTime = nextnode.currentTime;
+					}
 					Color nextcolor = nextnode.currentcolor;
 					if (count % stepSpeed == 0) {
 
@@ -274,7 +290,7 @@ public class SpaceView {
 
 							Runnable r = new Runnable() {
 								public void run() {
-									FillTransition ftA = new FillTransition(Duration.millis(500), currentnode.rectangle,
+									FillTransition ftA = new FillTransition(Duration.millis(40), currentnode.rectangle,
 											previouscolor, nextcolor);
 									ftA.setAutoReverse(false);
 									// ftA.setCycleCount(2);
@@ -307,6 +323,7 @@ public class SpaceView {
 			public void run() {
 				if (!ftList.isEmpty())
 					playbackTransition.getChildren().addAll(ftList);
+				// System.out.println(ftList.toString());
 
 			}
 
@@ -321,15 +338,23 @@ public class SpaceView {
 				sizechanged = true;
 				if (!playbackTransition.getChildren().isEmpty()) {
 
-					if (playback.size() <= playbackSize) {
+					if (playback.size() < playbackSize) {
 						playback.add(playbackTransition);
-						playbackControl.setMax(playback.size() - 1);
-						playbackControl.setValue(playback.size() - 1);
+						// add time for PB Status Display
+						PBStatusIndex.add(CAcurrentTime);
+						playbackControl.setMin(1);
+						playbackControl.setMax(playback.size());
+						playbackControl.setValue(playback.size());
+						//playbackControl.valueProperty().set(playback.size() - 1);
+						//playbackValue.setText(Double.toString(CAcurrentTime));
 
 					} else {
 						playback.poll();
 						playback.add(playbackTransition);
-						playbackControl.setValue(playback.size() - 1);
+						PBStatusIndex.poll();
+						PBStatusIndex.add(CAcurrentTime);
+						playbackControl.setValue(playback.size());
+						//playbackValue.setText(Double.toString(CAcurrentTime));
 
 					}
 				}
@@ -458,22 +483,33 @@ public class SpaceView {
 		// playbackControl.setLayoutY(95);
 		playbackControl.setShowTickLabels(true);
 		playbackControl.setShowTickMarks(true);
-		playbackControl.setMajorTickUnit(5);
+		playbackControl.setMajorTickUnit(1);
 		playbackControl.setSnapToTicks(true);
 		playbackControl.setBlockIncrement(1);
 
-		final Label playbackValue = new Label(
-				"Current Step: " + Long.toString(count - (long) playbackControl.getValue()));
+		playbackValue = new Label("0");
+
+		playbackValueString = new SimpleStringProperty();
+		
+		playbackValue.textProperty().bind(playbackValueString);
+		
+		
+
+		// final Label playbackValue = new Label(
+		// "Current Step: " + Long.toString(count - (long)
+		// playbackControl.getValue()));
 
 		playbackControl.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
 				if (playbackControl.getMax() > 0 && !sizechanged) {
 					// if (executor.isTerminated()) {
-					playback.get((int) playbackControl.getValue()).play();
+					int playI = playbackControl.valueProperty().intValue()-1;
+					if(playI<0)
+						playI = 0;
+					playback.get(playI).play();
 					playbacked = true;
-					playbackValue.setText("Current Step: " + String.format("%.0f",
-							(currentTime - playback.size() + 1 + (double) new_val.longValue())));
-					if (playbackControl.getMax() < 20) {
+					playbackValueString.set(PBStatusIndex.get(playI).toString());
+					if (playbackControl.getMax() < 50) {
 						// playbackControl.setMax(playback.size());
 						// playbackControl.autosize();
 					}
@@ -542,6 +578,10 @@ public class SpaceView {
 		stateValue.set("Simulator State: " + stateLabel + "\nTime of Last Event: "
 				+ +Round(controller.getSimulator().getTimeOfLastEvent(), 4) + "\nTime of Next Event: "
 				+ Round(controller.getSimulator().getTimeOfNextEvent(), 4));
+		
+		if(playbackSelected){
+			playbackValueString.set(Double.toString(CAcurrentTime));
+		}
 
 		// writeSimulatorInfo("Simulator State: ",attrSets[HEADER_ATTR]);
 		// writeSimulatorInfo(stateLabel,stateAttr);
@@ -830,7 +870,7 @@ public class SpaceView {
 		ca_split.getDividers().get(0).positionProperty().bindBidirectional(ellipse.opacityProperty());
 		if (HideAndShowControlButton.getText().equalsIgnoreCase("Hide Control")) {
 			FadeTransition dt = new FadeTransition(Duration.millis(800), ellipse);
-			dt.setFromValue(0.2818);
+			dt.setFromValue(0.34);
 			dt.setToValue(0);
 			dt.play();
 			HideAndShowControlButton.setText("Show Control");
@@ -838,7 +878,7 @@ public class SpaceView {
 		} else {
 			FadeTransition dt = new FadeTransition(Duration.millis(800), ellipse);
 			dt.setFromValue(0);
-			dt.setToValue(0.2818);
+			dt.setToValue(0.34);
 			dt.play();
 			HideAndShowControlButton.setText("Hide Control");
 

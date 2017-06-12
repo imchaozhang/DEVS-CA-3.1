@@ -11,8 +11,8 @@
 package view;
 
 import facade.modeling.*;
-import facade.modeling.CA.FCACellModel;
-import facade.modeling.CA.FCASpaceModel;
+import facade.modeling.CAmodeling.FCACellModel;
+import facade.modeling.CAmodeling.FCASpaceModel;
 import facade.simulation.*;
 import javafx.application.Application;
 import javafx.application.Platform;

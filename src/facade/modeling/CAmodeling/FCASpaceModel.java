@@ -1,4 +1,4 @@
-package facade.modeling.CA;
+package facade.modeling.CAmodeling;
 
 import java.util.List;
 import java.util.Vector;

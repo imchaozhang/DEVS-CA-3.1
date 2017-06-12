@@ -13,7 +13,7 @@ import facade.modeling.FAtomicModel;
 import facade.modeling.FCoupledModel;
 import facade.modeling.FModel;
 import facade.simulation.*;
-import facade.simulation.CA.FCASimulator;
+import facade.simulation.CAsimulation.FCASimulator;
 import javafx.application.Platform;
 
 //Standard API Imports
@@ -631,6 +631,7 @@ public class View extends JFrame implements ViewInterface {
 
 	// added for CA, by Chao
 	public void addCATrackingColumn(double currentTime) {
+
 		catracking.addCATracking(currentTime);
 	}
 
@@ -729,11 +730,10 @@ public class View extends JFrame implements ViewInterface {
 				SimView.modelView.runToOccur();
 			else if (gesture.equals(ControllerInterface.SIM_STEP_GESTURE))
 				SimView.modelView.stepToBeTaken();
-		if(isCATracking){
+		if (isCATracking) {
 			catracking.controlCATimeView(gesture);
 		}
 	}
-
 
 	public SimView getSim() {
 		return sim;
