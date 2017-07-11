@@ -53,7 +53,7 @@ public class CATrackingControl {
 		YSize = CAmodelColumn[0].getYSize();
 
 		if (XSize != -1) {
-			SpaceView.initial(XSize, YSize, controller);
+			SpaceView.initial(rootModelName, XSize, YSize, controller);
 			caView = new SpaceView();
 			// start a JavaFX Panel
 			initAndRunFX();

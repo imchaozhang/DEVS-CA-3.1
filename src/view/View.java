@@ -23,6 +23,8 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.*;
@@ -144,7 +146,9 @@ public class View extends JFrame implements ViewInterface {
 	// Swing page will be disabled.
 	public void createLoadPage() {
 		this.setVisible(false);
-		new LoadWizard();
+		//new LoadWizard();
+		new StartChoice();
+		
 
 	}
 
@@ -737,6 +741,67 @@ public class View extends JFrame implements ViewInterface {
 
 	public SimView getSim() {
 		return sim;
+	}
+
+	/**
+	 * This is the start choice window
+	 * 
+	 * @author Chao
+	 */
+	private class StartChoice extends JDialog{
+		public StartChoice() {
+			
+			JButton comp_btn = new JButton("Component View");
+			comp_btn.setPreferredSize(new Dimension(300, 400));		
+			
+			JButton ca_btn = new JButton("Cellular Automata");
+			ca_btn.setPreferredSize(new Dimension(300, 400));		
+
+			comp_btn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//System.out.println("I am clicked!");
+					isSimView = true;
+					isTracking = true;
+					isCATracking = false;
+					isCAModel = false;					
+					new LoadWizard();
+					StartChoice.this.dispose();
+				
+				}
+			});
+			
+			 String comp_tooltiptext = "<html>" + "<img src=\"file:src/graphics/DEVS-shot.png\">"
+					    + "</html>";
+			 comp_btn.setToolTipText(comp_tooltiptext);
+			
+			
+			ca_btn.addActionListener(new ActionListener() {
+				public void actionPerformed(ActionEvent e) {
+					//System.out.println("I am clicked!");
+					isSimView = false;
+					isTracking = false;
+					isCATracking = true;
+					isCAModel = true;
+					new LoadWizard();
+					StartChoice.this.dispose();
+					
+				}
+			});
+			
+			 String ca_tooltiptext = "<html>" + "<img src=\"file:src/graphics/CA.png\">"
+					    + "</html>";
+			 ca_btn.setToolTipText(ca_tooltiptext);
+
+			Container cont = this.getContentPane();
+			cont.setLayout(new FlowLayout());
+			cont.add(new JLabel("Select:"));
+			cont.add(comp_btn);
+			cont.add(ca_btn);
+			this.pack();
+			this.setVisible(true);
+			
+		}
+
 	}
 
 	/**

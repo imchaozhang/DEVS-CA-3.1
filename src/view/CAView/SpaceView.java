@@ -69,9 +69,10 @@ import view.CAView.FXMLComponents.CATimeViewControlMenuController;
 public class SpaceView {
 
 	private static ControllerInterface controller;
+	private static String name;
 
 	private static double sceneWidth = 729;
-	private static double sceneHeight = 700;
+	private static double sceneHeight = 850;
 	public static CellView[][] cellView;
 	static double gridWidth, gridHeight;
 	static int n, m;
@@ -132,13 +133,16 @@ public class SpaceView {
 	private Group root;
 	@FXML
 	private SplitPane ca_split;
+	@FXML
+	private Text model_name;
 
 	public SpaceView() {
 
 	}
 
-	public static void initial(int i, int j, ControllerInterface c) {
+	public static void initial(String _name, int i, int j, ControllerInterface c) {
 
+		name = _name;
 		n = i;
 		m = j;
 		setGridSize();
@@ -191,7 +195,7 @@ public class SpaceView {
 			if (nodeIn instanceof SplitPane) {
 				Node nodeIn2 = ((SplitPane) nodeIn).getItems().get(0);
 				Node nodeIn3 = ((AnchorPane) nodeIn2).getChildren().get(0);
-				Node nodeIn4 = ((VBox) nodeIn3).getChildren().get(1);
+				Node nodeIn4 = ((VBox) nodeIn3).getChildren().get(2);
 				Node nodeIn5 = ((TitledPane) nodeIn4).getContent();
 				Node nodeIn6 = ((AnchorPane) nodeIn5).getChildren().get(0);
 				((GridPane) nodeIn6).add(playbackControl, 0, 6, 4, 1);
@@ -200,7 +204,7 @@ public class SpaceView {
 				((GridPane) nodeIn6).add(playbackValue, 3, 7);
 
 				// add Control Buttons and Simulation Doc
-				Node nodeIn7 = ((VBox) nodeIn3).getChildren().get(2);
+				Node nodeIn7 = ((VBox) nodeIn3).getChildren().get(3);
 				Node nodeIn8 = ((TitledPane) nodeIn7).getContent();
 				Node nodeIn9 = ((AnchorPane) nodeIn8).getChildren().get(0);
 				((GridPane) nodeIn9).add(btn_run, 0, 0, 1, 1);
@@ -779,7 +783,10 @@ public class SpaceView {
 
 	@FXML
 	public void initialize() {
-
+		//set the model name for simulator UI
+		model_name.setText("Model Running: \""+ name + "\"");
+		
+		
 		// addHBox();
 
 		addGroup();

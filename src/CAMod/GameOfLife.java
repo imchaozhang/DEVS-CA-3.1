@@ -2,6 +2,7 @@ package CAMod;
 
 import java.awt.Dimension;
 import java.awt.Point;
+import java.util.Random;
 
 import SimpArcMod.genr;
 import javafx.application.Application;
@@ -20,11 +21,11 @@ public class GameOfLife extends TwoDimCellSpace {
 	public static final int[][] b_heptomino = new int[][] { { 0, 1, 1 }, { 1, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 } };
 
 	public GameOfLife() {
-		this(15,15);
+		this(50,100);
 	}
 
 	public GameOfLife(int xDim, int yDim) {
-		super("game", xDim, yDim);
+		super("game of life", xDim, yDim);
 
 //		clock g = new clock("g", 1);
 //		add(g);
@@ -33,16 +34,20 @@ public class GameOfLife extends TwoDimCellSpace {
 			for (int j = 0; j < yDimCellspace; j++) {
 				Life life = new Life(i, j);
 				addCell(life);
+				
+				Random randomno = new Random();
+				life.isLife = randomno.nextInt(2);
+				life.initialize();
 //				addCoupling(g, "out", life, "clock");
 			}
 		}
 		
-		for(int x=0;x<b_heptomino.length;x++)
-            for(int y=0;y<b_heptomino[x].length;y++){
-            	Life l = (Life)(getCell(x+xDim/2-b_heptomino.length/2, y+yDim/2-b_heptomino[x].length/2));
-            			l.isLife = b_heptomino[x][y];
-            			l.initialize();
-            }
+//		for(int x=0;x<b_heptomino.length;x++)
+//            for(int y=0;y<b_heptomino[x].length;y++){
+//            	Life l = (Life)(getCell(x+xDim/2-b_heptomino.length/2, y+yDim/2-b_heptomino[x].length/2));
+//            			l.isLife = b_heptomino[x][y];
+//            			l.initialize();
+//            }
         
 		
 
