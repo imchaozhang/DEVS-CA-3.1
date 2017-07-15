@@ -21,11 +21,11 @@ public class GameOfLife extends TwoDimCellSpace {
 	public static final int[][] b_heptomino = new int[][] { { 0, 1, 1 }, { 1, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 } };
 
 	public GameOfLife() {
-		this(50,100);
+		this(50,10);
 	}
 
 	public GameOfLife(int xDim, int yDim) {
-		super("game of life", xDim, yDim);
+		super("Game of Life", xDim, yDim);
 
 //		clock g = new clock("g", 1);
 //		add(g);

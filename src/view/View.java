@@ -752,10 +752,10 @@ public class View extends JFrame implements ViewInterface {
 		public StartChoice() {
 			
 			JButton comp_btn = new JButton("Component View");
-			comp_btn.setPreferredSize(new Dimension(300, 400));		
+			comp_btn.setPreferredSize(new Dimension(220, 220));		
 			
 			JButton ca_btn = new JButton("Cellular Automata");
-			ca_btn.setPreferredSize(new Dimension(300, 400));		
+			ca_btn.setPreferredSize(new Dimension(220, 220));		
 
 			comp_btn.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -793,8 +793,10 @@ public class View extends JFrame implements ViewInterface {
 			 ca_btn.setToolTipText(ca_tooltiptext);
 
 			Container cont = this.getContentPane();
+			
 			cont.setLayout(new FlowLayout());
-			cont.add(new JLabel("Select:"));
+			cont.add(new JLabel("<html>" + "<img src=\"file:src/graphics/DEVS-SuiteLogo.png\">"
+					    + "</html>"));
 			cont.add(comp_btn);
 			cont.add(ca_btn);
 			this.pack();

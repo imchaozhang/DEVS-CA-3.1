@@ -158,9 +158,9 @@ public class CellView extends StackPane {
 			return false;
 
 	}
-	public void setTPText(boolean isState, boolean isTL, boolean isSigma, boolean isStatusChanged){
+	public void setTPText(boolean _isPhase, boolean _isSigma, boolean _isStateChanged){
 		
-		text.setText("i: " + this.i + ", j: " + this.j + ((isState)?tp_State:"" ) + ((isTL)?tp_TL:"") + ((isSigma)?tp_Sigma:"") + ((isStatusChanged)?tp_StatusChanged:""));
+		text.setText("i: " + this.i + ", j: " + this.j + ((_isPhase)?tp_State:"" ) + ((_isSigma)?tp_Sigma:"") + ((_isStateChanged)?tp_StatusChanged:""));
 		tp.setText(text.getText());		
 		
 	}

@@ -72,18 +72,21 @@ public class SpaceView {
 	private static String name;
 
 	private static double sceneWidth = 729;
-	private static double sceneHeight = 850;
+	private static double sceneHeight = 800;
 	public static CellView[][] cellView;
 	static double gridWidth, gridHeight;
 	static int n, m;
 	public static LinkedList<ParallelTransition> playback = new LinkedList<ParallelTransition>();
 
 	public static LinkedList<Double> PBStatusIndex = new LinkedList<Double>();
+
+	// real time factors
+	private static final double[] REAL_TIME_FACTORS = { 0.0001, 0.001, 0.01, 0.1, 0.5, 1, 5, 10, 50, 100, 1000 };
+
 	// public static Slider slider;
 	private static int stepSpeed = 1;
 	private static long count = 0;
 	private static long numberOfCellChanged = 0;
-	private StringProperty numberOfCellChangedValue = new SimpleStringProperty("0");
 
 	private static boolean playbackSelected = false;
 	private static boolean playbacked = false;
@@ -92,29 +95,31 @@ public class SpaceView {
 	// atStartPoint is used to check if the simulation just start.
 	public static boolean atStartPoint = true;
 
-	private static boolean isState = true, isTL = true, isSigma = true, isStatusChanged = true;
+	private static boolean isPhase = true, isSigma = true, isStateChanged = true;
 
 	private static int playbackSize = 50;
 
 	private static Scene scene;
 	private static Parent ui;
 	private static VBox vbox;
-	private static Slider playbackControl;
+	private static Slider playbackControl, realTimeControl;
 
 	private double CAcurrentTime = 0;
 
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	private Text simulatorStateDoc;
+	private Text simulatorStateDoc, numberCellChangedState, RealTimeFactor;
 
 	private Label playbackValue;
-	
+
 	private StringProperty playbackValueString;
-	
+
 	private Button btn_run, btn_step, btn_stepn, btn_pause, btn_reset;
 
+	// For FXML
+
 	@FXML
-	private CheckBox PSelect, cb_State, cb_Sigma, cb_TL, cb_StatusChanged;
+	private CheckBox PSelect, cb_Phase, cb_Sigma, cb_StateChanged;
 	@FXML
 	private Button PBMaxLengthButton, ANSpeedButton, HideAndShowControlButton;
 
@@ -123,7 +128,7 @@ public class SpaceView {
 	@FXML
 	private Slider PBTracking, ANSpeedSlider;
 	@FXML
-	private Text PBStatus, CellChangedNumber;
+	private Text PBStatus;
 
 	@FXML
 	private HBox hbox;
@@ -165,10 +170,9 @@ public class SpaceView {
 		playbacked = false;
 		sizechanged = false;
 		animationPaused = false;
-		isState = true;
-		isTL = true;
+		isPhase = true;
 		isSigma = true;
-		isStatusChanged = true;
+		isStateChanged = true;
 		atStartPoint = true;
 
 		playback.clear();
@@ -184,9 +188,21 @@ public class SpaceView {
 		playbackControl = addPlaybackSilder();
 
 		addControlButtons();
+
+		RealTimeFactor = new Text("Real Time Factor: ");
+		realTimeControl = new Slider(0,REAL_TIME_FACTORS.length,0);
+		realTimeControl.setSnapToTicks(true);
+		//realTimeControl.setShowTickLabels(true);
+		//realTimeControl.setShowTickMarks(true);
+		realTimeControl.setMinorTickCount(0);
+		realTimeControl.setMajorTickUnit(1);
+		
+
 		simulatorStateDoc = new Text();
 		simulatorStateDoc.setLineSpacing(8);
 		simulatorStateDoc.prefHeight(60);
+
+		numberCellChangedState = new Text();
 
 		synchronizeView();
 
@@ -212,20 +228,26 @@ public class SpaceView {
 				((GridPane) nodeIn9).add(btn_stepn, 0, 1, 1, 1);
 				((GridPane) nodeIn9).add(btn_pause, 1, 1, 1, 1);
 				((GridPane) nodeIn9).add(btn_reset, 2, 1, 1, 1);
-				((GridPane) nodeIn9).add(simulatorStateDoc, 0, 2, 3, 2);
+				((GridPane) nodeIn9).add(RealTimeFactor, 0, 2, 3, 1);
+				((GridPane) nodeIn9).add(realTimeControl, 0, 3, 3, 1);
+
+				((GridPane) nodeIn9).add(simulatorStateDoc, 0, 4, 3, 2);
 
 				GridPane.setMargin(btn_run, new Insets(5));
 				GridPane.setMargin(btn_step, new Insets(5));
 				GridPane.setMargin(btn_stepn, new Insets(5));
 				GridPane.setMargin(btn_pause, new Insets(5));
 				GridPane.setMargin(btn_reset, new Insets(5));
+				GridPane.setMargin(RealTimeFactor, new Insets(5,0,0,10));
+				GridPane.setMargin(realTimeControl, new Insets(-5,5,5,5));
 				GridPane.setMargin(simulatorStateDoc, new Insets(0, 0, 0, 10));
 
-				// ((AnchorPane) nodeIn7).getChildren().add(simulatorStateDoc);
-
-				// Node nodeIn7 = ((GridPane) nodeIn6).getChildren().get(14);
-				//
-				// ((AnchorPane) nodeIn7).getChildren().add(playbackControl);
+				// add Number of Cell Changed
+				Node nodeIn10 = ((VBox) nodeIn3).getChildren().get(0);
+				Node nodeIn11 = ((TitledPane) nodeIn10).getContent();
+				Node nodeIn12 = ((AnchorPane) nodeIn11).getChildren().get(0);
+				((GridPane) nodeIn12).add(numberCellChangedState, 3, 3);
+				GridPane.setMargin(numberCellChangedState, new Insets(10, 0, 10, -2));
 
 				break;
 			}
@@ -349,8 +371,9 @@ public class SpaceView {
 						playbackControl.setMin(1);
 						playbackControl.setMax(playback.size());
 						playbackControl.setValue(playback.size());
-						//playbackControl.valueProperty().set(playback.size() - 1);
-						//playbackValue.setText(Double.toString(CAcurrentTime));
+						// playbackControl.valueProperty().set(playback.size() -
+						// 1);
+						// playbackValue.setText(Double.toString(CAcurrentTime));
 
 					} else {
 						playback.poll();
@@ -358,7 +381,7 @@ public class SpaceView {
 						PBStatusIndex.poll();
 						PBStatusIndex.add(CAcurrentTime);
 						playbackControl.setValue(playback.size());
-						//playbackValue.setText(Double.toString(CAcurrentTime));
+						// playbackValue.setText(Double.toString(CAcurrentTime));
 
 					}
 				}
@@ -494,10 +517,8 @@ public class SpaceView {
 		playbackValue = new Label("0");
 
 		playbackValueString = new SimpleStringProperty();
-		
+
 		playbackValue.textProperty().bind(playbackValueString);
-		
-		
 
 		// final Label playbackValue = new Label(
 		// "Current Step: " + Long.toString(count - (long)
@@ -507,8 +528,8 @@ public class SpaceView {
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
 				if (playbackControl.getMax() > 0 && !sizechanged) {
 					// if (executor.isTerminated()) {
-					int playI = playbackControl.valueProperty().intValue()-1;
-					if(playI<0)
+					int playI = playbackControl.valueProperty().intValue() - 1;
+					if (playI < 0)
 						playI = 0;
 					playback.get(playI).play();
 					playbacked = true;
@@ -544,11 +565,11 @@ public class SpaceView {
 
 		simulatorStateDoc.textProperty().bind(stateValue);
 
-		// try {simulatorDetailDoc.remove(0,simulatorDetailDoc.getLength());}
-		// catch (Exception e){}
+		StringProperty numberOfCellChangedValue = new SimpleStringProperty();
+		numberOfCellChangedValue.set(Long.toString(numberOfCellChanged));
+		numberCellChangedState.textProperty().bind(numberOfCellChangedValue);
 
 		String stateLabel = "Undefined";
-		// MutableAttributeSet stateAttr = attrSets[HEADER_ATTR];
 
 		switch (state) {
 		case FSimulator.STATE_INITIAL:
@@ -582,8 +603,8 @@ public class SpaceView {
 		stateValue.set("Simulator State: " + stateLabel + "\nTime of Last Event: "
 				+ +Round(controller.getSimulator().getTimeOfLastEvent(), 4) + "\nTime of Next Event: "
 				+ Round(controller.getSimulator().getTimeOfNextEvent(), 4));
-		
-		if(playbackSelected){
+
+		if (playbackSelected) {
 			playbackValueString.set(Double.toString(CAcurrentTime));
 		}
 
@@ -735,7 +756,7 @@ public class SpaceView {
 
 						} else {
 							// node.tp.setText(""+node.getWidth());
-							node.setTPText(isState, isTL, isSigma, isStatusChanged);
+							node.setTPText(isPhase, isSigma, isStateChanged);
 							node.tp.show(mynode, mynode.getScene().getWindow().getX() + t.getSceneX(),
 									mynode.getScene().getWindow().getY() + t.getSceneY());
 						}
@@ -783,10 +804,9 @@ public class SpaceView {
 
 	@FXML
 	public void initialize() {
-		//set the model name for simulator UI
-		model_name.setText("Model Running: \""+ name + "\"");
-		
-		
+		// set the model name for simulator UI
+		model_name.setText("Model Running: \"" + name + "\"");
+
 		// addHBox();
 
 		addGroup();
@@ -805,9 +825,9 @@ public class SpaceView {
 
 		});
 
-		cb_State.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		cb_Phase.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-				isState = new_val;
+				isPhase = new_val;
 			}
 		});
 
@@ -817,15 +837,9 @@ public class SpaceView {
 			}
 		});
 
-		cb_TL.selectedProperty().addListener(new ChangeListener<Boolean>() {
+		cb_StateChanged.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-				isTL = new_val;
-			}
-		});
-
-		cb_Sigma.selectedProperty().addListener(new ChangeListener<Boolean>() {
-			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
-				isStatusChanged = new_val;
+				isStateChanged = new_val;
 			}
 		});
 
