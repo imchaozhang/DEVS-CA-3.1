@@ -108,11 +108,11 @@ public class SpaceView {
 
 	private static ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	private Text simulatorStateDoc, numberCellChangedState, RealTimeFactor;
+	private Text simulatorStateDoc, numberCellChangedState;
 
-	private Label playbackValue;
+	private Label playbackValue, RealTimeFactor;
 
-	private StringProperty playbackValueString;
+	private StringProperty playbackValueString, RealTimeFactorString;
 
 	private Button btn_run, btn_step, btn_stepn, btn_pause, btn_reset;
 
@@ -189,14 +189,7 @@ public class SpaceView {
 
 		addControlButtons();
 
-		RealTimeFactor = new Text("Real Time Factor: ");
-		realTimeControl = new Slider(0,REAL_TIME_FACTORS.length,0);
-		realTimeControl.setSnapToTicks(true);
-		//realTimeControl.setShowTickLabels(true);
-		//realTimeControl.setShowTickMarks(true);
-		realTimeControl.setMinorTickCount(0);
-		realTimeControl.setMajorTickUnit(1);
-		
+		realTimeControl = addRealTimeControl();
 
 		simulatorStateDoc = new Text();
 		simulatorStateDoc.setLineSpacing(8);
@@ -238,8 +231,8 @@ public class SpaceView {
 				GridPane.setMargin(btn_stepn, new Insets(5));
 				GridPane.setMargin(btn_pause, new Insets(5));
 				GridPane.setMargin(btn_reset, new Insets(5));
-				GridPane.setMargin(RealTimeFactor, new Insets(5,0,0,10));
-				GridPane.setMargin(realTimeControl, new Insets(-5,5,5,5));
+				GridPane.setMargin(RealTimeFactor, new Insets(5, 0, 0, 10));
+				GridPane.setMargin(realTimeControl, new Insets(-5, 5, 5, 5));
 				GridPane.setMargin(simulatorStateDoc, new Insets(0, 0, 0, 10));
 
 				// add Number of Cell Changed
@@ -258,6 +251,81 @@ public class SpaceView {
 		return scene;
 
 		// animate();
+
+	}
+
+	private Slider addPlaybackSilder() {
+		Slider playbackControl = new Slider(0, 0, 0);
+		playbackControl.setId("playbackControl");
+		playbackControl.setPrefWidth(200);
+		// playbackControl.setLayoutX(10);
+		// playbackControl.setLayoutY(95);
+		playbackControl.setShowTickLabels(true);
+		playbackControl.setShowTickMarks(true);
+		playbackControl.setMajorTickUnit(1);
+		playbackControl.setSnapToTicks(true);
+		playbackControl.setBlockIncrement(1);
+
+		playbackValue = new Label("0");
+
+		playbackValueString = new SimpleStringProperty();
+
+		playbackValue.textProperty().bind(playbackValueString);
+
+		// final Label playbackValue = new Label(
+		// "Current Step: " + Long.toString(count - (long)
+		// playbackControl.getValue()));
+
+		playbackControl.valueProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+				if (playbackControl.getMax() > 0 && !sizechanged) {
+					// if (executor.isTerminated()) {
+					int playI = playbackControl.valueProperty().intValue() - 1;
+					if (playI < 0)
+						playI = 0;
+					playback.get(playI).play();
+					playbacked = true;
+					playbackValueString.set(PBStatusIndex.get(playI).toString());
+					if (playbackControl.getMax() < 50) {
+						// playbackControl.setMax(playback.size());
+						// playbackControl.autosize();
+					}
+
+					// }
+				}
+			}
+		});
+
+		playbackControl.setDisable(true); // disable the playback by default
+
+		return playbackControl;
+
+	}
+
+	private Slider addRealTimeControl() {
+
+		Slider _realTimeControl = new Slider(0, REAL_TIME_FACTORS.length - 1, 0);
+		_realTimeControl.setSnapToTicks(true);
+		// realTimeControl.setShowTickLabels(true);
+		// realTimeControl.setShowTickMarks(true);
+		_realTimeControl.setMinorTickCount(0);
+		_realTimeControl.setMajorTickUnit(1);
+
+		Double currentValue = _realTimeControl.getValue();
+		RealTimeFactor = new Label("Real Time Factor: " + REAL_TIME_FACTORS[currentValue.intValue()]);
+
+		// set the inital real time factor based on the slider inu=itial value
+		controller.userGesture(controller.SIM_SET_RT_GESTURE, REAL_TIME_FACTORS[currentValue.intValue()]);
+
+		_realTimeControl.valueProperty().addListener(new ChangeListener<Number>() {
+			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+				RealTimeFactor.setText("Real Time Factor: " + Double.toString(REAL_TIME_FACTORS[new_val.intValue()]));
+				controller.userGesture(controller.SIM_SET_RT_GESTURE, REAL_TIME_FACTORS[new_val.intValue()]);
+
+			}
+		});
+
+		return _realTimeControl;
 
 	}
 
@@ -499,54 +567,6 @@ public class SpaceView {
 				}
 			}
 		});
-
-	}
-
-	private Slider addPlaybackSilder() {
-		Slider playbackControl = new Slider(0, 0, 0);
-		playbackControl.setId("playbackControl");
-		playbackControl.setPrefWidth(200);
-		// playbackControl.setLayoutX(10);
-		// playbackControl.setLayoutY(95);
-		playbackControl.setShowTickLabels(true);
-		playbackControl.setShowTickMarks(true);
-		playbackControl.setMajorTickUnit(1);
-		playbackControl.setSnapToTicks(true);
-		playbackControl.setBlockIncrement(1);
-
-		playbackValue = new Label("0");
-
-		playbackValueString = new SimpleStringProperty();
-
-		playbackValue.textProperty().bind(playbackValueString);
-
-		// final Label playbackValue = new Label(
-		// "Current Step: " + Long.toString(count - (long)
-		// playbackControl.getValue()));
-
-		playbackControl.valueProperty().addListener(new ChangeListener<Number>() {
-			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-				if (playbackControl.getMax() > 0 && !sizechanged) {
-					// if (executor.isTerminated()) {
-					int playI = playbackControl.valueProperty().intValue() - 1;
-					if (playI < 0)
-						playI = 0;
-					playback.get(playI).play();
-					playbacked = true;
-					playbackValueString.set(PBStatusIndex.get(playI).toString());
-					if (playbackControl.getMax() < 50) {
-						// playbackControl.setMax(playback.size());
-						// playbackControl.autosize();
-					}
-
-					// }
-				}
-			}
-		});
-
-		playbackControl.setDisable(true); // disable the playback by default
-
-		return playbackControl;
 
 	}
 

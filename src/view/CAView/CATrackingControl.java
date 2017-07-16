@@ -99,7 +99,7 @@ public class CATrackingControl {
 		final JFXPanel contentPane = new JFXPanel();
 		dialog.setContentPane(contentPane);
 		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
-		dialog.setTitle("DEVS-CA Simulation");
+		dialog.setTitle("CA-DEVS Simulation");
 
 		dialog.addWindowListener(new java.awt.event.WindowAdapter() {
 			public void windowClosing(WindowEvent evt) {
