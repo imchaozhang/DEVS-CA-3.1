@@ -71,7 +71,7 @@ public class SpaceView {
 	private static ControllerInterface controller;
 	private static String name;
 
-	private static double sceneWidth = 729;
+	private static double sceneWidth = 400;
 	private static double sceneHeight = 800;
 	public static CellView[][] cellView;
 	static double gridWidth, gridHeight;
@@ -304,7 +304,7 @@ public class SpaceView {
 
 	private Slider addRealTimeControl() {
 
-		Slider _realTimeControl = new Slider(0, REAL_TIME_FACTORS.length - 1, 0);
+		Slider _realTimeControl = new Slider(0, REAL_TIME_FACTORS.length - 1, 1);
 		_realTimeControl.setSnapToTicks(true);
 		// realTimeControl.setShowTickLabels(true);
 		// realTimeControl.setShowTickMarks(true);

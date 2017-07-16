@@ -95,6 +95,7 @@ public class CATimeViewControlMenuController {
 	@FXML
 	private void initialize() {
 		dialogStage = new Stage();
+		dialogStage.setTitle("Cell: "+ cellview.getI() + ", " + cellview.getJ());
 		ck_timeview.setSelected(cellview.isCATimeViewSelected);
 		ck_trackinglog.setSelected(cellview.istrackinglogselected);
 		ck_phase.setSelected(cellview.trackPhase);
