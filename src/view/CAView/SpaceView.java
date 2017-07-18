@@ -1,7 +1,6 @@
 package view.CAView;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -10,15 +9,16 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.swing.JOptionPane;
-import javax.swing.text.MutableAttributeSet;
+import org.eclipse.ui.internal.tweaklets.Animations;
+
+import view.CAView.FXMLComponents.ToggleSwitch;
 import controller.ControllerInterface;
 import facade.simulation.FSimulator;
 import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
 import javafx.animation.ParallelTransition;
-import javafx.beans.binding.Bindings;
-import javafx.beans.property.DoubleProperty;
+import javafx.beans.property.BooleanProperty;
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -26,6 +26,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
@@ -50,12 +51,12 @@ import javafx.scene.control.SplitPane;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
+import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Ellipse;
@@ -63,7 +64,6 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import view.View;
 import view.CAView.FXMLComponents.CATimeViewControlMenuController;
 
 public class SpaceView {
@@ -83,7 +83,6 @@ public class SpaceView {
 	// real time factors
 	private static final double[] REAL_TIME_FACTORS = { 0.0001, 0.001, 0.01, 0.1, 0.5, 1, 5, 10, 50, 100, 1000 };
 
-	// public static Slider slider;
 	private static int stepSpeed = 1;
 	private static long count = 0;
 	private static long numberOfCellChanged = 0;
@@ -94,10 +93,14 @@ public class SpaceView {
 	private static boolean animationPaused = false;
 	// atStartPoint is used to check if the simulation just start.
 	public static boolean atStartPoint = true;
+	
+	private static ToggleSwitch AnimationSwitch;
+	private static BooleanProperty animationOn;
 
 	private static boolean isPhase = true, isSigma = true, isStateChanged = true;
 
-	private static int playbackSize = 50;
+	private static int playbackSize = 30;
+	private static int trackingInterval = 1;
 
 	private static Scene scene;
 	private static Parent ui;
@@ -112,7 +115,7 @@ public class SpaceView {
 
 	private Label playbackValue, RealTimeFactor;
 
-	private StringProperty playbackValueString, RealTimeFactorString;
+	private StringProperty playbackValueString;
 
 	private Button btn_run, btn_step, btn_stepn, btn_pause, btn_reset;
 
@@ -124,7 +127,7 @@ public class SpaceView {
 	private Button PBMaxLengthButton, ANSpeedButton, HideAndShowControlButton;
 
 	@FXML
-	private TextField PBMaxLength, PBFrom, PBTo, PBInterval, ANSpeed;
+	private TextField PBMaxLength, PBInterval, ANSpeed;
 	@FXML
 	private Slider PBTracking, ANSpeedSlider;
 	@FXML
@@ -184,6 +187,16 @@ public class SpaceView {
 
 		// define the vbox from FXMLLoader
 		ui = FXMLLoader.load(getClass().getResource("ComplexCA.fxml"));
+		
+		//add animation switch
+		AnimationSwitch = new ToggleSwitch();
+		//Since the Switch initially is on false, we fire a mouse click event for itself
+		AnimationSwitch.fireEvent( new MouseEvent(MouseEvent.MOUSE_CLICKED, 0,
+                0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
+                true, true, true, true, true, true, null));
+		animationOn = AnimationSwitch.switchedOnProperty();
+		AnimationSwitch.setScaleX(0.9);
+		AnimationSwitch.setScaleY(0.9);
 
 		playbackControl = addPlaybackSilder();
 
@@ -207,10 +220,11 @@ public class SpaceView {
 				Node nodeIn4 = ((VBox) nodeIn3).getChildren().get(2);
 				Node nodeIn5 = ((TitledPane) nodeIn4).getContent();
 				Node nodeIn6 = ((AnchorPane) nodeIn5).getChildren().get(0);
-				((GridPane) nodeIn6).add(playbackControl, 0, 6, 4, 1);
+				((GridPane) nodeIn6).add(playbackControl, 0, 5, 4, 1);
 				GridPane.setMargin(playbackControl, new Insets(-6, 0, 0, 0));
 
-				((GridPane) nodeIn6).add(playbackValue, 3, 7);
+				((GridPane) nodeIn6).add(playbackValue, 3, 6);
+				GridPane.setMargin(playbackValue, new Insets(-6, 0, 0, 0));
 
 				// add Control Buttons and Simulation Doc
 				Node nodeIn7 = ((VBox) nodeIn3).getChildren().get(3);
@@ -241,6 +255,13 @@ public class SpaceView {
 				Node nodeIn12 = ((AnchorPane) nodeIn11).getChildren().get(0);
 				((GridPane) nodeIn12).add(numberCellChangedState, 3, 3);
 				GridPane.setMargin(numberCellChangedState, new Insets(10, 0, 10, -2));
+				
+				//add animation switch
+				Node nodeIn13 = ((VBox) nodeIn3).getChildren().get(1);
+				Node nodeIn14 = ((TitledPane) nodeIn13).getContent();
+				Node nodeIn15 = ((AnchorPane) nodeIn14).getChildren().get(0);
+				((GridPane) nodeIn15).add(AnimationSwitch, 1, 0);
+				GridPane.setMargin(AnimationSwitch, new Insets(0, 0, 5, 5));
 
 				break;
 			}
@@ -263,6 +284,7 @@ public class SpaceView {
 		playbackControl.setShowTickLabels(true);
 		playbackControl.setShowTickMarks(true);
 		playbackControl.setMajorTickUnit(1);
+		playbackControl.setMinorTickCount(0);
 		playbackControl.setSnapToTicks(true);
 		playbackControl.setBlockIncrement(1);
 
@@ -306,8 +328,6 @@ public class SpaceView {
 
 		Slider _realTimeControl = new Slider(0, REAL_TIME_FACTORS.length - 1, 1);
 		_realTimeControl.setSnapToTicks(true);
-		// realTimeControl.setShowTickLabels(true);
-		// realTimeControl.setShowTickMarks(true);
 		_realTimeControl.setMinorTickCount(0);
 		_realTimeControl.setMajorTickUnit(1);
 
@@ -376,44 +396,49 @@ public class SpaceView {
 					Color nextcolor = nextnode.currentcolor;
 					if (count % stepSpeed == 0) {
 
-						if (playbackSelected) { // if animation is selected, all
-												// the cells'
-							// transition will be recorded.
-							// add a background thread for the filltransition
-							// animation, because it is slow.
-
-							Runnable r = new Runnable() {
-								public void run() {
-									FillTransition ftA = new FillTransition(Duration.millis(40), currentnode.rectangle,
-											previouscolor, nextcolor);
-									ftA.setAutoReverse(false);
-									// ftA.setCycleCount(2);
-									ftList.add(ftA);
-								}
-							};
-
-							executor.execute(r);
-
-							// new Thread(r).run();
-
-						}
 						if (nextcolor != previouscolor) {
 
 							numberOfCellChanged++;
 
 						}
-						if (!animationPaused) {
+						if (!animationPaused && animationOn.get()) {
 							cellView[ai][aj].rectangle.setFill(nextcolor);
+							cellView[ai][aj].previouscolor = nextcolor;
+						}
+						else{
+							cellView[ai][aj].rectangle.setFill(Color.WHITE);
 							cellView[ai][aj].previouscolor = nextcolor;
 						}
 
 					}
+
+					if (playbackSelected && count % trackingInterval == 0) {
+						// if animation is selected and at the tracking interval
+						// step, all the cells' transition will be recorded.
+						// add a background thread for the filltransition
+						// animation, because this can be efficient.
+
+						Runnable r = new Runnable() {
+							public void run() {
+								FillTransition ftA = new FillTransition(Duration.millis(40), currentnode.rectangle,
+										previouscolor, nextcolor);
+								ftA.setAutoReverse(false);
+								// ftA.setCycleCount(2);
+								ftList.add(ftA);
+							}
+						};
+
+						executor.execute(r);
+
+					}
+
 				}
 
 			}
 		}
 
 		Runnable r1 = new Runnable() {
+
 			public void run() {
 				if (!ftList.isEmpty())
 					playbackTransition.getChildren().addAll(ftList);
@@ -698,9 +723,69 @@ public class SpaceView {
 	}
 
 	@FXML
-	protected void actionApplySettingsButton(ActionEvent event) {
-		ANSpeed.setText("Sign in button pressed");
-		System.out.println("The button was clicked!");
+	protected void actionANSpeedSetting(ActionEvent event) {
+		Double _animationSpeed;
+		try {
+			_animationSpeed = Double.parseDouble(ANSpeed.getText());
+		} catch (Exception e) {
+			_animationSpeed = -1.0;
+		}
+		if (_animationSpeed >= 1 && _animationSpeed <= 100) {
+			ANSpeedSlider.setValue(_animationSpeed);
+
+		} else {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Error: Animation Speed Setting is not accepted");
+			alert.setContentText("The number must be between 1 and 100.");
+			alert.showAndWait();
+			ANSpeed.setText(Integer.toString(stepSpeed));
+			
+		}
+	}
+
+	@FXML
+	protected void actionPlaybackSetting(ActionEvent event) {
+		Double _maxLength, _interval;
+		try {
+			_maxLength = Double.parseDouble(PBMaxLength.getText());
+			_interval = Double.parseDouble(PBInterval.getText());
+		} catch (Exception e) {
+			_maxLength = -1.0;
+			_interval = -1.0;
+		}
+
+		if (_maxLength < playbackSize) {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Playback Max Length must not be smaller then previsou setting.");
+			alert.showAndWait();
+		} else if (_maxLength >= 1 && _maxLength <= 1000 && _interval >= 1 && _interval <= 100) {
+			Alert alert = new Alert(AlertType.CONFIRMATION);
+			alert.setTitle("Successful!");
+			alert.setHeaderText("Playback Setting Successful");
+			alert.setContentText("Max Length: " + _maxLength.intValue()
+					+ "\nRecording Interval: " + _interval.intValue());
+			Optional<ButtonType> result = alert.showAndWait();
+			if (result.get() == ButtonType.OK) {
+				playbackSize = _maxLength.intValue();
+				trackingInterval = _interval.intValue();
+			}
+
+		} else {
+			Alert alert = new Alert(AlertType.ERROR);
+			alert.setTitle("Error");
+			alert.setHeaderText("Error: Playback Setting is not accepted");
+			alert.setContentText(
+					"Max Length must be between 1 and 1000.\nInterval should be between 1 and 100");
+			alert.showAndWait();
+		}
+
+		PBMaxLength.setText(Integer.toString(playbackSize));
+		PBInterval.setText(Integer.toString(trackingInterval));
+
+		// ANSpeed.setText("Sign in button pressed");
+		// System.out.println("The button was clicked!");
 	}
 
 	@FXML
@@ -827,6 +912,14 @@ public class SpaceView {
 		// set the model name for simulator UI
 		model_name.setText("Model Running: \"" + name + "\"");
 
+		// set the Animiaton Control Panel
+		ANSpeed.setText(Integer.toString(stepSpeed));
+		ANSpeedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+			ANSpeed.setText(Integer.toString(newValue.intValue()));
+			stepSpeed = newValue.intValue();
+
+		});
+
 		// addHBox();
 
 		addGroup();
@@ -844,6 +937,13 @@ public class SpaceView {
 			}
 
 		});
+
+		// THe play back Control Initialized
+		PBMaxLength.setDisable(true);
+		PBMaxLength.setText(Integer.toString(playbackSize));
+		PBInterval.setDisable(true);
+		PBInterval.setText(Integer.toString(trackingInterval));
+		PBMaxLengthButton.setDisable(true);
 
 		cb_Phase.selectedProperty().addListener(new ChangeListener<Boolean>() {
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
@@ -867,37 +967,23 @@ public class SpaceView {
 			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
 				playbackSelected = new_val;
 				playbackControl.setDisable(!new_val);
+				PBMaxLengthButton.setDisable(!new_val);
+				PBMaxLength.setDisable(!new_val);
+				PBInterval.setDisable(!new_val);
 			}
 		});
 
-		PBMaxLength.textProperty().addListener((observable, oldValue, newValue) -> {
-			try {
-				if (Double.parseDouble(newValue) > 0 && Double.parseDouble(newValue) < 50000)
-					PBTracking.setMax(Double.parseDouble(newValue));
-			} catch (Exception e) {
-				if (!newValue.isEmpty())
-					System.out.println("Wrong input");
-				PBMaxLength.setPromptText("Wrong");
-			}
-		});
-
-		// PBTracking.valueProperty().addListener(new ChangeListener<Number>() {
-		// public void changed(ObservableValue<? extends Number> ov, Number
-		// old_val, Number new_val) {
-		// if (PBTracking.getMax() > 0 && !sizechanged) {
-		// // if (executor.isTerminated()) {
-		// playback.get((int) PBTracking.getValue()).play();
-		// playbacked = true;
-		// PBStatus.setText(
-		// String.format("%.0f", (currentTime - playback.size() + 1 + (double)
-		// new_val.longValue())));
-		// if (PBTracking.getMax() < 20) {
-		// // playbackControl.setMax(playback.size());
-		// // playbackControl.autosize();
-		// }
-		//
-		// // }
-		// }
+		// PBMaxLength.textProperty().addListener((observable, oldValue,
+		// newValue) -> {
+		// try {
+		// if (Double.parseDouble(newValue) > 0 && Double.parseDouble(newValue)
+		// < 500)
+		// // PBTracking.setMax(Double.parseDouble(newValue));
+		// System.out.println("Right input");
+		// } catch (Exception e) {
+		// if (!newValue.isEmpty())
+		// System.out.println("Wrong input");
+		// PBMaxLength.setPromptText("Wrong");
 		// }
 		// });
 
@@ -911,7 +997,7 @@ public class SpaceView {
 		ca_split.getDividers().get(0).positionProperty().bindBidirectional(ellipse.opacityProperty());
 		if (HideAndShowControlButton.getText().equalsIgnoreCase("Hide Control")) {
 			FadeTransition dt = new FadeTransition(Duration.millis(800), ellipse);
-			dt.setFromValue(0.34);
+			dt.setFromValue(0.425);
 			dt.setToValue(0);
 			dt.play();
 			HideAndShowControlButton.setText("Show Control");
@@ -919,7 +1005,7 @@ public class SpaceView {
 		} else {
 			FadeTransition dt = new FadeTransition(Duration.millis(800), ellipse);
 			dt.setFromValue(0);
-			dt.setToValue(0.34);
+			dt.setToValue(0.425);
 			dt.play();
 			HideAndShowControlButton.setText("Hide Control");
 
