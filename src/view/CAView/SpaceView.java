@@ -87,15 +87,15 @@ public class SpaceView {
 	private static long count = 0;
 	private static long numberOfCellChanged = 0;
 
-	private static boolean playbackSelected = false;
+	private static boolean playbackSelected = false, animationSelected = true;
 	private static boolean playbacked = false;
 	private static boolean sizechanged = false;
 	private static boolean animationPaused = false;
 	// atStartPoint is used to check if the simulation just start.
 	public static boolean atStartPoint = true;
-	
-	private static ToggleSwitch AnimationSwitch;
-	private static BooleanProperty animationOn;
+
+	// private static ToggleSwitch AnimationSwitch;
+	// private static BooleanProperty animationOn;
 
 	private static boolean isPhase = true, isSigma = true, isStateChanged = true;
 
@@ -122,7 +122,7 @@ public class SpaceView {
 	// For FXML
 
 	@FXML
-	private CheckBox PSelect, cb_Phase, cb_Sigma, cb_StateChanged;
+	private CheckBox ANSelect, PSelect, cb_Phase, cb_Sigma, cb_StateChanged;
 	@FXML
 	private Button PBMaxLengthButton, ANSpeedButton, HideAndShowControlButton;
 
@@ -187,16 +187,18 @@ public class SpaceView {
 
 		// define the vbox from FXMLLoader
 		ui = FXMLLoader.load(getClass().getResource("ComplexCA.fxml"));
-		
-		//add animation switch
-		AnimationSwitch = new ToggleSwitch();
-		//Since the Switch initially is on false, we fire a mouse click event for itself
-		AnimationSwitch.fireEvent( new MouseEvent(MouseEvent.MOUSE_CLICKED, 0,
-                0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
-                true, true, true, true, true, true, null));
-		animationOn = AnimationSwitch.switchedOnProperty();
-		AnimationSwitch.setScaleX(0.9);
-		AnimationSwitch.setScaleY(0.9);
+
+		// //add animation switch
+		// AnimationSwitch = new ToggleSwitch();
+		// //Since the Switch initially is on false, we fire a mouse click event
+		// for itself
+		// AnimationSwitch.fireEvent( new MouseEvent(MouseEvent.MOUSE_CLICKED,
+		// 0,
+		// 0, 0, 0, MouseButton.PRIMARY, 1, true, true, true, true,
+		// true, true, true, true, true, true, null));
+		// animationOn = AnimationSwitch.switchedOnProperty();
+		// AnimationSwitch.setScaleX(0.9);
+		// AnimationSwitch.setScaleY(0.9);
 
 		playbackControl = addPlaybackSilder();
 
@@ -255,13 +257,13 @@ public class SpaceView {
 				Node nodeIn12 = ((AnchorPane) nodeIn11).getChildren().get(0);
 				((GridPane) nodeIn12).add(numberCellChangedState, 3, 3);
 				GridPane.setMargin(numberCellChangedState, new Insets(10, 0, 10, -2));
-				
-				//add animation switch
+
+				// add animation switch
 				Node nodeIn13 = ((VBox) nodeIn3).getChildren().get(1);
 				Node nodeIn14 = ((TitledPane) nodeIn13).getContent();
 				Node nodeIn15 = ((AnchorPane) nodeIn14).getChildren().get(0);
-				((GridPane) nodeIn15).add(AnimationSwitch, 1, 0);
-				GridPane.setMargin(AnimationSwitch, new Insets(0, 0, 5, 5));
+				// ((GridPane) nodeIn15).add(AnimationSwitch, 1, 0);
+				// GridPane.setMargin(AnimationSwitch, new Insets(0, 0, 5, 5));
 
 				break;
 			}
@@ -395,21 +397,25 @@ public class SpaceView {
 					}
 					Color nextcolor = nextnode.currentcolor;
 					if (count % stepSpeed == 0) {
+						animationPaused = false;
 
-						if (nextcolor != previouscolor) {
+					} else {
 
-							numberOfCellChanged++;
+						animationPaused = true;
+					}
 
-						}
-						if (!animationPaused && animationOn.get()) {
-							cellView[ai][aj].rectangle.setFill(nextcolor);
-							cellView[ai][aj].previouscolor = nextcolor;
-						}
-						else{
-							cellView[ai][aj].rectangle.setFill(Color.WHITE);
-							cellView[ai][aj].previouscolor = nextcolor;
-						}
+					if (nextcolor != previouscolor) {
 
+						numberOfCellChanged++;
+
+					}
+					// if (!animationPaused && animationOn.get()) {
+					if (!animationPaused && animationSelected) {
+						cellView[ai][aj].rectangle.setFill(nextcolor);
+						cellView[ai][aj].previouscolor = nextcolor;
+					} else {
+						cellView[ai][aj].rectangle.setFill(Color.WHITE);
+						cellView[ai][aj].previouscolor = nextcolor;
 					}
 
 					if (playbackSelected && count % trackingInterval == 0) {
@@ -417,7 +423,6 @@ public class SpaceView {
 						// step, all the cells' transition will be recorded.
 						// add a background thread for the filltransition
 						// animation, because this can be efficient.
-
 						Runnable r = new Runnable() {
 							public void run() {
 								FillTransition ftA = new FillTransition(Duration.millis(40), currentnode.rectangle,
@@ -740,7 +745,7 @@ public class SpaceView {
 			alert.setContentText("The number must be between 1 and 100.");
 			alert.showAndWait();
 			ANSpeed.setText(Integer.toString(stepSpeed));
-			
+
 		}
 	}
 
@@ -764,8 +769,8 @@ public class SpaceView {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
 			alert.setTitle("Successful!");
 			alert.setHeaderText("Playback Setting Successful");
-			alert.setContentText("Max Length: " + _maxLength.intValue()
-					+ "\nRecording Interval: " + _interval.intValue());
+			alert.setContentText(
+					"Max Length: " + _maxLength.intValue() + "\nRecording Interval: " + _interval.intValue());
 			Optional<ButtonType> result = alert.showAndWait();
 			if (result.get() == ButtonType.OK) {
 				playbackSize = _maxLength.intValue();
@@ -776,8 +781,7 @@ public class SpaceView {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText("Error: Playback Setting is not accepted");
-			alert.setContentText(
-					"Max Length must be between 1 and 1000.\nInterval should be between 1 and 100");
+			alert.setContentText("Max Length must be between 1 and 1000.\nInterval should be between 1 and 100");
 			alert.showAndWait();
 		}
 
@@ -970,6 +974,15 @@ public class SpaceView {
 				PBMaxLengthButton.setDisable(!new_val);
 				PBMaxLength.setDisable(!new_val);
 				PBInterval.setDisable(!new_val);
+			}
+		});
+
+		ANSelect.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+				animationSelected = new_val;
+				ANSpeed.setDisable(!new_val);
+				ANSpeedButton.setDisable(!new_val);
+				ANSpeedSlider.setDisable(!new_val);
 			}
 		});
 

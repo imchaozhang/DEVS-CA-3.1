@@ -750,12 +750,12 @@ public class View extends JFrame implements ViewInterface {
 	 */
 	private class StartChoice extends JDialog{
 		public StartChoice() {
-			
+			//StartChoice.this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 			JButton comp_btn = new JButton("Component View");
-			comp_btn.setPreferredSize(new Dimension(220, 220));		
+			comp_btn.setPreferredSize(new Dimension(272, 138));		
 			
 			JButton ca_btn = new JButton("Cellular Automata");
-			ca_btn.setPreferredSize(new Dimension(220, 220));		
+			ca_btn.setPreferredSize(new Dimension(272, 138));		
 
 			comp_btn.addActionListener(new ActionListener() {
 				public void actionPerformed(ActionEvent e) {
@@ -765,12 +765,13 @@ public class View extends JFrame implements ViewInterface {
 					isCATracking = false;
 					isCAModel = false;					
 					new LoadWizard();
+
 					StartChoice.this.dispose();
 				
 				}
 			});
 			
-			 String comp_tooltiptext = "<html>" + "<img src=\"file:src/graphics/DEVS-shot.png\">"
+			 String comp_tooltiptext = "<html>" + "<img src=\"file:src/graphics/DEVS-shot.png\" >"
 					    + "</html>";
 			 comp_btn.setToolTipText(comp_tooltiptext);
 			
@@ -794,11 +795,11 @@ public class View extends JFrame implements ViewInterface {
 
 			Container cont = this.getContentPane();
 			
-			cont.setLayout(new FlowLayout());
-			cont.add(new JLabel("<html>" + "<img src=\"file:src/graphics/DEVS-SuiteLogo.png\">"
-					    + "</html>"));
-			cont.add(comp_btn);
-			cont.add(ca_btn);
+			cont.setLayout(new BorderLayout());
+			cont.add(new JLabel("<html>" + "<img src=\"file:src/graphics/DEVS-SuiteLogo-small.png\" >"
+					    + "</html>"),BorderLayout.PAGE_START);
+			cont.add(comp_btn,BorderLayout.LINE_START);
+			cont.add(ca_btn,BorderLayout.LINE_END);
 			this.pack();
 			this.setVisible(true);
 			
