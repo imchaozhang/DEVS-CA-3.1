@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry excluding="view/CAView/SpaceView2.java|view/CAView/GroupPane.java|view/CAView/FXMLComponents/CATimeViewControlMenu.java" kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="timeview.jar"/>
 	<classpathentry kind="lib" path="DEVS_Suite_3.0.0_lib/chartengineapi.jar"/>
 	<classpathentry kind="lib" path="DEVS_Suite_3.0.0_lib/com.ibm.icu_54.1.1.v201501272100.jar"/>
@@ -39,5 +38,6 @@
 	<classpathentry kind="lib" path="DEVS_Suite_3.0.0_lib/org.eclipse.ui.workbench_3.107.1.v20160120-2131.jar"/>
 	<classpathentry kind="lib" path="DEVS_Suite_3.0.0_lib/org.mozilla.javascript_1.7.5.v201504281450.jar"/>
 	<classpathentry kind="lib" path="DEVS_Suite_3.0.0_lib/runtime_registry_compatibility.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
