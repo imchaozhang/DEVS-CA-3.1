@@ -163,7 +163,7 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 				
 			} else {
 				//view.setSwingVisible(false);
-				view.setSwingVisible(true);
+				view.setSwingVisible(false);
 			}
 
 			Object instance;

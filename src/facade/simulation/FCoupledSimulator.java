@@ -283,8 +283,8 @@ public class FCoupledSimulator implements FSimulator
         		long endTime = System.currentTimeMillis();
 
         		System.out.println("CPU End Time: " + endTime);
-        		System.out.println("CPU Computing Time: " + (endTime-startTime));
-                
+        		System.out.println("CPU Computing Time (seconds): " + ((endTime - startTime)/1000));
+        		System.out.println("CPU Computing Time (minutes): " + ((float)(endTime - startTime)/(1000*60)));  
                 
                 shouldIterate = false;                
                           
