@@ -39,5 +39,6 @@
 	<classpathentry kind="lib" path="DEVS_Suite_3.0.0_lib/org.mozilla.javascript_1.7.5.v201504281450.jar"/>
 	<classpathentry kind="lib" path="DEVS_Suite_3.0.0_lib/runtime_registry_compatibility.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="DEVS_Suite_3.0.0_lib/controlsfx-8.40.12.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

@@ -1,6 +1,7 @@
 package view.CAView;
 
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -9,6 +10,7 @@ import java.util.Optional;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.controlsfx.control.HiddenSidesPane;
 import org.eclipse.ui.internal.tweaklets.Animations;
 
 import view.CAView.FXMLComponents.ToggleSwitch;
@@ -31,6 +33,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Orientation;
+import javafx.geometry.Side;
 import javafx.scene.Group;
 import javafx.scene.Node;
 import javafx.scene.Parent;
@@ -48,6 +51,7 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
@@ -72,7 +76,7 @@ public class SpaceView {
 	private static String name;
 
 	private static double sceneWidth = 400;
-	private static double sceneHeight = 800;
+	private static double sceneHeight = 400;
 	public static CellView[][] cellView;
 	static double gridWidth, gridHeight;
 	static int n, m;
@@ -118,6 +122,9 @@ public class SpaceView {
 	private StringProperty playbackValueString;
 
 	private Button btn_run, btn_step, btn_stepn, btn_pause, btn_reset;
+	
+	
+	//private Group root2;
 
 	// For FXML
 
@@ -132,15 +139,16 @@ public class SpaceView {
 	private Slider PBTracking, ANSpeedSlider;
 	@FXML
 	private Text PBStatus;
-
+	@FXML
+	private TextArea consoleText;
 	@FXML
 	private HBox hbox;
 	@FXML
-	private AnchorPane leftP, centerP, right, PlaybackPositioned;
+	private AnchorPane leftP, centerP, groupP, consoleP, PlaybackPositioned;
 	@FXML
 	private Group root;
 	@FXML
-	private SplitPane ca_split;
+	private SplitPane ca_split, console_split;
 	@FXML
 	private Text model_name;
 
@@ -211,6 +219,10 @@ public class SpaceView {
 		simulatorStateDoc.prefHeight(60);
 
 		numberCellChangedState = new Text();
+		
+		//root2 = new Group();
+		//addGroup();
+		
 
 		synchronizeView();
 
@@ -218,6 +230,37 @@ public class SpaceView {
 		for (Node nodeIn : ((VBox) ui).getChildren()) {
 			if (nodeIn instanceof SplitPane) {
 				Node nodeIn2 = ((SplitPane) nodeIn).getItems().get(0);
+				
+//				Node nodeInGroup = ((SplitPane) nodeIn).getItems().get(1);
+//
+//				HiddenSidesPane pane = new HiddenSidesPane();
+//				 pane.setContent(root2);
+//				 
+//				 TextArea ta = new TextArea();
+//					ta.setEditable(false);
+//			        JXConsoleComponent console = new JXConsoleComponent(ta);
+//			        PrintStream ps = new PrintStream(console, true);
+//			        System.setOut(ps);
+//			        System.setErr(ps);
+//				ta.setOnMouseClicked(new EventHandler<MouseEvent>() {
+//	                @Override
+//	                public void handle(MouseEvent event) {
+//	                    if (pane.getPinnedSide() != null) {
+//	                        pane.setPinnedSide(null);
+//	                    } else {
+//	                        pane.setPinnedSide(Side.RIGHT);
+//	                    }
+//	                }
+//	            });;	
+//
+//				 
+//				 
+//				 pane.setRight(ta);
+//				 //pane.setPinnedSide(Side.RIGHT);
+//				 pane.setTriggerDistance(20);
+//				 
+//				 ((AnchorPane) nodeInGroup).getChildren().add(pane);
+				 
 				Node nodeIn3 = ((AnchorPane) nodeIn2).getChildren().get(0);
 				Node nodeIn4 = ((VBox) nodeIn3).getChildren().get(2);
 				Node nodeIn5 = ((TitledPane) nodeIn4).getContent();
@@ -797,8 +840,9 @@ public class SpaceView {
 		// get Group and hbox from FXML
 
 		// set Grid Size
-		// sceneWidth = PSelect.getBoundsInParent().getWidth();
-		// sceneHeight = centerP.getPrefHeight();
+		sceneWidth = groupP.getPrefWidth();
+		sceneHeight = groupP.getPrefHeight();
+		setGridSize();
 		// System.out.println(sceneWidth+"; "+ sceneHeight);
 
 		// Create context menu for right click the node
@@ -910,7 +954,26 @@ public class SpaceView {
 		}
 
 	}
-
+	@FXML
+	public void addFXConsole(){
+			consoleText.setEditable(false);
+	        JXConsoleComponent console = new JXConsoleComponent(consoleText);
+	        PrintStream ps = new PrintStream(console, true);
+	        System.setOut(ps);
+	        System.setErr(ps);	
+	}
+	
+	@FXML
+	public void resizeCA(){
+		
+		console_split.getDividers().get(0).positionProperty().addListener((obs, oldVal, newVal) -> {
+			//consoleText.setPrefHeight((1-newVal.doubleValue())*770);		
+			System.out.println("It's a mouse drag to pos: " + newVal.doubleValue());
+        });		
+	}
+	
+	
+	
 	@FXML
 	public void initialize() {
 		// set the model name for simulator UI
@@ -927,20 +990,45 @@ public class SpaceView {
 		// addHBox();
 
 		addGroup();
+		
+		addFXConsole();
 
 		// resize the cell node
-		centerP.widthProperty().addListener((observable, oldValue, newValue) -> {
-			sceneWidth = (double) newValue;
-			setGridSize();
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < m; j++) {
-					cellView[i][j].changeWidth(gridWidth);
-					cellView[i][j].setTranslateX(i * gridWidth);
-
-				}
-			}
-
-		});
+		//resizeCA();
+		
+		
+		
+//		centerP.widthProperty().addListener((observable, oldValue, newValue) -> {
+//			sceneWidth = (double) newValue;
+//			setGridSize();
+//			consoleText.setPrefWidth(sceneWidth);
+//			groupP.setPrefWidth(sceneWidth);
+//			consoleP.setPrefWidth(sceneWidth);
+//		
+//			for (int i = 0; i < n; i++) {
+//				for (int j = 0; j < m; j++) {
+//					cellView[i][j].changeWidth(gridWidth);
+//					cellView[i][j].setTranslateX(i * gridWidth);
+//
+//				}
+//			}
+//
+//		});
+		
+//		centerP.heightProperty().addListener((observable, oldValue, newValue) -> {
+//			sceneHeight = (double) newValue;
+//			setGridSize();
+//			for (int i = 0; i < n; i++) {
+//				for (int j = 0; j < m; j++) {
+//					cellView[i][j].changeHeight(gridHeight);
+//					//cellView[i][j].setTranslateY(j * gridHeight);
+//
+//				}
+//			}
+//
+//		});
+		
+		
 
 		// THe play back Control Initialized
 		PBMaxLength.setDisable(true);

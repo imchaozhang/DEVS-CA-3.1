@@ -21,7 +21,7 @@ public class GameOfLife extends TwoDimCellSpace {
 	public static final int[][] b_heptomino = new int[][] { { 0, 1, 1 }, { 1, 1, 0 }, { 0, 1, 1 }, { 0, 0, 1 } };
 
 	public GameOfLife() {
-		this(50,100);
+		this(50,50);
 	}
 
 	public GameOfLife(int xDim, int yDim) {
