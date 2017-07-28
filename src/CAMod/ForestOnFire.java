@@ -12,7 +12,7 @@ import view.modeling.ViewableComponentUtil;
 public class ForestOnFire extends TwoDimCellSpace {
 
 	public ForestOnFire() {
-		this(100, 100);
+		this(10, 10);
 	}
 
 	public ForestOnFire(int xDim, int yDim) {

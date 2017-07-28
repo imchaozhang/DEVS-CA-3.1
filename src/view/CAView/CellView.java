@@ -174,7 +174,7 @@ public class CellView extends StackPane {
 	
 	public void changeHeight(double new_height){
 		
-		rectangle.setWidth(new_height);
+		rectangle.setHeight(new_height);
 		
 	}
 	

@@ -81,9 +81,9 @@
       </HBox>
 		<SplitPane fx:id="ca_split" dividerPositions="0.425" focusTraversable="true" prefHeight="-1.0" prefWidth="-1.0" VBox.vgrow="ALWAYS">
 			<items>
-				<AnchorPane id="leftP" fx:id="leftP" maxWidth="300.0" minWidth="0.0" prefWidth="310.0">
+				<AnchorPane id="leftP" fx:id="leftP" maxWidth="300.0" prefWidth="300.0">
 					<children>
-						<VBox fx:id="vbox" maxWidth="300.0" minWidth="0.0" prefWidth="300.0">
+						<VBox fx:id="vbox" maxWidth="300.0" minWidth="300.0" prefWidth="300.0">
 							<children>
 										<TitledPane text="Tracking">
 											<content>
@@ -328,22 +328,22 @@
 				</AnchorPane>
 				<AnchorPane id="centerP" fx:id="centerP" minHeight="-1.0">
 					<children>
-                  <SplitPane fx:id="consoleSplit" dividerPositions="0.75" orientation="VERTICAL">
+                  <SplitPane fx:id="console_split" dividerPositions="0.75" orientation="VERTICAL" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                     <items>
-                      <AnchorPane fx:id="groupP" minHeight="400.0" minWidth="400.0" prefHeight="570.0" prefWidth="400.0">
+                      <AnchorPane fx:id="groupP" minHeight="0.0" minWidth="100.0">
                            <children>
-            						<Group id="root" fx:id="root" />
+            						<Group id="root" fx:id="root" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                            </children>
                         </AnchorPane>
                       <AnchorPane>
                            <children>
-                              <TabPane minHeight="34.0" tabClosingPolicy="UNAVAILABLE">
+                              <TabPane fx:id="DisplayTabs" minHeight="30.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                 <tabs>
-                                  <Tab text="Console">
+                                  <Tab fx:id="consoleTab" text="Console">
                                     <content>
                                       <AnchorPane fx:id="consoleP">
                                              <children>
-                                                <TextArea fx:id="consoleText" layoutY="-1.0" prefWidth="400.0" />
+                                                <TextArea fx:id="consoleText" layoutY="-1.0" prefWidth="400.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
                                              </children></AnchorPane>
                                     </content>
                                   </Tab>
