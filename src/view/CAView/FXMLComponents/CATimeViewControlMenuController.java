@@ -1,9 +1,17 @@
 package view.CAView.FXMLComponents;
 
+import java.util.List;
+
+import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import view.CAView.CellView;
 
@@ -12,13 +20,28 @@ public class CATimeViewControlMenuController {
 	private Stage dialogStage;
 	private boolean okClicked = false;
 	private CellView cellview;
+	private boolean atLeastOneInputTracked;
+	private boolean atLeastOneOutputTracked;
+	private boolean[] inputPorts;
+	private boolean[] outputPorts;
+	List inputPortNames;
+	List outputPortNames;
+
+	String[] inputUnits;
+	String[] outputUnits;
 
 	@FXML
 	Button btn_ok, btn_cancel;
 	@FXML
-	public CheckBox ck_timeview, ck_trackinglog, ck_phase, ck_sigma, ck_tl, ck_tn, ck_zero;
+	private CheckBox ck_timeview, ck_trackinglog, ck_phase, ck_sigma, ck_tl, ck_tn, ck_zero;
 	@FXML
-	public TextField tx_phase, tx_sigma, tx_tl, tx_tn, tx_x, tx_inc;
+	private TextField tx_phase, tx_sigma, tx_tl, tx_tn, tx_x, tx_inc;
+	@FXML
+	private TableView<TrackingTableData> input_table, output_table;
+	@FXML
+	private TableColumn<TrackingTableData, String> inputPortName, inputPortUnit, outputPortName, outputPortUnit;
+	@FXML
+	private TableColumn<TrackingTableData, Boolean> inputPortSelected, outputPortSelected;
 
 	public CATimeViewControlMenuController(CellView _cellview) {
 		cellview = _cellview;
@@ -93,9 +116,33 @@ public class CATimeViewControlMenuController {
 	}
 
 	@FXML
+	private void setInputTable() {
+		input_table.prefHeightProperty()
+				.bind(input_table.fixedCellSizeProperty().multiply(Bindings.size(input_table.getItems()).add(1.01)));
+
+		inputPortNames = cellview.catracker.getAttachedModel().getInputPortNames();
+		ObservableList<TrackingTableData> input_data = FXCollections.observableArrayList(new TrackingTableData("a","b",false));
+		inputUnits = cellview.catracker.getInputPortUnits();
+		inputPorts = cellview.catracker.gettrackInputPorts();
+
+		for (int i = 0; i < inputPortNames.size(); i++) {
+			TrackingTableData rowData = new TrackingTableData(String.valueOf(inputPortNames.get(i)), inputUnits[i],
+					inputPorts[i]);
+			input_data.add(rowData);
+		}
+
+		inputPortName.setCellValueFactory(new PropertyValueFactory<TrackingTableData,String>("portName"));
+		inputPortUnit.setCellValueFactory(new PropertyValueFactory<TrackingTableData,String>("portUnit"));
+		inputPortSelected.setCellValueFactory(new PropertyValueFactory<TrackingTableData,Boolean>("portSelecgted"));
+		
+		input_table.setItems(input_data);
+
+	}
+
+	@FXML
 	private void initialize() {
 		dialogStage = new Stage();
-		dialogStage.setTitle("Cell: "+ cellview.getI() + ", " + cellview.getJ());
+		dialogStage.setTitle("Cell: " + cellview.getI() + ", " + cellview.getJ());
 		ck_timeview.setSelected(cellview.isCATimeViewSelected);
 		ck_trackinglog.setSelected(cellview.istrackinglogselected);
 		ck_phase.setSelected(cellview.trackPhase);
@@ -109,5 +156,8 @@ public class CATimeViewControlMenuController {
 		tx_tn.setText(cellview.tnUnit);
 		tx_x.setText(cellview.xUnit);
 		tx_inc.setText(cellview.timeIncr);
+
+		//setInputTable();
+
 	}
 }
