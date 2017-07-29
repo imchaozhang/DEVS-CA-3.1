@@ -1,7 +1,9 @@
 package view.CAView.FXMLComponents;
 
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
 
 public class TrackingTableData {
 	private final SimpleStringProperty portName;
@@ -21,6 +23,11 @@ public class TrackingTableData {
     public void setPortName(String pName) {
     	portName.set(pName);
     }
+    
+    public StringProperty portNameProperty() {
+        return portName;
+    }
+    
 
     public String getPortUnit() {
         return portUnit.get();
@@ -30,12 +37,20 @@ public class TrackingTableData {
     	portUnit.set(pUnit);
     }
     
+    public StringProperty portUnitProperty() {
+        return portUnit;
+    }
+    
     public boolean getPortSelected() {
         return portSelected.get();
     }
 
     public void setPortSelected(boolean pSelected) {
     	portSelected.set(pSelected);
+    }
+    
+    public BooleanProperty portSelectedProperty() {
+        return portSelected;
     }
 }
 

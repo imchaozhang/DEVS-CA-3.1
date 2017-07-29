@@ -5,7 +5,7 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" stylesheets="@CATimeViewControlMenu.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1">
 	<children>
 		<HBox>
 			<children>
@@ -149,29 +149,15 @@
 		</HBox>
 		<TitledPane animated="false" collapsible="false" focusTraversable="false" text="Input Ports/Unit">
 			<content>
-				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="135.0" prefWidth="500.0">
+				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="165.0" prefWidth="500.0">
 					<children>
-						<ScrollPane blendMode="MULTIPLY" prefHeight="135.0" prefWidth="500.0">
-							<content>
-								<AnchorPane minHeight="0.0" minWidth="0.0">
-									<children>
-										<TableView fx:id="input_table" fixedCellSize="25.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="100.0">
+										<TableView fx:id="input_table" blendMode="MULTIPLY" editable="true" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="-3.0">
 											<columns>
-												<TableColumn fx:id="inpurPortName" editable="false" prefWidth="176.0" resizable="false" text="Input Ports" />
-												<TableColumn fx:id="inpurPortUnit" prefWidth="176.0" resizable="false" sortable="false" text="Unit" />
-												<TableColumn fx:id="inpurPortSelected" minWidth="0.0" resizable="false" sortable="false" text="Selected" />
+												<TableColumn fx:id="inputPortName" maxWidth="500.0" prefWidth="185.0" resizable="false" text="Input Ports" />
+												<TableColumn fx:id="inputPortUnit" prefWidth="185.0" resizable="false" sortable="false" text="Unit" />
+												<TableColumn fx:id="inputPortSelected" minWidth="0.0" prefWidth="95.0" resizable="false" sortable="false" text="Selected" />
 											</columns>
 										</TableView>
-									</children>
-									<padding>
-										<Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
-									</padding>
-								</AnchorPane>
-							</content>
-							<padding>
-								<Insets left="25.0" right="10.0" top="10.0" />
-							</padding>
-						</ScrollPane>
 					</children>
 					<padding>
 						<Insets top="5.0" />
@@ -182,38 +168,27 @@
 				<Insets bottom="5.0" left="5.0" right="5.0" />
 			</VBox.margin>
 		</TitledPane>
-		<TitledPane animated="false" collapsible="false" focusTraversable="false" text="output Ports/Unit">
-			<content>
-				<AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="135.0" prefWidth="500.0">
-					<children>
-						<ScrollPane blendMode="MULTIPLY" prefHeight="135.0" prefWidth="500.0">
-							<content>
-								<AnchorPane minHeight="0.0" minWidth="0.0">
-									<children>
-										<TableView fx:id="output_table" fixedCellSize="25.0" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="150.0">
-											<columns>
-												<TableColumn fx:id="outputPortName" editable="false" prefWidth="176.0" resizable="false" text="Output Ports" />
-												<TableColumn fx:id="outputPortUnit" prefWidth="176.0" resizable="false" sortable="false" text="Unit" />
-												<TableColumn fx:id="outputPortSelected" minWidth="0.0" resizable="false" sortable="false" text="Selected" />
-											</columns>
-										</TableView>
-									</children>
-									<padding>
-										<Insets bottom="5.0" left="5.0" right="10.0" top="5.0" />
-									</padding>
-								</AnchorPane>
-							</content>
-							<padding>
-								<Insets left="25.0" right="10.0" top="10.0" />
-							</padding>
-						</ScrollPane>
-					</children>
-				</AnchorPane>
-			</content>
-			<VBox.margin>
-				<Insets left="5.0" right="5.0" />
-			</VBox.margin>
-		</TitledPane>
+      <TitledPane animated="false" collapsible="false" focusTraversable="false" text="Input Ports/Unit">
+         <content>
+            <AnchorPane blendMode="MULTIPLY" minHeight="0.0" minWidth="0.0" prefHeight="165.0" prefWidth="500.0">
+               <children>
+                  <TableView fx:id="output_table" editable="true" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="150.0" AnchorPane.bottomAnchor="5.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0" AnchorPane.topAnchor="-3.0">
+                     <columns>
+                        <TableColumn fx:id="outputPortName" maxWidth="500.0" prefWidth="185.0" resizable="false" text="Output Ports" />
+                        <TableColumn fx:id="outputPortUnit" prefWidth="185.0" resizable="false" sortable="false" text="Unit" />
+                        <TableColumn fx:id="outputPortSelected" minWidth="0.0" prefWidth="95.0" resizable="false" sortable="false" text="Selected" />
+                     </columns>
+                  </TableView>
+               </children>
+               <padding>
+                  <Insets top="5.0" />
+               </padding>
+            </AnchorPane>
+         </content>
+         <VBox.margin>
+            <Insets bottom="5.0" left="5.0" right="5.0" />
+         </VBox.margin>
+      </TitledPane>
 		<AnchorPane prefHeight="34.0">
 			<children>
 				<Button fx:id="btn_ok" layoutX="350.0" layoutY="1.0" mnemonicParsing="false" onAction="#handleOk" prefWidth="65.0" text="OK" AnchorPane.bottomAnchor="5.0" AnchorPane.topAnchor="5.0" />

@@ -11,9 +11,9 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 import view.CAView.CellView;
+import view.CAView.FXMLComponents.TrackingTableData;
 
 public class CATimeViewControlMenuController {
 
@@ -117,11 +117,8 @@ public class CATimeViewControlMenuController {
 
 	@FXML
 	private void setInputTable() {
-		input_table.prefHeightProperty()
-				.bind(input_table.fixedCellSizeProperty().multiply(Bindings.size(input_table.getItems()).add(1.01)));
-
 		inputPortNames = cellview.catracker.getAttachedModel().getInputPortNames();
-		ObservableList<TrackingTableData> input_data = FXCollections.observableArrayList(new TrackingTableData("a","b",false));
+		ObservableList<TrackingTableData> input_data = FXCollections.observableArrayList();
 		inputUnits = cellview.catracker.getInputPortUnits();
 		inputPorts = cellview.catracker.gettrackInputPorts();
 
@@ -130,17 +127,41 @@ public class CATimeViewControlMenuController {
 					inputPorts[i]);
 			input_data.add(rowData);
 		}
+		
+		inputPortName.setCellValueFactory(cellData -> cellData.getValue().portNameProperty());
+		inputPortUnit.setCellValueFactory(cellData -> cellData.getValue().portUnitProperty());
+		inputPortSelected.setCellValueFactory(cellData -> cellData.getValue().portSelectedProperty());
 
-		inputPortName.setCellValueFactory(new PropertyValueFactory<TrackingTableData,String>("portName"));
-		inputPortUnit.setCellValueFactory(new PropertyValueFactory<TrackingTableData,String>("portUnit"));
-		inputPortSelected.setCellValueFactory(new PropertyValueFactory<TrackingTableData,Boolean>("portSelecgted"));
+//		inputPortName.setCellValueFactory(new PropertyValueFactory<>("portName"));
+//		inputPortUnit.setCellValueFactory(new PropertyValueFactory<TrackingTableData,String>("portUnit"));
+//		inputPortSelected.setCellValueFactory(new PropertyValueFactory<TrackingTableData,Boolean>("portSelecgted"));
 		
 		input_table.setItems(input_data);
+	}
+	
+	
+	@FXML
+	private void setOutputTable() {
+		outputPortNames = cellview.catracker.getAttachedModel().getOutputPortNames();
+		ObservableList<TrackingTableData> output_data = FXCollections.observableArrayList();
+		outputUnits = cellview.catracker.getOutputPortUnits();
+		outputPorts = cellview.catracker.gettrackOutputPorts();
 
+		for (int i = 0; i < outputPortNames.size(); i++) {
+			TrackingTableData rowData = new TrackingTableData(String.valueOf(outputPortNames.get(i)), outputUnits[i],
+					outputPorts[i]);
+			output_data.add(rowData);
+		}
+		
+		outputPortName.setCellValueFactory(cellData -> cellData.getValue().portNameProperty());
+		outputPortUnit.setCellValueFactory(cellData -> cellData.getValue().portUnitProperty());
+		outputPortSelected.setCellValueFactory(cellData -> cellData.getValue().portSelectedProperty());
+		
+		output_table.setItems(output_data);
 	}
 
 	@FXML
-	private void initialize() {
+	public void initialize() {
 		dialogStage = new Stage();
 		dialogStage.setTitle("Cell: " + cellview.getI() + ", " + cellview.getJ());
 		ck_timeview.setSelected(cellview.isCATimeViewSelected);
@@ -157,7 +178,8 @@ public class CATimeViewControlMenuController {
 		tx_x.setText(cellview.xUnit);
 		tx_inc.setText(cellview.timeIncr);
 
-		//setInputTable();
+		setInputTable();
+		setOutputTable();
 
 	}
 }
