@@ -39,6 +39,7 @@ import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Separator;
 import javafx.scene.control.Slider;
 import javafx.scene.control.SplitPane;
@@ -116,6 +117,10 @@ public class SpaceView {
 
 	private Button btn_run, btn_step, btn_stepn, btn_pause, btn_reset;
 
+	// for Area Selection
+	private int[] topleft = { 0, 0 };
+	private int[] bottomright = { cellView.length, cellView[0].length };
+
 	// private Group root2;
 
 	// For FXML
@@ -126,7 +131,7 @@ public class SpaceView {
 	private Button PBMaxLengthButton, ANSpeedButton, HideAndShowControlButton;
 
 	@FXML
-	private TextField PBMaxLength, PBInterval, ANSpeed;
+	private TextField PBMaxLength, PBInterval, ANSpeed, tlX,tlY,brX,brY;
 	@FXML
 	private Slider PBTracking, ANSpeedSlider;
 	@FXML
@@ -136,7 +141,7 @@ public class SpaceView {
 	@FXML
 	private HBox hbox;
 	@FXML
-	private AnchorPane leftP, centerP, groupP, consoleP, PlaybackPositioned;
+	private AnchorPane leftP, centerP, groupP, consoleP, PlaybackPositioned, groupScrollP;
 	@FXML
 	private Group root;
 	@FXML
@@ -147,6 +152,8 @@ public class SpaceView {
 	private Tab consoleTab;
 	@FXML
 	private TabPane DisplayTabs;
+	@FXML
+	private ScrollPane groupScrollView;
 
 	public SpaceView() {
 
@@ -260,10 +267,10 @@ public class SpaceView {
 				Node nodeIn4 = ((VBox) nodeIn3).getChildren().get(2);
 				Node nodeIn5 = ((TitledPane) nodeIn4).getContent();
 				Node nodeIn6 = ((AnchorPane) nodeIn5).getChildren().get(0);
-				((GridPane) nodeIn6).add(playbackControl, 0, 5, 4, 1);
+				((GridPane) nodeIn6).add(playbackControl, 0, 4, 4, 1);
 				GridPane.setMargin(playbackControl, new Insets(-6, 0, 0, 0));
 
-				((GridPane) nodeIn6).add(playbackValue, 3, 6);
+				((GridPane) nodeIn6).add(playbackValue, 3, 5);
 				GridPane.setMargin(playbackValue, new Insets(-6, 0, 0, 0));
 
 				// add Control Buttons and Simulation Doc
@@ -449,7 +456,8 @@ public class SpaceView {
 					}
 					// if (!animationPaused && animationOn.get()) {
 					/*
-					 * Since Group root will be invisible when animation switch is off, these two conditions will do the same.
+					 * Since Group root will be invisible when animation switch
+					 * is off, these two conditions will do the same.
 					 */
 					if (!animationPaused && animationSelected) {
 						cellView[ai][aj].rectangle.setFill(nextcolor);
@@ -966,7 +974,10 @@ public class SpaceView {
 	public void resizeCA() {
 
 		groupP.widthProperty().addListener((observable, oldValue, newValue) -> {
-			sceneWidth = (double) newValue;
+			if ((double) newValue > 1) {
+				ANSelect.setSelected(true);
+			}
+			sceneWidth = (double) newValue-30;
 			setGridSize();
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < m; j++) {
@@ -981,8 +992,8 @@ public class SpaceView {
 		groupP.heightProperty().addListener((observable, oldValue, newValue) -> {
 			if ((double) newValue < 1) {
 				ANSelect.setSelected(false);
-			}			
-			sceneHeight = (double) newValue;
+			}
+			sceneHeight = (double) newValue-30;
 			setGridSize();
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < m; j++) {
@@ -994,6 +1005,88 @@ public class SpaceView {
 
 		});
 	}
+
+	@FXML
+	protected void actionEnlarge(ActionEvent event) {
+		sceneWidth = sceneWidth * 1.2;
+		sceneHeight = sceneHeight * 1.2;
+		setGridSize();
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				cellView[i][j].changeWidth(gridWidth);
+				cellView[i][j].setTranslateX(i * gridWidth);
+				cellView[i][j].changeHeight(gridHeight);
+				cellView[i][j].setTranslateY(j * gridHeight);
+			}
+		}
+
+	}
+
+	@FXML
+	protected void actionReduce(ActionEvent event) {
+		sceneWidth = sceneWidth / 1.2;
+		sceneHeight = sceneHeight / 1.2;
+		setGridSize();
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				cellView[i][j].changeWidth(gridWidth);
+				cellView[i][j].setTranslateX(i * gridWidth);
+				cellView[i][j].changeHeight(gridHeight);
+				cellView[i][j].setTranslateY(j * gridHeight);
+			}
+		}
+
+	}
+
+	@FXML
+	protected void actionAreaSelect(ActionEvent event) {
+		topleft[0]=Integer.parseInt(tlX.getText());
+		topleft[1]=Integer.parseInt(tlY.getText());
+		
+		bottomright[0] = Integer.parseInt(brX.getText());
+		bottomright[1] = Integer.parseInt(brY.getText());
+		
+		int centerX = (topleft[0]+ bottomright[0])/2;
+		int centerY =  (topleft[1]+ bottomright[1])/2;
+
+		int xCellsNumber = bottomright[0] - topleft[0]+1;
+		int yCellsNumber = bottomright[1] - topleft[1]+1;
+
+		gridWidth = (groupP.getWidth()-25) / xCellsNumber;
+		gridHeight = (groupP.getHeight()-25) / yCellsNumber;
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				cellView[i][j].changeWidth(gridWidth);
+				cellView[i][j].setTranslateX((i) * gridWidth);
+				cellView[i][j].changeHeight(gridHeight);
+				cellView[i][j].setTranslateY((j)* gridHeight);
+				//cellView[i][j].setLayoutY(j);
+			}
+		}
+		centerNodeInScrollPaneX(groupScrollView, cellView[centerX][centerY]);
+		centerNodeInScrollPaneY(groupScrollView, cellView[centerX][centerY]);
+		
+//		groupScrollView.setHvalue(0+topleft[0]*gridWidth/sceneWidth);
+//		groupScrollView.setVvalue(0+topleft[1]*gridHeight/sceneHeight);
+		System.out.println("v: "+ groupScrollView.vvalueProperty().get() + ";h: "+groupScrollView.hvalueProperty().get());
+
+	}
+	
+	public void centerNodeInScrollPaneY(ScrollPane scrollPane, Node node) {
+	    double h = scrollPane.getContent().getBoundsInLocal().getHeight();
+	    double y = (node.getBoundsInParent().getMaxY() + 
+	                node.getBoundsInParent().getMinY()) / 2.0;
+	    double v = scrollPane.getViewportBounds().getHeight();
+	    scrollPane.setVvalue(scrollPane.getVmax() * ((y - 0.5 * v) / (h - v)));
+	}
+	public void centerNodeInScrollPaneX(ScrollPane scrollPane, Node node) {
+	    double h = scrollPane.getContent().getBoundsInLocal().getWidth();
+	    double y = (node.getBoundsInParent().getMaxX() + 
+	                node.getBoundsInParent().getMinX()) / 2.0;
+	    double v = scrollPane.getViewportBounds().getWidth();
+	    scrollPane.setHvalue(scrollPane.getHmax() * ((y - 0.5 * v) / (h - v)));
+	}
+	
 
 	@FXML
 	public void initialize() {

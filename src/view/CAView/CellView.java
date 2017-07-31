@@ -70,6 +70,7 @@ public class CellView extends StackPane {
 
 		// initialize rectangle
 		rectangle = new Rectangle(width, height);
+		rectangle.setStroke(Color.BLACK);
 		// rectangle.setFill(Color.ANTIQUEWHITE);
 		currentcolor = previouscolor = Color.WHITE;
 
@@ -249,10 +250,8 @@ public class CellView extends StackPane {
 				graphs.add(in);
 				if (!InputPortUnits[i].equalsIgnoreCase(""))
 					in.setUnit(InputPortUnits[i]);
-
 				else
 					in.setUnit("");
-
 			}
 		}
 		catracker.settrackInputPorts(isInputPortSelected);
@@ -268,10 +267,8 @@ public class CellView extends StackPane {
 				graphs.add(out);
 				if (!OutputPortUnits[i].equalsIgnoreCase(""))
 					out.setUnit(OutputPortUnits[i]);
-
 				else
 					out.setUnit("");
-
 			}
 		}
 		catracker.settrackOutputPorts(isOutputPortSelected);
