@@ -385,7 +385,12 @@
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                              </GridPane.margin>
                                           </TextField>
-                                          <Button mnemonicParsing="false" onAction="#actionAreaSelect" text="Select" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                          <Button fx:id="AreaSelectFunctionButton" mnemonicParsing="false" onAction="#actionAreaSelect" text="Select" GridPane.columnIndex="1" GridPane.rowIndex="3">
+                                             <GridPane.margin>
+                                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                                             </GridPane.margin>
+                                          </Button>
+                                          <Button mnemonicParsing="false" onAction="#actionSelectTwice" text="Select" GridPane.columnIndex="1" GridPane.rowIndex="3">
                                              <GridPane.margin>
                                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                              </GridPane.margin>

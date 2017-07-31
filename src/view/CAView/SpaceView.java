@@ -13,7 +13,10 @@ import controller.ControllerInterface;
 import facade.simulation.FSimulator;
 import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
+import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -128,10 +131,10 @@ public class SpaceView {
 	@FXML
 	private CheckBox ANSelect, PSelect, cb_Phase, cb_Sigma, cb_StateChanged;
 	@FXML
-	private Button PBMaxLengthButton, ANSpeedButton, HideAndShowControlButton;
+	private Button PBMaxLengthButton, ANSpeedButton, HideAndShowControlButton, AreaSelectFunctionButton;
 
 	@FXML
-	private TextField PBMaxLength, PBInterval, ANSpeed, tlX,tlY,brX,brY;
+	private TextField PBMaxLength, PBInterval, ANSpeed, tlX, tlY, brX, brY;
 	@FXML
 	private Slider PBTracking, ANSpeedSlider;
 	@FXML
@@ -977,7 +980,7 @@ public class SpaceView {
 			if ((double) newValue > 1) {
 				ANSelect.setSelected(true);
 			}
-			sceneWidth = (double) newValue-30;
+			sceneWidth = (double) newValue - 30;
 			setGridSize();
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < m; j++) {
@@ -993,7 +996,7 @@ public class SpaceView {
 			if ((double) newValue < 1) {
 				ANSelect.setSelected(false);
 			}
-			sceneHeight = (double) newValue-30;
+			sceneHeight = (double) newValue - 30;
 			setGridSize();
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < m; j++) {
@@ -1039,54 +1042,75 @@ public class SpaceView {
 	}
 
 	@FXML
+	protected void actionSelectTwice(ActionEvent event) {
+		for (int i = 0; i < 2; i++)
+			//AreaSelectFunctionButton.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY,
+			//		1, true, true, true, true, true, true, true, true, true, true, null));
+			AreaSelectFunctionButton.fire();
+
+		System.out.println("fired twice");
+
+	}
+
+	@FXML
 	protected void actionAreaSelect(ActionEvent event) {
-		topleft[0]=Integer.parseInt(tlX.getText());
-		topleft[1]=Integer.parseInt(tlY.getText());
-		
+		topleft[0] = Integer.parseInt(tlX.getText());
+		topleft[1] = Integer.parseInt(tlY.getText());
+
 		bottomright[0] = Integer.parseInt(brX.getText());
 		bottomright[1] = Integer.parseInt(brY.getText());
-		
-		int centerX = (topleft[0]+ bottomright[0])/2;
-		int centerY =  (topleft[1]+ bottomright[1])/2;
 
-		int xCellsNumber = bottomright[0] - topleft[0]+1;
-		int yCellsNumber = bottomright[1] - topleft[1]+1;
+		int xCellsNumber = bottomright[0] - topleft[0] + 1;
+		int yCellsNumber = bottomright[1] - topleft[1] + 1;
 
-		gridWidth = (groupP.getWidth()-25) / xCellsNumber;
-		gridHeight = (groupP.getHeight()-25) / yCellsNumber;
+		gridWidth = (groupP.getWidth() - 25) / xCellsNumber;
+		gridHeight = (groupP.getHeight() - 25) / yCellsNumber;
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < m; j++) {
 				cellView[i][j].changeWidth(gridWidth);
 				cellView[i][j].setTranslateX((i) * gridWidth);
 				cellView[i][j].changeHeight(gridHeight);
-				cellView[i][j].setTranslateY((j)* gridHeight);
-				//cellView[i][j].setLayoutY(j);
+				cellView[i][j].setTranslateY((j) * gridHeight);
+				// System.out.println("i "+i+", j "+j+"boundX Min
+				// "+cellView[i][j].getBoundsInParent().getMinX()+" boundX
+				// Max"+cellView[i][j].getBoundsInParent().getMaxX());
+				// cellView[i][j].setLayoutY(j);
 			}
 		}
-		centerNodeInScrollPaneX(groupScrollView, cellView[centerX][centerY]);
-		centerNodeInScrollPaneY(groupScrollView, cellView[centerX][centerY]);
-		
-//		groupScrollView.setHvalue(0+topleft[0]*gridWidth/sceneWidth);
-//		groupScrollView.setVvalue(0+topleft[1]*gridHeight/sceneHeight);
-		System.out.println("v: "+ groupScrollView.vvalueProperty().get() + ";h: "+groupScrollView.hvalueProperty().get());
+
+		double scrollX = topleftNodeInScrollPaneX(groupScrollView, cellView[topleft[0]][topleft[1]]);
+		double scrollY = topleftNodeInScrollPaneY(groupScrollView, cellView[topleft[0]][topleft[1]]);
+
+		final Timeline timeline = new Timeline();
+		final KeyValue kvalueX = new KeyValue(groupScrollView.hvalueProperty(), scrollX);
+		final KeyValue kvalueY = new KeyValue(groupScrollView.vvalueProperty(), scrollY);
+
+		final KeyFrame kf = new KeyFrame(Duration.millis(500), kvalueX, kvalueY);
+		timeline.getKeyFrames().add(kf);
+		timeline.play();
+
+		// groupScrollView.setHvalue(0+topleft[0]*gridWidth/sceneWidth);
+		// groupScrollView.setVvalue(0+topleft[1]*gridHeight/sceneHeight);
+		System.out.println(
+				"v: " + groupScrollView.vvalueProperty().get() + ";h: " + groupScrollView.hvalueProperty().get());
 
 	}
-	
-	public void centerNodeInScrollPaneY(ScrollPane scrollPane, Node node) {
-	    double h = scrollPane.getContent().getBoundsInLocal().getHeight();
-	    double y = (node.getBoundsInParent().getMaxY() + 
-	                node.getBoundsInParent().getMinY()) / 2.0;
-	    double v = scrollPane.getViewportBounds().getHeight();
-	    scrollPane.setVvalue(scrollPane.getVmax() * ((y - 0.5 * v) / (h - v)));
+
+	public double topleftNodeInScrollPaneY(ScrollPane scrollPane, Node node) {
+		double h = scrollPane.getContent().getBoundsInLocal().getHeight();
+		double y = node.getBoundsInParent().getMinY();
+		double v = scrollPane.getViewportBounds().getHeight();
+		double m = scrollPane.getVmax();
+		return (m * ((y) / (h - v)));
 	}
-	public void centerNodeInScrollPaneX(ScrollPane scrollPane, Node node) {
-	    double h = scrollPane.getContent().getBoundsInLocal().getWidth();
-	    double y = (node.getBoundsInParent().getMaxX() + 
-	                node.getBoundsInParent().getMinX()) / 2.0;
-	    double v = scrollPane.getViewportBounds().getWidth();
-	    scrollPane.setHvalue(scrollPane.getHmax() * ((y - 0.5 * v) / (h - v)));
+
+	public double topleftNodeInScrollPaneX(ScrollPane scrollPane, Node node) {
+		double w = scrollPane.getContent().getBoundsInLocal().getWidth();
+		double x = node.getBoundsInParent().getMinX();
+		double v = scrollPane.getViewportBounds().getWidth();
+		double m = scrollPane.getHmax();
+		return (m * ((x) / (w - v)));
 	}
-	
 
 	@FXML
 	public void initialize() {
