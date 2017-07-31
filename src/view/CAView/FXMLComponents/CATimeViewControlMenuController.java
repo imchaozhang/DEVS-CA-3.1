@@ -2,7 +2,6 @@ package view.CAView.FXMLComponents;
 
 import java.util.List;
 
-import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -11,9 +10,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.Stage;
+import javafx.util.converter.DefaultStringConverter;
 import view.CAView.CellView;
 import view.CAView.FXMLComponents.TrackingTableData;
+import view.CAView.FXMLComponents.EditCell;
 
 public class CATimeViewControlMenuController {
 
@@ -98,12 +100,40 @@ public class CATimeViewControlMenuController {
 			cellview.isZeroTimeSelected = false;
 		}
 
+		for (final TrackingTableData ttd : input_table.getItems()) {
+			for (int i = 0; i < inputPortNames.size(); i++) {
+				if (ttd.getPortName().equals(String.valueOf(inputPortNames.get(i)))) {
+					inputPorts[i] = ttd.getPortSelected();
+					inputUnits[i] = ttd.getPortUnit();
+					break;
+				}
+			}
+		}
+		
+		for (final TrackingTableData ttd : output_table.getItems()) {
+			for (int i = 0; i < outputPortNames.size(); i++) {
+				if (ttd.getPortName().equals(String.valueOf(outputPortNames.get(i)))) {
+					outputPorts[i] = ttd.getPortSelected();
+					outputUnits[i] = ttd.getPortUnit();
+					break;
+				}
+			}
+		}
+
 		cellview.phaseUnit = tx_phase.getText();
 		cellview.sigmaUnit = tx_sigma.getText();
 		cellview.tlUnit = tx_tl.getText();
 		cellview.tnUnit = tx_tn.getText();
 		cellview.xUnit = tx_x.getText();
 		cellview.timeIncr = tx_inc.getText();
+		
+		cellview.isInputPortSelected = inputPorts;
+		cellview.InputPortUnits = inputUnits;
+		cellview.InputPortNames = inputPortNames;
+		
+		cellview.isOutputPortSelected = outputPorts;
+		cellview.OutputPortUnits = outputUnits;
+		cellview.OutputPortNames = outputPortNames;
 
 		dialogStage.close();
 
@@ -127,19 +157,17 @@ public class CATimeViewControlMenuController {
 					inputPorts[i]);
 			input_data.add(rowData);
 		}
-		
+
 		inputPortName.setCellValueFactory(cellData -> cellData.getValue().portNameProperty());
 		inputPortUnit.setCellValueFactory(cellData -> cellData.getValue().portUnitProperty());
 		inputPortSelected.setCellValueFactory(cellData -> cellData.getValue().portSelectedProperty());
 
-//		inputPortName.setCellValueFactory(new PropertyValueFactory<>("portName"));
-//		inputPortUnit.setCellValueFactory(new PropertyValueFactory<TrackingTableData,String>("portUnit"));
-//		inputPortSelected.setCellValueFactory(new PropertyValueFactory<TrackingTableData,Boolean>("portSelecgted"));
-		
+		inputPortUnit.setCellFactory(tc -> new EditCell<>(new DefaultStringConverter()));
+		inputPortSelected.setCellFactory(tc -> new CheckBoxTableCell<>());
+
 		input_table.setItems(input_data);
 	}
-	
-	
+
 	@FXML
 	private void setOutputTable() {
 		outputPortNames = cellview.catracker.getAttachedModel().getOutputPortNames();
@@ -152,11 +180,14 @@ public class CATimeViewControlMenuController {
 					outputPorts[i]);
 			output_data.add(rowData);
 		}
-		
+
 		outputPortName.setCellValueFactory(cellData -> cellData.getValue().portNameProperty());
 		outputPortUnit.setCellValueFactory(cellData -> cellData.getValue().portUnitProperty());
 		outputPortSelected.setCellValueFactory(cellData -> cellData.getValue().portSelectedProperty());
-		
+		outputPortUnit.setCellFactory(tc -> new EditCell<>(new DefaultStringConverter()));
+
+		outputPortSelected.setCellFactory(tc -> new CheckBoxTableCell<>());
+
 		output_table.setItems(output_data);
 	}
 

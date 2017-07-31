@@ -2,6 +2,7 @@ package view.CAView;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
@@ -43,6 +44,9 @@ public class CellView extends StackPane {
     
 	public boolean isZeroTimeSelected;
 	
+	public boolean[] isInputPortSelected;
+	public boolean[] isOutputPortSelected;
+	
    
     //private boolean isBreakout = false;
     public String xUnit = "sec";
@@ -52,8 +56,13 @@ public class CellView extends StackPane {
     public String phaseUnit = "";
     public String sigmaUnit = "";
     
+    public List InputPortNames;
+    public List OutputPortNames;
+    public String[] InputPortUnits;
+    public String[] OutputPortUnits;
+    
 	
-	private String tp_Sigma="", tp_State="", tp_TL="", tp_StatusChanged="";
+	private String tp_Sigma="", tp_Phase="", tp_StatusChanged="";
 
 	private int i, j;
 
@@ -129,11 +138,9 @@ public class CellView extends StackPane {
 
 			Event currentSigma = datalistCAView.poll();
 
-			tp_State = "\nphase: " + current.getData();
+			tp_Phase = "\nphase: " + current.getData();
 			
 			tp_Sigma = "\nsigma: " + currentSigma.getData();
-			
-			tp_TL = "\nCurrent time: "+ current.getTime();
 			
 			tp_StatusChanged = "\nStatus Changed: " + statusChanged;
 			
@@ -160,7 +167,7 @@ public class CellView extends StackPane {
 	}
 	public void setTPText(boolean _isPhase, boolean _isSigma, boolean _isStateChanged){
 		
-		text.setText("i: " + this.i + ", j: " + this.j + ((_isPhase)?tp_State:"" ) + ((_isSigma)?tp_Sigma:"") + ((_isStateChanged)?tp_StatusChanged:""));
+		text.setText("i: " + this.i + ", j: " + this.j + ((_isPhase)?tp_Phase:"" ) + ((_isSigma)?tp_Sigma:"") + ((_isStateChanged)?tp_StatusChanged:""));
 		tp.setText(text.getText());		
 		
 	}
@@ -190,6 +197,11 @@ public class CellView extends StackPane {
 		catracker.settimeIncrement(timeIncr);
 		catracker.setxUnit(xUnit);
 		catracker.setisBreakout(true);
+		
+		catracker.setInputPortUnits(InputPortUnits);
+		
+
+		
 		ArrayList<Graph> graphs = new ArrayList<Graph>();
 		GraphFactory graphFactory = new GraphFactory();
 		if (trackTL) {
@@ -225,6 +237,45 @@ public class CellView extends StackPane {
 			sigma.setZeroTimeAdvance(isZeroTimeSelected);
 			graphs.add(sigma);
 		}
+		
+		catracker.setatLeastOneInputTracked(false);
+		for (int i = 0; i < isInputPortSelected.length; i++) {
+			if (isInputPortSelected[i]) {
+				catracker.setatLeastOneInputTracked(true);
+				Graph in = graphFactory.createChart("INPUT");
+				in.setName(InputPortNames.get(i).toString());
+				in.setCategory("INPUT");
+				in.setZeroTimeAdvance(isZeroTimeSelected);
+				graphs.add(in);
+				if (!InputPortUnits[i].equalsIgnoreCase(""))
+					in.setUnit(InputPortUnits[i]);
+
+				else
+					in.setUnit("");
+
+			}
+		}
+		catracker.settrackInputPorts(isInputPortSelected);
+		
+		catracker.setatLeastOneOutputTracked(false);
+		for (int i = 0; i < isOutputPortSelected.length; i++) {
+			if (isOutputPortSelected[i]) {
+				catracker.setatLeastOneOutputTracked(true);
+				Graph out = graphFactory.createChart("OUTPUT");
+				out.setName(OutputPortNames.get(i).toString());
+				out.setCategory("OUTPUT");
+				out.setZeroTimeAdvance(isZeroTimeSelected);
+				graphs.add(out);
+				if (!OutputPortUnits[i].equalsIgnoreCase(""))
+					out.setUnit(OutputPortUnits[i]);
+
+				else
+					out.setUnit("");
+
+			}
+		}
+		catracker.settrackOutputPorts(isOutputPortSelected);
+		
 		
 		this.catracker.setGraphs(graphs);	
 		
