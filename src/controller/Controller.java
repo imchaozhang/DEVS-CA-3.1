@@ -162,8 +162,8 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 				view.setSwingVisible(true);
 				
 			} else {
-				//view.setSwingVisible(false);
 				view.setSwingVisible(false);
+				//view.setSwingVisible(true);
 			}
 
 			Object instance;

@@ -77,7 +77,7 @@ public class SpaceView {
 	public static CellView[][] cellView;
 
 	static double gridWidth, gridHeight;
-	static int n, m, initalN, initalM;
+	static int n, m;
 	public static LinkedList<ParallelTransition> playback = new LinkedList<ParallelTransition>();
 
 	public static LinkedList<Double> PBStatusIndex = new LinkedList<Double>();
@@ -124,8 +124,7 @@ public class SpaceView {
 	// for Area Selection
 	private int[] topleft = { 0, 0 };
 	private int[] bottomright = { cellView.length, cellView[0].length };
-	private static CellView[][] currentCellView;
-
+	private static int xCellsNumber, yCellsNumber;
 	// private Group root2;
 
 	// For FXML
@@ -169,17 +168,25 @@ public class SpaceView {
 		name = _name;
 		n = i;
 		m = j;
-		initalN = n;
-		initalM = m;
-		setGridSize();
+		xCellsNumber = n;
+		yCellsNumber = m;
+		// setGridSize();
+		gridHeight = gridWidth = Math.min(sceneWidth / n, sceneHeight / m);
 		cellView = new CellView[n][m];
 		controller = c;
 
 	}
 
 	private static void setGridSize() {
-		gridWidth = sceneWidth / n;
-		gridHeight = sceneHeight / m;
+		gridHeight = gridWidth = Math.min(sceneWidth / n, sceneHeight / m);
+		for (int i = 0; i < n; i++) {
+			for (int j = 0; j < m; j++) {
+				cellView[i][j].changeWidth(gridWidth);
+				cellView[i][j].setTranslateX(i * gridWidth);
+				cellView[i][j].changeHeight(gridHeight);
+				cellView[i][j].setTranslateY(j * gridHeight);
+			}
+		}
 
 	}
 
@@ -859,9 +866,9 @@ public class SpaceView {
 		bottomright[1] = Integer.parseInt(brY.getText());
 
 		// set Grid Size
-		sceneWidth = groupP.getPrefWidth();
-		sceneHeight = groupP.getPrefHeight();
-		setGridSize();
+		// sceneWidth = groupP.getPrefWidth();
+		// sceneHeight = groupP.getPrefHeight();
+		
 		// System.out.println(sceneWidth+"; "+ sceneHeight);
 
 		// Create context menu for right click the node
@@ -987,35 +994,18 @@ public class SpaceView {
 	public void resizeCA() {
 
 		groupP.widthProperty().addListener((observable, oldValue, newValue) -> {
-			if ((double) newValue > 1) {
-				ANSelect.setSelected(true);
-			}
-			sceneWidth = (double) newValue - 30;
+			sceneWidth = (double) newValue-25;
+			sceneWidth = sceneWidth*n/xCellsNumber;			
 			setGridSize();
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < m; j++) {
-					cellView[i][j].changeWidth(gridWidth);
-					cellView[i][j].setTranslateX(i * gridWidth);
-
-				}
-			}
-
 		});
 
 		groupP.heightProperty().addListener((observable, oldValue, newValue) -> {
 			if ((double) newValue < 1) {
 				ANSelect.setSelected(false);
 			}
-			sceneHeight = (double) newValue - 30;
+			sceneHeight = (double) newValue-25;
+			sceneHeight = sceneHeight*m/yCellsNumber;
 			setGridSize();
-			for (int i = 0; i < n; i++) {
-				for (int j = 0; j < m; j++) {
-					cellView[i][j].changeHeight(gridHeight);
-					cellView[i][j].setTranslateY(j * gridHeight);
-
-				}
-			}
-
 		});
 	}
 
@@ -1024,14 +1014,6 @@ public class SpaceView {
 		sceneWidth = sceneWidth * 1.2;
 		sceneHeight = sceneHeight * 1.2;
 		setGridSize();
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < m; j++) {
-				cellView[i][j].changeWidth(gridWidth);
-				cellView[i][j].setTranslateX(i * gridWidth);
-				cellView[i][j].changeHeight(gridHeight);
-				cellView[i][j].setTranslateY(j * gridHeight);
-			}
-		}
 
 	}
 
@@ -1040,23 +1022,9 @@ public class SpaceView {
 		sceneWidth = sceneWidth / 1.2;
 		sceneHeight = sceneHeight / 1.2;
 		setGridSize();
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < m; j++) {
-				cellView[i][j].changeWidth(gridWidth);
-				cellView[i][j].setTranslateX(i * gridWidth);
-				cellView[i][j].changeHeight(gridHeight);
-				cellView[i][j].setTranslateY(j * gridHeight);
-			}
-		}
 
 	}
 
-	// @FXML
-	// protected void actionSelectTwice(ActionEvent event) {
-	//
-	// System.out.println("fired twice");
-	//
-	// }
 
 	@FXML
 	protected void actionAreaSelect(ActionEvent event) {
@@ -1066,8 +1034,8 @@ public class SpaceView {
 		bottomright[0] = Integer.parseInt(brX.getText());
 		bottomright[1] = Integer.parseInt(brY.getText());
 
-		int xCellsNumber = bottomright[0] - topleft[0] + 1;
-		int yCellsNumber = bottomright[1] - topleft[1] + 1;
+		xCellsNumber = bottomright[0] - topleft[0] + 1;
+		yCellsNumber = bottomright[1] - topleft[1] + 1;
 
 		gridWidth = (groupP.getWidth() - 25) / xCellsNumber;
 		gridHeight = (groupP.getHeight() - 25) / yCellsNumber;
@@ -1084,15 +1052,12 @@ public class SpaceView {
 					cellView[i][j].setVisible(false);
 				}
 
-				cellView[i][j].changeWidth(gridWidth);
-				cellView[i][j].setTranslateX((i) * gridWidth);
-				cellView[i][j].changeHeight(gridHeight);
-				cellView[i][j].setTranslateY((j) * gridHeight);
 			}
 		}
 
 		sceneWidth = gridWidth * n;
 		sceneHeight = gridHeight * m;
+		setGridSize();
 
 		double scrollX = topleftNodeInScrollPaneX(groupScrollView, cellView[topleft[0]][topleft[1]]);
 		double scrollY = topleftNodeInScrollPaneY(groupScrollView, cellView[topleft[0]][topleft[1]]);
