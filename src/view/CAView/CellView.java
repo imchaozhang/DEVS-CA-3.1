@@ -70,7 +70,7 @@ public class CellView extends StackPane {
 
 		// initialize rectangle
 		rectangle = new Rectangle(width, height);
-		rectangle.setStroke(Color.BLACK);
+		rectangle.setStroke(Color.LIGHTGREY);
 		// rectangle.setFill(Color.ANTIQUEWHITE);
 		currentcolor = previouscolor = Color.WHITE;
 

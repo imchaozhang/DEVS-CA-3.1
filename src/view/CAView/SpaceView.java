@@ -75,8 +75,9 @@ public class SpaceView {
 	private static double sceneWidth = 400;
 	private static double sceneHeight = 400;
 	public static CellView[][] cellView;
+
 	static double gridWidth, gridHeight;
-	static int n, m;
+	static int n, m, initalN, initalM;
 	public static LinkedList<ParallelTransition> playback = new LinkedList<ParallelTransition>();
 
 	public static LinkedList<Double> PBStatusIndex = new LinkedList<Double>();
@@ -123,6 +124,7 @@ public class SpaceView {
 	// for Area Selection
 	private int[] topleft = { 0, 0 };
 	private int[] bottomright = { cellView.length, cellView[0].length };
+	private static CellView[][] currentCellView;
 
 	// private Group root2;
 
@@ -167,6 +169,8 @@ public class SpaceView {
 		name = _name;
 		n = i;
 		m = j;
+		initalN = n;
+		initalM = m;
 		setGridSize();
 		cellView = new CellView[n][m];
 		controller = c;
@@ -848,6 +852,12 @@ public class SpaceView {
 	private void addGroup() {
 		// get Group and hbox from FXML
 
+		topleft[0] = Integer.parseInt(tlX.getText());
+		topleft[1] = Integer.parseInt(tlY.getText());
+
+		bottomright[0] = Integer.parseInt(brX.getText());
+		bottomright[1] = Integer.parseInt(brY.getText());
+
 		// set Grid Size
 		sceneWidth = groupP.getPrefWidth();
 		sceneHeight = groupP.getPrefHeight();
@@ -1041,16 +1051,12 @@ public class SpaceView {
 
 	}
 
-	@FXML
-	protected void actionSelectTwice(ActionEvent event) {
-		for (int i = 0; i < 2; i++)
-			//AreaSelectFunctionButton.fireEvent(new MouseEvent(MouseEvent.MOUSE_CLICKED, 0, 0, 0, 0, MouseButton.PRIMARY,
-			//		1, true, true, true, true, true, true, true, true, true, true, null));
-			AreaSelectFunctionButton.fire();
-
-		System.out.println("fired twice");
-
-	}
+	// @FXML
+	// protected void actionSelectTwice(ActionEvent event) {
+	//
+	// System.out.println("fired twice");
+	//
+	// }
 
 	@FXML
 	protected void actionAreaSelect(ActionEvent event) {
@@ -1067,16 +1073,26 @@ public class SpaceView {
 		gridHeight = (groupP.getHeight() - 25) / yCellsNumber;
 		for (int i = 0; i < n; i++) {
 			for (int j = 0; j < m; j++) {
+
+				if (i >= topleft[0] && i <= bottomright[0] && j >= topleft[1] && j <= bottomright[1]) {
+					cellView[i][j].setDisable(false);
+					cellView[i][j].setVisible(true);
+				}
+
+				else {
+					cellView[i][j].setDisable(true);
+					cellView[i][j].setVisible(false);
+				}
+
 				cellView[i][j].changeWidth(gridWidth);
 				cellView[i][j].setTranslateX((i) * gridWidth);
 				cellView[i][j].changeHeight(gridHeight);
 				cellView[i][j].setTranslateY((j) * gridHeight);
-				// System.out.println("i "+i+", j "+j+"boundX Min
-				// "+cellView[i][j].getBoundsInParent().getMinX()+" boundX
-				// Max"+cellView[i][j].getBoundsInParent().getMaxX());
-				// cellView[i][j].setLayoutY(j);
 			}
 		}
+
+		sceneWidth = gridWidth * n;
+		sceneHeight = gridHeight * m;
 
 		double scrollX = topleftNodeInScrollPaneX(groupScrollView, cellView[topleft[0]][topleft[1]]);
 		double scrollY = topleftNodeInScrollPaneY(groupScrollView, cellView[topleft[0]][topleft[1]]);
@@ -1089,8 +1105,6 @@ public class SpaceView {
 		timeline.getKeyFrames().add(kf);
 		timeline.play();
 
-		// groupScrollView.setHvalue(0+topleft[0]*gridWidth/sceneWidth);
-		// groupScrollView.setVvalue(0+topleft[1]*gridHeight/sceneHeight);
 		System.out.println(
 				"v: " + groupScrollView.vvalueProperty().get() + ";h: " + groupScrollView.hvalueProperty().get());
 
@@ -1114,10 +1128,10 @@ public class SpaceView {
 
 	@FXML
 	public void initialize() {
-		// set the model name for simulator UI
+		// setup the model name for simulator UI
 		model_name.setText("Model Running: \"" + name + "\"");
 
-		// set the Animiaton Control Panel
+		// setup the Animiaton Control Panel
 		ANSpeed.setText(Integer.toString(stepSpeed));
 		ANSpeedSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
 			ANSpeed.setText(Integer.toString(newValue.intValue()));
@@ -1127,8 +1141,17 @@ public class SpaceView {
 
 		// addHBox();
 
+		// setup the area selection index as initial, before call the addGroup
+		// function.
+		tlX.setText("" + 0);
+		tlY.setText("" + 0);
+		brX.setText("" + (n - 1));
+		brY.setText("" + (m - 1));
+
+		// setup the root of nodes
 		addGroup();
 
+		// setup the FX console pane
 		addFXConsole();
 
 		// resize the cell node
