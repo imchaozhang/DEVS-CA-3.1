@@ -190,6 +190,15 @@ public class CellView extends StackPane {
 		catracker = _CAtracker;		
 	}
 	
+	public void setInitialStatus(String _phase, double _sigma){
+		tp_Phase = "\nphase: " + _phase;
+		tp_Sigma = "\nsigma: "+_sigma;
+		status = _phase;
+		refreshNodeColor();		
+		
+	}
+	
+	
 	public void setCATimeViewGraphs(){
 		catracker.setTrackPhase(trackPhase);
 		catracker.setTrackSigma(trackSigma);

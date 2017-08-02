@@ -1011,16 +1011,16 @@ public class SpaceView {
 
 	@FXML
 	protected void actionEnlarge(ActionEvent event) {
-		sceneWidth = sceneWidth * 1.2;
-		sceneHeight = sceneHeight * 1.2;
+		sceneWidth = sceneWidth * 1.3;
+		sceneHeight = sceneHeight * 1.3;
 		setGridSize();
 
 	}
 
 	@FXML
 	protected void actionReduce(ActionEvent event) {
-		sceneWidth = sceneWidth / 1.2;
-		sceneHeight = sceneHeight / 1.2;
+		sceneWidth = sceneWidth / 1.3;
+		sceneHeight = sceneHeight / 1.3;
 		setGridSize();
 
 	}

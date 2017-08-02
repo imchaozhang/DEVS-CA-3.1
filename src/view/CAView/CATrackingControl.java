@@ -11,6 +11,7 @@ import javax.swing.SwingUtilities;
 import controller.ControllerInterface;
 import facade.modeling.FAtomicModel;
 import facade.modeling.FModel;
+import facade.modeling.CAmodeling.FCACellModel;
 import facade.modeling.CAmodeling.FCASpaceModel;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
@@ -70,7 +71,10 @@ public class CATrackingControl {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
+
 						SpaceView.cellView[x][y].setCATracker(catrack);
+						FAtomicModel caCell = (FAtomicModel) catrack.getAttachedModel();
+						SpaceView.cellView[x][y].setInitialStatus(caCell.getPhase(), caCell.getSigma());
 					}
 				});
 			}
