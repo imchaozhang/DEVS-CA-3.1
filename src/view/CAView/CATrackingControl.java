@@ -1,11 +1,15 @@
 package view.CAView;
 
+import java.awt.Dialog;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.swing.ImageIcon;
 import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JRootPane;
 import javax.swing.SwingUtilities;
 
 import controller.ControllerInterface;
@@ -16,6 +20,7 @@ import facade.modeling.CAmodeling.FCASpaceModel;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import view.ExternalTimeView;
+import view.ViewUtils;
 import view.timeView.Event;
 import view.timeView.TimeView;
 
@@ -35,7 +40,7 @@ public class CATrackingControl {
 
 	protected static ArrayList<ExternalTimeView> windowHandles = new ArrayList<ExternalTimeView>(0);
 
-	private static JDialog dialog;
+	private static JFrame dialog;
 
 	private int XSize, YSize;
 
@@ -99,10 +104,12 @@ public class CATrackingControl {
 		} catch (Exception e) {
 
 		}
-		dialog = new JDialog();
+		dialog = new JFrame();
 		final JFXPanel contentPane = new JFXPanel();
 		dialog.setContentPane(contentPane);
-		dialog.setDefaultCloseOperation(JDialog.HIDE_ON_CLOSE);
+		dialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		dialog.setIconImage((new ImageIcon(ViewUtils.loadFullImage(ViewUtils.LOGO)).getImage()));
+		
 		dialog.setTitle("CA-DEVS Simulation");
 
 		dialog.addWindowListener(new java.awt.event.WindowAdapter() {

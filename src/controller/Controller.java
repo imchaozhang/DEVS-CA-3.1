@@ -128,26 +128,25 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 		// This prevent the slow of the simulation
 		if (View.isTracking) {
 			view.addTrackingColumn(simulator.getTimeOfNextEvent());
-			view.synchronizeView();
+
 			// System.out.println("Tracking@@@@@@@@@@@@@@@@@"
 			// +simulator.getTimeOfNextEvent());
 		} else if (View.isCATracking) {
 			view.addCATrackingColumn(simulator.getTimeOfNextEvent());
-			// view.synchronizeView();
+
 			view.synchronizeCAView();
 
 		}
+		view.synchronizeView();
 
 	}
 
 	public void simulatorStateChangeHook() {
 		// This prevent the slow of the simulation
-		if (View.isTracking) {
-			view.synchronizeView();
-		} else if (View.isCATracking) {
-			// view.synchronizeView();
+		if (View.isCATracking) {
 			view.synchronizeCAView();
 		}
+		view.synchronizeView();
 	}
 
 	// Params[0] = Model Package
@@ -160,10 +159,10 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 			// Swing
 			if (View.isCAModel != true) {
 				view.setSwingVisible(true);
-				
+
 			} else {
 				view.setSwingVisible(false);
-				//view.setSwingVisible(true);
+				// view.setSwingVisible(true);
 			}
 
 			Object instance;

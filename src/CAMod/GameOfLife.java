@@ -64,30 +64,21 @@ public class GameOfLife extends TwoDimCellSpace {
     public void layoutForSimView()
     {
         preferredSize = new Dimension(800, 700);
-        ((ViewableComponent)withName("Cell_key = 0 ,value = 2")).setPreferredLocation(new Point(6, 249));
-        ((ViewableComponent)withName("Cell_key = 2 ,value = 3")).setPreferredLocation(new Point(204, 285));
-        ((ViewableComponent)withName("Cell_key = 1 ,value = 0")).setPreferredLocation(new Point(381, 52));
-        ((ViewableComponent)withName("Cell_key = 2 ,value = 4")).setPreferredLocation(new Point(370, 214));
-        ((ViewableComponent)withName("Cell_key = 2 ,value = 1")).setPreferredLocation(new Point(-99, 148));
-        ((ViewableComponent)withName("Cell_key = 2 ,value = 2")).setPreferredLocation(new Point(302, -35));
-        ((ViewableComponent)withName("Cell_key = 4 ,value = 0")).setPreferredLocation(new Point(-62, -37));
-        ((ViewableComponent)withName("Cell_key = 1 ,value = 2")).setPreferredLocation(new Point(212, 145));
-        ((ViewableComponent)withName("Cell_key = 1 ,value = 4")).setPreferredLocation(new Point(101, -29));
-        ((ViewableComponent)withName("Cell_key = 3 ,value = 2")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 3 ,value = 3")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 4 ,value = 4")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 4 ,value = 2")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 0 ,value = 0")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 2 ,value = 0")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 0 ,value = 3")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 3 ,value = 0")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 4 ,value = 3")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 0 ,value = 1")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 1 ,value = 1")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 0 ,value = 4")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 1 ,value = 3")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 3 ,value = 1")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 4 ,value = 1")).setPreferredLocation(new Point(50, 50));
-        ((ViewableComponent)withName("Cell_key = 3 ,value = 4")).setPreferredLocation(new Point(50, 50));
+        ((ViewableComponent)withName("Cell_key = 2 ,value = 2")).setPreferredLocation(new Point(-7, -5));
+        ((ViewableComponent)withName("Cell_key = 3 ,value = 1")).setPreferredLocation(new Point(676, 493));
+        ((ViewableComponent)withName("Cell_key = 0 ,value = 0")).setPreferredLocation(new Point(-27, 486));
+        ((ViewableComponent)withName("Cell_key = 0 ,value = 2")).setPreferredLocation(new Point(389, 485));
+        ((ViewableComponent)withName("Cell_key = 0 ,value = 3")).setPreferredLocation(new Point(386, 123));
+        ((ViewableComponent)withName("Cell_key = 2 ,value = 0")).setPreferredLocation(new Point(685, -24));
+        ((ViewableComponent)withName("Cell_key = 1 ,value = 2")).setPreferredLocation(new Point(165, 486));
+        ((ViewableComponent)withName("Cell_key = 3 ,value = 2")).setPreferredLocation(new Point(-14, 282));
+        ((ViewableComponent)withName("Cell_key = 3 ,value = 0")).setPreferredLocation(new Point(194, 289));
+        ((ViewableComponent)withName("Cell_key = 0 ,value = 1")).setPreferredLocation(new Point(403, 293));
+        ((ViewableComponent)withName("Cell_key = 1 ,value = 0")).setPreferredLocation(new Point(196, 115));
+        ((ViewableComponent)withName("Cell_key = 1 ,value = 3")).setPreferredLocation(new Point(-12, 118));
+        ((ViewableComponent)withName("Cell_key = 2 ,value = 1")).setPreferredLocation(new Point(428, -18));
+        ((ViewableComponent)withName("Cell_key = 2 ,value = 3")).setPreferredLocation(new Point(208, -2));
+        ((ViewableComponent)withName("Cell_key = 1 ,value = 1")).setPreferredLocation(new Point(679, 117));
+        ((ViewableComponent)withName("Cell_key = 3 ,value = 3")).setPreferredLocation(new Point(677, 325));
     }
 }
