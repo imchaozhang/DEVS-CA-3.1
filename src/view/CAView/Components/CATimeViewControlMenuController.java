@@ -1,4 +1,4 @@
-package view.CAView.FXMLComponents;
+package view.CAView.Components;
 
 import java.util.List;
 
@@ -14,8 +14,8 @@ import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.stage.Stage;
 import javafx.util.converter.DefaultStringConverter;
 import view.CAView.CellView;
-import view.CAView.FXMLComponents.TrackingTableData;
-import view.CAView.FXMLComponents.EditCell;
+import view.CAView.Components.EditCell;
+import view.CAView.Components.TrackingTableData;
 
 public class CATimeViewControlMenuController {
 

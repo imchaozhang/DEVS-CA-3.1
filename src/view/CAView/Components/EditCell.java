@@ -1,4 +1,4 @@
-package view.CAView.FXMLComponents;
+package view.CAView.Components;
 
 import javafx.event.Event;
 import javafx.scene.control.ContentDisplay;

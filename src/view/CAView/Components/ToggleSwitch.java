@@ -1,4 +1,4 @@
-package view.CAView.FXMLComponents;
+package view.CAView.Components;
 
 //Create by Almas Baimagambetov. Get it from https://github.com/AlmasB/FXTutorials/blob/master/src/com/almasb/ios/IOSApp.java
 import javafx.animation.FillTransition;
