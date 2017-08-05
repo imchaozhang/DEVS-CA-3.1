@@ -10,4 +10,9 @@ public class GameOfLifeUI {
 		CAViewUI.addPhaseColor("die", Color.WHITE);
 	}
 	
+//TODO get color of phase	
+/*	public static void getPhaseColor(){
+		CAViewUI.getColor();
+	}*/
+	
 }
