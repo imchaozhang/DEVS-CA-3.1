@@ -65,7 +65,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import view.CAView.FXMLComponents.CATimeViewControlMenuController;
+import view.CAView.Components.CATimeViewControlMenuController;
 
 public class SpaceView {
 
@@ -123,7 +123,7 @@ public class SpaceView {
 
 	// for Area Selection
 	private int[] topleft = { 0, 0 };
-	private int[] bottomright = { cellView.length, cellView[0].length };
+	private int[] bottomright = { cellView.length - 1, cellView[0].length - 1 };
 	private static int xCellsNumber, yCellsNumber;
 	// private Group root2;
 
@@ -868,7 +868,7 @@ public class SpaceView {
 		// set Grid Size
 		// sceneWidth = groupP.getPrefWidth();
 		// sceneHeight = groupP.getPrefHeight();
-		
+
 		// System.out.println(sceneWidth+"; "+ sceneHeight);
 
 		// Create context menu for right click the node
@@ -956,7 +956,7 @@ public class SpaceView {
 	public boolean showCATimeViewControlDialog(CellView node) {
 		try {
 			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(getClass().getResource("./FXMLComponents/CATimeViewControlMenu.fxml"));
+			loader.setLocation(getClass().getResource("./Components/CATimeViewControlMenu.fxml"));
 			// initializing the controller
 			CATimeViewControlMenuController popupController = new CATimeViewControlMenuController(node);
 			loader.setController(popupController);
@@ -994,8 +994,8 @@ public class SpaceView {
 	public void resizeCA() {
 
 		groupP.widthProperty().addListener((observable, oldValue, newValue) -> {
-			sceneWidth = (double) newValue-25;
-			sceneWidth = sceneWidth*n/xCellsNumber;			
+			sceneWidth = (double) newValue - 25;
+			sceneWidth = sceneWidth * n / xCellsNumber;
 			setGridSize();
 		});
 
@@ -1003,8 +1003,8 @@ public class SpaceView {
 			if ((double) newValue < 1) {
 				ANSelect.setSelected(false);
 			}
-			sceneHeight = (double) newValue-25;
-			sceneHeight = sceneHeight*m/yCellsNumber;
+			sceneHeight = (double) newValue - 25;
+			sceneHeight = sceneHeight * m / yCellsNumber;
 			setGridSize();
 		});
 	}
@@ -1025,53 +1025,73 @@ public class SpaceView {
 
 	}
 
-
 	@FXML
 	protected void actionAreaSelect(ActionEvent event) {
-		topleft[0] = Integer.parseInt(tlX.getText());
-		topleft[1] = Integer.parseInt(tlY.getText());
+		Alert alert = new Alert(AlertType.ERROR);
+		try {
+			topleft[0] = Integer.parseInt(tlX.getText());
+			topleft[1] = Integer.parseInt(tlY.getText());
 
-		bottomright[0] = Integer.parseInt(brX.getText());
-		bottomright[1] = Integer.parseInt(brY.getText());
+			bottomright[0] = Integer.parseInt(brX.getText());
+			bottomright[1] = Integer.parseInt(brY.getText());
+		} catch (Exception e) {
+			alert.setTitle("Error");
+			alert.setHeaderText("Error: Input should be number.");
+			// alert.setContentText(".");
+			alert.showAndWait();
+		}
 
 		xCellsNumber = bottomright[0] - topleft[0] + 1;
 		yCellsNumber = bottomright[1] - topleft[1] + 1;
 
-		gridWidth = (groupP.getWidth() - 25) / xCellsNumber;
-		gridHeight = (groupP.getHeight() - 25) / yCellsNumber;
-		for (int i = 0; i < n; i++) {
-			for (int j = 0; j < m; j++) {
+		if (xCellsNumber < 1 || yCellsNumber < 1) {
+			alert.setTitle("Error");
+			alert.setHeaderText("Error: Area selection BottomRight coordinates should be larger than TopLeft.");
+			alert.showAndWait();
+		} else if (topleft[0] < 0 || topleft[1] < 0) {
+			alert.setTitle("Error");
+			alert.setHeaderText("Error: Area selection TopLeft coordinates should be larger than 0.");
+			alert.showAndWait();
+			
+		} else if (bottomright[0] > cellView.length-1 || bottomright[1] > cellView[0].length-1) {
+			alert.setTitle("Error");
+			alert.setHeaderText("Error: Area selection BottomRight coordinates should be smaller than CA model size.");
+			alert.showAndWait();
+		} else {
 
-				if (i >= topleft[0] && i <= bottomright[0] && j >= topleft[1] && j <= bottomright[1]) {
-					cellView[i][j].setDisable(false);
-					cellView[i][j].setVisible(true);
+			gridWidth = (groupP.getWidth() - 25) / xCellsNumber;
+			gridHeight = (groupP.getHeight() - 25) / yCellsNumber;
+			for (int i = 0; i < n; i++) {
+				for (int j = 0; j < m; j++) {
+
+					if (i >= topleft[0] && i <= bottomright[0] && j >= topleft[1] && j <= bottomright[1]) {
+						cellView[i][j].setDisable(false);
+						cellView[i][j].setVisible(true);
+					}
+
+					else {
+						cellView[i][j].setDisable(true);
+						cellView[i][j].setVisible(false);
+					}
+
 				}
-
-				else {
-					cellView[i][j].setDisable(true);
-					cellView[i][j].setVisible(false);
-				}
-
 			}
+
+			sceneWidth = gridWidth * n;
+			sceneHeight = gridHeight * m;
+			setGridSize();
+
+			double scrollX = topleftNodeInScrollPaneX(groupScrollView, cellView[topleft[0]][topleft[1]]);
+			double scrollY = topleftNodeInScrollPaneY(groupScrollView, cellView[topleft[0]][topleft[1]]);
+
+			final Timeline timeline = new Timeline();
+			final KeyValue kvalueX = new KeyValue(groupScrollView.hvalueProperty(), scrollX);
+			final KeyValue kvalueY = new KeyValue(groupScrollView.vvalueProperty(), scrollY);
+
+			final KeyFrame kf = new KeyFrame(Duration.millis(500), kvalueX, kvalueY);
+			timeline.getKeyFrames().add(kf);
+			timeline.play();
 		}
-
-		sceneWidth = gridWidth * n;
-		sceneHeight = gridHeight * m;
-		setGridSize();
-
-		double scrollX = topleftNodeInScrollPaneX(groupScrollView, cellView[topleft[0]][topleft[1]]);
-		double scrollY = topleftNodeInScrollPaneY(groupScrollView, cellView[topleft[0]][topleft[1]]);
-
-		final Timeline timeline = new Timeline();
-		final KeyValue kvalueX = new KeyValue(groupScrollView.hvalueProperty(), scrollX);
-		final KeyValue kvalueY = new KeyValue(groupScrollView.vvalueProperty(), scrollY);
-
-		final KeyFrame kf = new KeyFrame(Duration.millis(500), kvalueX, kvalueY);
-		timeline.getKeyFrames().add(kf);
-		timeline.play();
-
-		System.out.println(
-				"v: " + groupScrollView.vvalueProperty().get() + ";h: " + groupScrollView.hvalueProperty().get());
 
 	}
 
