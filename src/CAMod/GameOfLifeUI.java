@@ -12,7 +12,7 @@ public class GameOfLifeUI {
 	
 //TODO get color of phase	
 /*	public static void getPhaseColor(){
-		...;
+		...; 
 	}*/
 	
 }
