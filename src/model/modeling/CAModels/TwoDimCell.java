@@ -44,7 +44,7 @@ public abstract class TwoDimCell extends ViewableAtomic implements Cell {
 	 * Default constructor
 	 */
 	public TwoDimCell(Pair cellId) {
-		super("Cell_" + cellId.toString());
+		super("Cell: " + cellId.getKey() + ", " + cellId.getValue());
 		id = cellId;
 		Integer x = (Integer) cellId.getKey();
 		Integer y = (Integer) cellId.getValue();

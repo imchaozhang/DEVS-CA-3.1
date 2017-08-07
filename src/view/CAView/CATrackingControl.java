@@ -72,7 +72,6 @@ public class CATrackingControl {
 
 			// System.out.println("x=" + x + ";y=" + y);
 			// System.out.println(CAmodelColumn.length);
-			// displaying initial state of cells
 			if (x != -1 && y != -1) {
 				Platform.runLater(new Runnable() {
 					@Override

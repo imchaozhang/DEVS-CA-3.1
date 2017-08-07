@@ -65,7 +65,8 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import view.CAView.Components.CATimeViewControlMenuController;
+import javafx.util.converter.NumberStringConverter;
+import view.CAView.Components.*;
 
 public class SpaceView {
 
@@ -93,6 +94,7 @@ public class SpaceView {
 	private static boolean playbacked = false;
 	private static boolean sizechanged = false;
 	private static boolean animationPaused = false;
+	private static boolean toolTipSelected = true;
 	// atStartPoint is used to check if the simulation just start.
 	public static boolean atStartPoint = true;
 
@@ -125,12 +127,14 @@ public class SpaceView {
 	private int[] topleft = { 0, 0 };
 	private int[] bottomright = { cellView.length - 1, cellView[0].length - 1 };
 	private static int xCellsNumber, yCellsNumber;
+	private static boolean rubberbandSelected = false;
+	private static RubberBandSelection rbs;
 	// private Group root2;
 
 	// For FXML
 
 	@FXML
-	private CheckBox ANSelect, PSelect, cb_Phase, cb_Sigma, cb_StateChanged;
+	private CheckBox ANSelect, PSelect, cb_Phase, cb_Sigma, cb_StateChanged, DragSelect;
 	@FXML
 	private Button PBMaxLengthButton, ANSpeedButton, HideAndShowControlButton, AreaSelectFunctionButton;
 
@@ -187,6 +191,7 @@ public class SpaceView {
 				cellView[i][j].setTranslateY(j * gridHeight);
 			}
 		}
+		rbs.clearRubberBand();
 
 	}
 
@@ -555,17 +560,6 @@ public class SpaceView {
 			executor.execute(r2);
 		}
 
-		// playbackTransition.play();
-		//
-		// playbackTransition.setOnFinished(new EventHandler<ActionEvent>() {
-		// @Override
-		// public void handle(ActionEvent event) {
-		// // animate();
-		//
-		// }
-		//
-		// });
-
 		count++;
 
 		// synchronizeView();
@@ -801,11 +795,18 @@ public class SpaceView {
 		if (_animationSpeed >= 1 && _animationSpeed <= 100) {
 			ANSpeedSlider.setValue(_animationSpeed);
 
-		} else {
+		} 
+		else if(_animationSpeed > 100){
+			ANSpeedSlider.setMax(_animationSpeed);
+			ANSpeedSlider.setValue(_animationSpeed);
+			
+		}
+			else {
+		
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText("Error: Animation Speed Setting is not accepted");
-			alert.setContentText("The number must be between 1 and 100.");
+			//alert.setContentText("The number must be between 1 and 100.");
 			alert.showAndWait();
 			ANSpeed.setText(Integer.toString(stepSpeed));
 
@@ -823,12 +824,12 @@ public class SpaceView {
 			_interval = -1.0;
 		}
 
-		if (_maxLength < playbackSize) {
+		if (_maxLength < playback.size()) {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
-			alert.setHeaderText("Playback Max Length must not be smaller then previsou setting.");
+			alert.setHeaderText("Playback Max Length must not be smaller then Current Size");
 			alert.showAndWait();
-		} else if (_maxLength >= 1 && _maxLength <= 1000 && _interval >= 1 && _interval <= 100) {
+		} else if (_maxLength >= 1 && _interval >= 1) {
 			Alert alert = new Alert(AlertType.CONFIRMATION);
 			alert.setTitle("Successful!");
 			alert.setHeaderText("Playback Setting Successful");
@@ -844,10 +845,9 @@ public class SpaceView {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText("Error: Playback Setting is not accepted");
-			alert.setContentText("Max Length must be between 1 and 1000.\nInterval should be between 1 and 100");
+			//alert.setContentText("Max Length must be between 1 and 1000.\nInterval should be between 1 and 100");
 			alert.showAndWait();
 		}
-
 		PBMaxLength.setText(Integer.toString(playbackSize));
 		PBInterval.setText(Integer.toString(trackingInterval));
 
@@ -864,12 +864,6 @@ public class SpaceView {
 
 		bottomright[0] = Integer.parseInt(brX.getText());
 		bottomright[1] = Integer.parseInt(brY.getText());
-
-		// set Grid Size
-		// sceneWidth = groupP.getPrefWidth();
-		// sceneHeight = groupP.getPrefHeight();
-
-		// System.out.println(sceneWidth+"; "+ sceneHeight);
 
 		// Create context menu for right click the node
 		ContextMenu contextMenu = new ContextMenu();
@@ -934,10 +928,11 @@ public class SpaceView {
 							});
 
 						} else {
-							// node.tp.setText(""+node.getWidth());
-							node.setTPText(isPhase, isSigma, isStateChanged);
-							node.tp.show(mynode, mynode.getScene().getWindow().getX() + t.getSceneX(),
-									mynode.getScene().getWindow().getY() + t.getSceneY());
+							if (toolTipSelected) {
+								node.setTPText(isPhase, isSigma, isStateChanged);
+								node.tp.show(mynode, mynode.getScene().getWindow().getX() + t.getSceneX(),
+										mynode.getScene().getWindow().getY() + t.getSceneY());
+							}
 						}
 					}
 				});
@@ -997,6 +992,7 @@ public class SpaceView {
 			sceneWidth = (double) newValue - 25;
 			sceneWidth = sceneWidth * n / xCellsNumber;
 			setGridSize();
+
 		});
 
 		groupP.heightProperty().addListener((observable, oldValue, newValue) -> {
@@ -1052,8 +1048,8 @@ public class SpaceView {
 			alert.setTitle("Error");
 			alert.setHeaderText("Error: Area selection TopLeft coordinates should be larger than 0.");
 			alert.showAndWait();
-			
-		} else if (bottomright[0] > cellView.length-1 || bottomright[1] > cellView[0].length-1) {
+
+		} else if (bottomright[0] > cellView.length - 1 || bottomright[1] > cellView[0].length - 1) {
 			alert.setTitle("Error");
 			alert.setHeaderText("Error: Area selection BottomRight coordinates should be smaller than CA model size.");
 			alert.showAndWait();
@@ -1081,17 +1077,34 @@ public class SpaceView {
 			sceneHeight = gridHeight * m;
 			setGridSize();
 
-			double scrollX = topleftNodeInScrollPaneX(groupScrollView, cellView[topleft[0]][topleft[1]]);
-			double scrollY = topleftNodeInScrollPaneY(groupScrollView, cellView[topleft[0]][topleft[1]]);
-
-			final Timeline timeline = new Timeline();
-			final KeyValue kvalueX = new KeyValue(groupScrollView.hvalueProperty(), scrollX);
-			final KeyValue kvalueY = new KeyValue(groupScrollView.vvalueProperty(), scrollY);
-
-			final KeyFrame kf = new KeyFrame(Duration.millis(500), kvalueX, kvalueY);
-			timeline.getKeyFrames().add(kf);
-			timeline.play();
+			// double scrollX = topleftNodeInScrollPaneX(groupScrollView,
+			// cellView[topleft[0]][topleft[1]]);
+			// double scrollY = topleftNodeInScrollPaneY(groupScrollView,
+			// cellView[topleft[0]][topleft[1]]);
+			//
+			// final Timeline timeline = new Timeline();
+			// final KeyValue kvalueX = new
+			// KeyValue(groupScrollView.hvalueProperty(), scrollX);
+			// final KeyValue kvalueY = new
+			// KeyValue(groupScrollView.vvalueProperty(), scrollY);
+			//
+			// final KeyFrame kf = new KeyFrame(Duration.millis(500), kvalueX,
+			// kvalueY);
+			// timeline.getKeyFrames().add(kf);
+			// timeline.play();
 		}
+
+	}
+
+	@FXML
+	protected void actionAreaReset(ActionEvent event) {
+		tlX.setText("" + 0);
+		tlY.setText("" + 0);
+		brX.setText("" + (n - 1));
+		brY.setText("" + (m - 1));
+		rbs.clearRubberBand();
+		actionAreaSelect(event);
+		DragSelect.setSelected(false);
 
 	}
 
@@ -1126,6 +1139,17 @@ public class SpaceView {
 
 		// addHBox();
 
+		// setup the FX console pane
+		addFXConsole();
+
+		// Area Space Selection by Mouse Drag
+		rbs = new RubberBandSelection(root);
+		rbs.disable(!rubberbandSelected);
+		tlX.textProperty().bindBidirectional(rbs.getTopleft()[0], new NumberStringConverter());
+		tlY.textProperty().bindBidirectional(rbs.getTopleft()[1], new NumberStringConverter());
+		brX.textProperty().bindBidirectional(rbs.getBottomright()[0], new NumberStringConverter());
+		brY.textProperty().bindBidirectional(rbs.getBottomright()[1], new NumberStringConverter());
+
 		// setup the area selection index as initial, before call the addGroup
 		// function.
 		tlX.setText("" + 0);
@@ -1135,9 +1159,6 @@ public class SpaceView {
 
 		// setup the root of nodes
 		addGroup();
-
-		// setup the FX console pane
-		addFXConsole();
 
 		// resize the cell node
 		resizeCA();
@@ -1192,6 +1213,15 @@ public class SpaceView {
 				ANSpeedButton.setDisable(!new_val);
 				ANSpeedSlider.setDisable(!new_val);
 				root.setVisible(new_val);
+				DragSelect.setSelected(false);
+			}
+		});
+
+		DragSelect.selectedProperty().addListener(new ChangeListener<Boolean>() {
+			public void changed(ObservableValue<? extends Boolean> ov, Boolean old_val, Boolean new_val) {
+				rubberbandSelected = new_val;
+				toolTipSelected = !new_val;
+				rbs.disable(!new_val);
 			}
 		});
 

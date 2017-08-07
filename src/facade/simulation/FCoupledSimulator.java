@@ -158,6 +158,7 @@ public class FCoupledSimulator implements FSimulator
             {
                 simulators.tellAll("initialize");
                 tL = 0;
+                tN = 0;
                 stopRequested    = false;
                 suspendRequested = false;
                 setCurrentState(STATE_INITIAL);
