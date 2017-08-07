@@ -1,4 +1,4 @@
-package view.CAView.FXMLComponents;
+package view.CAView.Components;
 
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
