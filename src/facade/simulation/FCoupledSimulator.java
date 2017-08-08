@@ -264,6 +264,7 @@ public class FCoupledSimulator implements FSimulator
                      * cause the slowness of simulation engine
                      * so disable when we select only the simview.
                      */
+                    //Time View Tracking get the data before simulation step
                     if (Flistener != null)
                 	   Flistener.postComputeInputOutputHook();
                                         
@@ -273,6 +274,12 @@ public class FCoupledSimulator implements FSimulator
                     i++; 
                     
                     System.out.println("done computeIO");
+                    
+                    // CATracking get the data after simulation step
+                    if (Flistener != null)
+                	   Flistener.CAPostComputeInputOutputHook();
+                    
+                    
                 }
 
                

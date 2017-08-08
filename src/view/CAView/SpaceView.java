@@ -282,7 +282,10 @@ public class SpaceView {
 				//
 				// ((AnchorPane) nodeInGroup).getChildren().add(pane);
 
-				Node nodeIn3 = ((AnchorPane) nodeIn2).getChildren().get(0);
+				Node nodeIn3_1 = ((AnchorPane) nodeIn2).getChildren().get(0);
+				Node nodeIn3_2 = ((ScrollPane) nodeIn3_1).getContent();
+				Node nodeIn3 = ((AnchorPane) nodeIn3_2).getChildren().get(0);
+
 				Node nodeIn4 = ((VBox) nodeIn3).getChildren().get(2);
 				Node nodeIn5 = ((TitledPane) nodeIn4).getContent();
 				Node nodeIn6 = ((AnchorPane) nodeIn5).getChildren().get(0);
@@ -360,10 +363,6 @@ public class SpaceView {
 
 		playbackValue.textProperty().bind(playbackValueString);
 
-		// final Label playbackValue = new Label(
-		// "Current Step: " + Long.toString(count - (long)
-		// playbackControl.getValue()));
-
 		playbackControl.valueProperty().addListener(new ChangeListener<Number>() {
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
 				if (playbackControl.getMax() > 0 && !sizechanged) {
@@ -374,12 +373,7 @@ public class SpaceView {
 					playback.get(playI).play();
 					playbacked = true;
 					playbackValueString.set(PBStatusIndex.get(playI).toString());
-					if (playbackControl.getMax() < 50) {
-						// playbackControl.setMax(playback.size());
-						// playbackControl.autosize();
-					}
 
-					// }
 				}
 			}
 		});
@@ -400,7 +394,7 @@ public class SpaceView {
 		Double currentValue = _realTimeControl.getValue();
 		RealTimeFactor = new Label("Real Time Factor: " + REAL_TIME_FACTORS[currentValue.intValue()]);
 
-		// set the inital real time factor based on the slider inu=itial value
+		// set the initial real time factor based on the slider initial value
 		controller.userGesture(controller.SIM_SET_RT_GESTURE, REAL_TIME_FACTORS[currentValue.intValue()]);
 
 		_realTimeControl.valueProperty().addListener(new ChangeListener<Number>() {
@@ -440,8 +434,6 @@ public class SpaceView {
 		// period
 		numberOfCellChanged = 0;
 
-		// ExecutorService executor = Executors.newSingleThreadExecutor();
-
 		// only transition for playback
 		ParallelTransition playbackTransition = new ParallelTransition();
 		LinkedList<FillTransition> ftList = new LinkedList<FillTransition>();
@@ -449,8 +441,6 @@ public class SpaceView {
 		for (int ai = 0; ai < n; ai++) {
 			for (int aj = 0; aj < m; aj++) {
 				CellView currentnode = cellView[ai][aj];
-				// currentnode.setCache(true);
-				// currentnode.setCacheHint(CacheHint.SPEED);
 				Color previouscolor = currentnode.previouscolor;
 				if (!currentnode.isDatalistEmp()) {
 					CellView nextnode = currentnode.step();
@@ -473,7 +463,6 @@ public class SpaceView {
 						numberOfCellChanged++;
 
 					}
-					// if (!animationPaused && animationOn.get()) {
 					/*
 					 * Since Group root will be invisible when animation switch
 					 * is off, these two conditions will do the same.
@@ -496,7 +485,6 @@ public class SpaceView {
 								FillTransition ftA = new FillTransition(Duration.millis(40), currentnode.rectangle,
 										previouscolor, nextcolor);
 								ftA.setAutoReverse(false);
-								// ftA.setCycleCount(2);
 								ftList.add(ftA);
 							}
 						};
@@ -515,7 +503,6 @@ public class SpaceView {
 			public void run() {
 				if (!ftList.isEmpty())
 					playbackTransition.getChildren().addAll(ftList);
-				// System.out.println(ftList.toString());
 
 			}
 
@@ -537,9 +524,6 @@ public class SpaceView {
 						playbackControl.setMin(1);
 						playbackControl.setMax(playback.size());
 						playbackControl.setValue(playback.size());
-						// playbackControl.valueProperty().set(playback.size() -
-						// 1);
-						// playbackValue.setText(Double.toString(CAcurrentTime));
 
 					} else {
 						playback.poll();
@@ -547,7 +531,6 @@ public class SpaceView {
 						PBStatusIndex.poll();
 						PBStatusIndex.add(CAcurrentTime);
 						playbackControl.setValue(playback.size());
-						// playbackValue.setText(Double.toString(CAcurrentTime));
 
 					}
 				}
@@ -624,7 +607,6 @@ public class SpaceView {
 					try {
 						Integer i = new Integer(s.get());
 						controller.userGesture(controller.SIM_STEPN_GESTURE, i);
-						// btn_run.setDisable(true);
 					} catch (Exception exp) {
 						System.err.println(exp);
 					}
@@ -795,18 +777,16 @@ public class SpaceView {
 		if (_animationSpeed >= 1 && _animationSpeed <= 100) {
 			ANSpeedSlider.setValue(_animationSpeed);
 
-		} 
-		else if(_animationSpeed > 100){
+		} else if (_animationSpeed > 100) {
 			ANSpeedSlider.setMax(_animationSpeed);
 			ANSpeedSlider.setValue(_animationSpeed);
-			
-		}
-			else {
-		
+
+		} else {
+
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText("Error: Animation Speed Setting is not accepted");
-			//alert.setContentText("The number must be between 1 and 100.");
+			// alert.setContentText("The number must be between 1 and 100.");
 			alert.showAndWait();
 			ANSpeed.setText(Integer.toString(stepSpeed));
 
@@ -845,7 +825,8 @@ public class SpaceView {
 			Alert alert = new Alert(AlertType.ERROR);
 			alert.setTitle("Error");
 			alert.setHeaderText("Error: Playback Setting is not accepted");
-			//alert.setContentText("Max Length must be between 1 and 1000.\nInterval should be between 1 and 100");
+			// alert.setContentText("Max Length must be between 1 and
+			// 1000.\nInterval should be between 1 and 100");
 			alert.showAndWait();
 		}
 		PBMaxLength.setText(Integer.toString(playbackSize));
@@ -1229,15 +1210,10 @@ public class SpaceView {
 
 	@FXML
 	protected void hideAndShowControl(ActionEvent event) {
-		// Double propValue =
-		// ca_split.getDividers().get(0).positionProperty().doubleValue();
+
 		Ellipse ellipse = new Ellipse();
 		ca_split.getDividers().get(0).positionProperty().bindBidirectional(ellipse.opacityProperty());
-		// leftP.minWidthProperty().bindBidirectional(new
-		// SimpleDoubleProperty((ellipse.opacityProperty().multiply(ca_split.getWidth()).doubleValue())));
 
-		// leftP.minWidthProperty().bindBidirectional(new
-		// SimpleDoubleProperty((ellipse.opacityProperty().multiply(height)).doubleValue()));
 		if (HideAndShowControlButton.getText().equalsIgnoreCase("Hide Control")) {
 			leftP.setMinWidth(0);
 			FadeTransition dt = new FadeTransition(Duration.millis(100), ellipse);
@@ -1247,7 +1223,7 @@ public class SpaceView {
 			HideAndShowControlButton.setText("Show Control");
 
 		} else {
-			leftP.setMinWidth(300);
+			leftP.setMinWidth(320);
 			FadeTransition dt = new FadeTransition(Duration.millis(500), ellipse);
 			dt.setFromValue(0);
 			dt.setToValue(0.425);

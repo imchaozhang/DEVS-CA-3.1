@@ -82,19 +82,26 @@ public class CATracker extends Tracker {
 		time = currentTime;
 		if (isCACell) {
 			FCACellModel CACell = (FCACellModel) CAModel;
-			e = new Event("Phase", "STATE", time, CACell.getPhase());
+//			e = new Event("Phase", "STATE", time, CACell.getPhase());
+//			CAViewData.add(e);
+//			e = new Event("Sigma", "SIGMA", time, String.valueOf(CACell.getSigma()));
+//			CAViewData.add(e);
+//			e = new Event("tL", "STATEVARIABLE", time, String.valueOf(CACell.getTimeOfLastEvent()));
+//			CAViewData.add(e);
+//			e = new Event("tN", "STATEVARIABLE", time, String.valueOf(CACell.getTimeOfNextEvent()));
+//			CAViewData.add(e);
+			e = new Event("Phase", "STATE", time, CACell.getModel().getFormattedPhase());
 			CAViewData.add(e);
-			e = new Event("Sigma", "SIGMA", time, String.valueOf(CACell.getSigma()));
+			e = new Event("Sigma", "SIGMA", time, CACell.getModel().getFormattedSigma());
 			CAViewData.add(e);
 			e = new Event("tL", "STATEVARIABLE", time, String.valueOf(CACell.getTimeOfLastEvent()));
 			CAViewData.add(e);
 			e = new Event("tN", "STATEVARIABLE", time, String.valueOf(CACell.getTimeOfNextEvent()));
 			CAViewData.add(e);
+			
+			
+			
 
-			// e = new Event("X","COORD",time, CACell.getXcoord());
-			// CAViewData.add(e);
-			// e = new Event("Y","COORD",time, CACell.getYcoord());
-			// CAViewData.add(e);
 		}
 
 		return CAViewData;

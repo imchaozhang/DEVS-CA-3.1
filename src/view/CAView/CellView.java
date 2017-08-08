@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import facade.modeling.CAmodeling.FCACellModel;
 import javafx.beans.property.StringProperty;
 import javafx.event.EventHandler;
 import javafx.scene.Node;
@@ -25,44 +26,42 @@ public class CellView extends StackPane {
 	public String status = "passive";
 	public StringProperty sstatus;
 	public Text text;
-	public Color previouscolor,currentcolor;
+	public Color previouscolor, currentcolor;
 	public LinkedList<Event> datalistCAView = new LinkedList<Event>();
 	public Tooltip tp = new Tooltip();
 	public boolean statusChanged = false;
 	public double currentTime = 0;
 	public CATracker catracker;
-	
-	//parameters for TimeView
+
+	// parameters for TimeView
 	public boolean isTimeViewWindowOpen;
 	public boolean trackPhase;
 	public boolean trackSigma;
 	public boolean trackTL;
 	public boolean trackTN;
-    
+
 	public boolean isCATimeViewSelected;
-	public boolean istrackinglogselected;   //to make one tracking log panel
-    
+	public boolean istrackinglogselected; // to make one tracking log panel
+
 	public boolean isZeroTimeSelected;
-	
+
 	public boolean[] isInputPortSelected;
 	public boolean[] isOutputPortSelected;
-	
-   
-    //private boolean isBreakout = false;
-    public String xUnit = "sec";
-    public String timeIncr = "10";
-    public String tlUnit = "";
-    public String tnUnit = "";
-    public String phaseUnit = "";
-    public String sigmaUnit = "";
-    
-    public List InputPortNames;
-    public List OutputPortNames;
-    public String[] InputPortUnits;
-    public String[] OutputPortUnits;
-    
-	
-	private String tp_Sigma="", tp_Phase="", tp_StatusChanged="";
+
+	// private boolean isBreakout = false;
+	public String xUnit = "sec";
+	public String timeIncr = "10";
+	public String tlUnit = "";
+	public String tnUnit = "";
+	public String phaseUnit = "";
+	public String sigmaUnit = "";
+
+	public List InputPortNames;
+	public List OutputPortNames;
+	public String[] InputPortUnits;
+	public String[] OutputPortUnits;
+
+	private String tp_Sigma = "", tp_Phase = "", tp_StatusChanged = "";
 
 	private int i, j;
 
@@ -71,7 +70,6 @@ public class CellView extends StackPane {
 		// initialize rectangle
 		rectangle = new Rectangle(width, height);
 		rectangle.setStroke(Color.LIGHTGREY);
-		// rectangle.setFill(Color.ANTIQUEWHITE);
 		currentcolor = previouscolor = Color.WHITE;
 
 		rectangle.setFill(currentcolor);
@@ -85,25 +83,23 @@ public class CellView extends StackPane {
 		setTranslateY(y * height);
 
 		getChildren().add(rectangle);
-		// getChildren().add(text);
 
 		tp.setText(text.getText());
 		tp.setAutoHide(true);
-		
-		//setting for CA TimeView
-        trackPhase = false;
-        trackSigma = false;
-        trackTL    = false;
-        trackTN    = false;
-        isCATimeViewSelected = false;
-        istrackinglogselected = false;
-        isZeroTimeSelected = false;
+
+		// setting for CA TimeView
+		trackPhase = false;
+		trackSigma = false;
+		trackTL = false;
+		trackTN = false;
+		isCATimeViewSelected = false;
+		istrackinglogselected = false;
+		isZeroTimeSelected = false;
 
 	}
 
 	public void addEvent(Event e) {
 		if (e.getName() == "Phase") {
-			// System.out.println(e);
 			try {
 				datalistCAView.add(e);
 
@@ -113,7 +109,7 @@ public class CellView extends StackPane {
 		}
 
 		else if (e.getName() == "Sigma") {
-			// System.out.println(e);
+
 			try {
 				datalistCAView.add(e);
 
@@ -126,26 +122,26 @@ public class CellView extends StackPane {
 	public CellView step() {
 		statusChanged = false;
 		try {
-			Event current = datalistCAView.poll();
-			if (current.getName() == "Phase") {
-				if (status != current.getData()) {
-					statusChanged = true;
-				}
+			while (!datalistCAView.isEmpty()) {
+				Event current = datalistCAView.poll();
+				if (current.getName() == "Phase") {
+					if (status != current.getData()) {
+						statusChanged = true;
+					}
 					status = (String) current.getData();
-					currentcolor = CAViewUI.getColor(current.getData().toString());
-				
+					currentcolor = CAViewUI.getColor(status);
+					tp_Phase = "\nphase: " + status;
 
+				} else if (current.getName() == "Sigma") {
+					tp_Sigma = "\nsigma: " + current.getData();
+
+				}
+
+				tp_StatusChanged = "\nStatus Changed: " + statusChanged;
+
+				currentTime = current.getTime();
 			}
 
-			Event currentSigma = datalistCAView.poll();
-
-			tp_Phase = "\nphase: " + current.getData();
-			
-			tp_Sigma = "\nsigma: " + currentSigma.getData();
-			
-			tp_StatusChanged = "\nStatus Changed: " + statusChanged;
-			
-			currentTime = current.getTime();
 		} catch (Exception e) {
 			System.out.println("No data in list!");
 
@@ -153,10 +149,10 @@ public class CellView extends StackPane {
 		return this;
 
 	}
-	
-	public void refreshNodeColor(){
+
+	public void refreshNodeColor() {
 		currentcolor = CAViewUI.getColor(status);
-		rectangle.setFill(currentcolor);	
+		rectangle.setFill(currentcolor);
 	}
 
 	public boolean isDatalistEmp() {
@@ -166,40 +162,40 @@ public class CellView extends StackPane {
 			return false;
 
 	}
-	public void setTPText(boolean _isPhase, boolean _isSigma, boolean _isStateChanged){
-		
-		text.setText("i: " + this.i + ", j: " + this.j + ((_isPhase)?tp_Phase:"" ) + ((_isSigma)?tp_Sigma:"") + ((_isStateChanged)?tp_StatusChanged:""));
-		tp.setText(text.getText());		
-		
+
+	public void setTPText(boolean _isPhase, boolean _isSigma, boolean _isStateChanged) {
+
+		text.setText("i: " + this.i + ", j: " + this.j + ((_isPhase) ? tp_Phase : "") + ((_isSigma) ? tp_Sigma : "")
+				+ ((_isStateChanged) ? tp_StatusChanged : ""));
+		tp.setText(text.getText());
+
 	}
-	
-	
-	public void changeWidth(double new_width){
-		
+
+	public void changeWidth(double new_width) {
+
 		rectangle.setWidth(new_width);
-		
+
 	}
-	
-	public void changeHeight(double new_height){
-		
+
+	public void changeHeight(double new_height) {
+
 		rectangle.setHeight(new_height);
-		
+
 	}
-	
-	public void setCATracker(CATracker _CAtracker){
-		catracker = _CAtracker;		
+
+	public void setCATracker(CATracker _CAtracker) {
+		catracker = _CAtracker;
 	}
-	
-	public void setInitialStatus(String _phase, double _sigma){
+
+	public void setInitialStatus(String _phase, String _sigma) {
 		tp_Phase = "\nphase: " + _phase;
-		tp_Sigma = "\nsigma: "+_sigma;
+		tp_Sigma = "\nsigma: " + _sigma;
 		status = _phase;
-		refreshNodeColor();		
-		
+		refreshNodeColor();
+
 	}
-	
-	
-	public void setCATimeViewGraphs(){
+
+	public void setCATimeViewGraphs() {
 		catracker.setTrackPhase(trackPhase);
 		catracker.setTrackSigma(trackSigma);
 		catracker.setTrackTL(trackTL);
@@ -207,11 +203,9 @@ public class CellView extends StackPane {
 		catracker.settimeIncrement(timeIncr);
 		catracker.setxUnit(xUnit);
 		catracker.setisBreakout(true);
-		
-		catracker.setInputPortUnits(InputPortUnits);
-		
 
-		
+		catracker.setInputPortUnits(InputPortUnits);
+
 		ArrayList<Graph> graphs = new ArrayList<Graph>();
 		GraphFactory graphFactory = new GraphFactory();
 		if (trackTL) {
@@ -247,7 +241,7 @@ public class CellView extends StackPane {
 			sigma.setZeroTimeAdvance(isZeroTimeSelected);
 			graphs.add(sigma);
 		}
-		
+
 		catracker.setatLeastOneInputTracked(false);
 		for (int i = 0; i < isInputPortSelected.length; i++) {
 			if (isInputPortSelected[i]) {
@@ -264,7 +258,7 @@ public class CellView extends StackPane {
 			}
 		}
 		catracker.settrackInputPorts(isInputPortSelected);
-		
+
 		catracker.setatLeastOneOutputTracked(false);
 		for (int i = 0; i < isOutputPortSelected.length; i++) {
 			if (isOutputPortSelected[i]) {
@@ -281,25 +275,22 @@ public class CellView extends StackPane {
 			}
 		}
 		catracker.settrackOutputPorts(isOutputPortSelected);
-		
-		
-		this.catracker.setGraphs(graphs);	
-		
-		
-		catracker.getCATrackingControl().registerCATimeView(catracker.getGraphs(),
-				catracker.getModelNum(), catracker.getxUnit(), catracker.gettimeIncrement(), isTimeViewWindowOpen);
-		
+
+		this.catracker.setGraphs(graphs);
+
+		catracker.getCATrackingControl().registerCATimeView(catracker.getGraphs(), catracker.getModelNum(),
+				catracker.getxUnit(), catracker.gettimeIncrement(), isTimeViewWindowOpen);
+
 	}
-	
-	public int getI(){
+
+	public int getI() {
 		return i;
-		
+
 	}
-	
-	public int getJ(){
+
+	public int getJ() {
 		return j;
-		
+
 	}
-	
 
 }

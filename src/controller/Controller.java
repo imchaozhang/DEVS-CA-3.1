@@ -128,16 +128,23 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 		// This prevent the slow of the simulation
 		if (View.isTracking) {
 			view.addTrackingColumn(simulator.getTimeOfNextEvent());
-
 			// System.out.println("Tracking@@@@@@@@@@@@@@@@@"
 			// +simulator.getTimeOfNextEvent());
-		} else if (View.isCATracking) {
-			view.addCATrackingColumn(simulator.getTimeOfNextEvent());
-
-			view.synchronizeCAView();
-
+		}
+		else if(View.isCATracking){
+			view.addCATimeViewTrackingColumn(simulator.getTimeOfNextEvent());
 		}
 		view.synchronizeView();
+
+	}
+
+	//this is run after simulation step, so it will be getTimeOfLastEvent
+	public void CAPostComputeInputOutputHook() {
+		// else if (View.isCATracking) {
+		view.addCATrackingColumn(simulator.getTimeOfLastEvent());
+		view.synchronizeCAView();
+
+		// }
 
 	}
 

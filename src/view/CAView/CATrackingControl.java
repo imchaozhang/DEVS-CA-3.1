@@ -70,16 +70,16 @@ public class CATrackingControl {
 			int y = CAmodelColumn[i].getY();
 			CATracker catrack = CAmodelColumn[i];
 
-			// System.out.println("x=" + x + ";y=" + y);
-			// System.out.println(CAmodelColumn.length);
 			if (x != -1 && y != -1) {
 				Platform.runLater(new Runnable() {
 					@Override
 					public void run() {
 
 						SpaceView.cellView[x][y].setCATracker(catrack);
-						FAtomicModel caCell = (FAtomicModel) catrack.getAttachedModel();
-						SpaceView.cellView[x][y].setInitialStatus(caCell.getPhase(), caCell.getSigma());
+						//set the initial phase, sigma, and color before animation. Data is from Facade directly.
+						FCACellModel caCell = (FCACellModel) catrack.getAttachedModel();
+						SpaceView.cellView[x][y].setInitialStatus(caCell.getModel().getFormattedPhase(), caCell.getModel().getFormattedSigma());
+						//caView.animate();
 					}
 				});
 			}
@@ -109,7 +109,7 @@ public class CATrackingControl {
 		dialog.setContentPane(contentPane);
 		dialog.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
 		dialog.setIconImage((new ImageIcon(ViewUtils.loadFullImage(ViewUtils.LOGO)).getImage()));
-		
+
 		dialog.setTitle("CA-DEVS Simulation");
 
 		dialog.addWindowListener(new java.awt.event.WindowAdapter() {
@@ -126,7 +126,6 @@ public class CATrackingControl {
 				try {
 					contentPane.setScene(caView.createScene());
 				} catch (Exception e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -162,22 +161,29 @@ public class CATrackingControl {
 	public void addCATracking(double currTime) {
 		for (int i = 0; i < CAmodelColumn.length; i++) {
 			dataCAView = CAmodelColumn[i].getCurrentCAViewData(currTime);
+			int x = CAmodelColumn[i].getX();
+			int y = CAmodelColumn[i].getY();
+
+			if (x != -1 && y != -1) {
+				for (int j = 0; j < dataCAView.size(); j++) {
+					caView.cellView[x][y].addEvent(dataCAView.get(j));
+				}
+
+			}
+		}
+		caView.animate();
+
+	}
+	
+	public void addCATimeViewTracking(double currTime){
+		for (int i = 0; i < CAmodelColumn.length; i++) {
 			dataTimeView = CAmodelColumn[i].getCurrentTimeViewData(currTime);
 			int x = CAmodelColumn[i].getX();
 			int y = CAmodelColumn[i].getY();
 
-			// System.out.println("x=" + x + ";y=" + y);
-			// System.out.println(CAmodelColumn.length);
 			if (x != -1 && y != -1) {
-				for (int j = 0; j < dataCAView.size(); j++) {
-					// System.out.println("X=" + x + ", Y=" + y + ": " +
-					// dataCAView.get(j));
-					caView.cellView[x][y].addEvent(dataCAView.get(j));
-				}
-
 				if (timeView[i] != null) {
 					for (int j = 0; j < dataTimeView.size(); j++) {
-						// System.out.println("addingevents^^^^^^^^^^"+(dataTimeView.get(j)));
 						timeView[i].addEvent(dataTimeView.get(j));
 					}
 					timeView[i].endTime(currTime);
@@ -185,8 +191,8 @@ public class CATrackingControl {
 
 			}
 		}
-		caView.animate();
-
+		
+		
 	}
 
 	public SpaceView getCAView() {

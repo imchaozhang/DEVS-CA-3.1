@@ -13,5 +13,6 @@ package facade.simulation.hooks;
 public interface SimulatorHookListener 
 {
     public void postComputeInputOutputHook();
+    public void CAPostComputeInputOutputHook();
     public void simulatorStateChangeHook();
 }

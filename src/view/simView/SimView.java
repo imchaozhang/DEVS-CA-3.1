@@ -317,6 +317,7 @@ public class SimView
         public void clockChanged(double newTime){}
         public void iterationsCompleted(){}
         public void postComputeInputOutputHook(){}
+        public void CAPostComputeInputOutputHook(){};
         public void simulatorStateChangeHook(){}
         
         /**

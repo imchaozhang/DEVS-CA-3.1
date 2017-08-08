@@ -638,6 +638,11 @@ public class View extends JFrame implements ViewInterface {
 
 		catracking.addCATracking(currentTime);
 	}
+	
+	public void addCATimeViewTrackingColumn(double currentTime) {
+
+		catracking.addCATimeViewTracking(currentTime);
+	}
 
 	/**
 	 * Load Simulator
