@@ -23,10 +23,10 @@ import view.timeView.GraphFactory;
 public class CellView extends StackPane {
 
 	public Rectangle rectangle;
-	public String status = "passive";
+	private String status = "passive";
 	public StringProperty sstatus;
 	public Text text;
-	public Color previouscolor, currentcolor;
+	private Color previouscolor, currentcolor;
 	public LinkedList<Event> datalistCAView = new LinkedList<Event>();
 	public Tooltip tp = new Tooltip();
 	public boolean statusChanged = false;
@@ -151,7 +151,7 @@ public class CellView extends StackPane {
 	}
 
 	public void refreshNodeColor() {
-		currentcolor = CAViewUI.getColor(status);
+		previouscolor = currentcolor = CAViewUI.getColor(status);
 		rectangle.setFill(currentcolor);
 	}
 
@@ -291,6 +291,30 @@ public class CellView extends StackPane {
 	public int getJ() {
 		return j;
 
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Color getPreviouscolor() {
+		return previouscolor;
+	}
+
+	public void setPreviouscolor(Color previouscolor) {
+		this.previouscolor = previouscolor;
+	}
+
+	public Color getCurrentcolor() {
+		return currentcolor;
+	}
+
+	public void setCurrentcolor(Color currentcolor) {
+		this.currentcolor = currentcolor;
 	}
 
 }

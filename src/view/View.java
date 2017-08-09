@@ -695,7 +695,7 @@ public class View extends JFrame implements ViewInterface {
 	public void synchronizeCAView() {
 		// after the simulation starts, use platform runlater to avoid
 		// refreshing text too quickly to kill the javafx application
-		if (!SpaceView.atStartPoint) {
+		if (!SpaceView.isAtStartPoint()) {
 			Platform.runLater(new Runnable() {
 				@Override
 				public void run() {

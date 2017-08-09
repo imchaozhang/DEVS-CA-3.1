@@ -65,25 +65,28 @@ public class CATrackingControl {
 			initAndRunFX();
 		}
 
-		for (int i = 0; i < CAmodelColumn.length; i++) {
-			int x = CAmodelColumn[i].getX();
-			int y = CAmodelColumn[i].getY();
-			CATracker catrack = CAmodelColumn[i];
+		Platform.runLater(new Runnable() {
+			@Override
+			public void run() {
+				for (int i = 0; i < CAmodelColumn.length; i++) {
+					int x = CAmodelColumn[i].getX();
+					int y = CAmodelColumn[i].getY();
+					CATracker catrack = CAmodelColumn[i];
 
-			if (x != -1 && y != -1) {
-				Platform.runLater(new Runnable() {
-					@Override
-					public void run() {
+					if (x != -1 && y != -1) {
 
 						SpaceView.cellView[x][y].setCATracker(catrack);
-						//set the initial phase, sigma, and color before animation. Data is from Facade directly.
+						// set the initial phase, sigma, and color before
+						// animation. Data is from Facade directly.
 						FCACellModel caCell = (FCACellModel) catrack.getAttachedModel();
-						SpaceView.cellView[x][y].setInitialStatus(caCell.getModel().getFormattedPhase(), caCell.getModel().getFormattedSigma());
-						//caView.animate();
+						SpaceView.cellView[x][y].setInitialStatus(caCell.getModel().getFormattedPhase(),
+								caCell.getModel().getFormattedSigma());
+
 					}
-				});
+				}
+				caView.animate();
 			}
-		}
+		});
 
 		timeView = new TimeView[cntModel];
 		dataCAView = new ArrayList<Event>(1);
@@ -174,8 +177,8 @@ public class CATrackingControl {
 		caView.animate();
 
 	}
-	
-	public void addCATimeViewTracking(double currTime){
+
+	public void addCATimeViewTracking(double currTime) {
 		for (int i = 0; i < CAmodelColumn.length; i++) {
 			dataTimeView = CAmodelColumn[i].getCurrentTimeViewData(currTime);
 			int x = CAmodelColumn[i].getX();
@@ -191,8 +194,7 @@ public class CATrackingControl {
 
 			}
 		}
-		
-		
+
 	}
 
 	public SpaceView getCAView() {

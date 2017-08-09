@@ -13,10 +13,7 @@ import controller.ControllerInterface;
 import facade.simulation.FSimulator;
 import javafx.animation.FadeTransition;
 import javafx.animation.FillTransition;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
 import javafx.animation.ParallelTransition;
-import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 import javafx.beans.value.ChangeListener;
@@ -52,7 +49,6 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.TextInputDialog;
 import javafx.scene.control.TitledPane;
-import javafx.scene.input.MouseButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
@@ -77,11 +73,11 @@ public class SpaceView {
 	private static double sceneHeight = 400;
 	public static CellView[][] cellView;
 
-	static double gridWidth, gridHeight;
-	static int n, m;
-	public static LinkedList<ParallelTransition> playback = new LinkedList<ParallelTransition>();
+	private static double gridWidth, gridHeight;
+	private static int n, m;
+	private static LinkedList<ParallelTransition> playback = new LinkedList<ParallelTransition>();
 
-	public static LinkedList<Double> PBStatusIndex = new LinkedList<Double>();
+	private static LinkedList<Double> PBStatusIndex = new LinkedList<Double>();
 
 	// real time factors
 	private static final double[] REAL_TIME_FACTORS = { 0.0001, 0.001, 0.01, 0.1, 0.5, 1, 5, 10, 50, 100, 1000 };
@@ -96,14 +92,14 @@ public class SpaceView {
 	private static boolean animationPaused = false;
 	private static boolean toolTipSelected = true;
 	// atStartPoint is used to check if the simulation just start.
-	public static boolean atStartPoint = true;
+	private static boolean atStartPoint = true;
 
 	// private static ToggleSwitch AnimationSwitch;
 	// private static BooleanProperty animationOn;
 
 	private static boolean isPhase = true, isSigma = true, isStateChanged = true;
 
-	private static int playbackSize = 30;
+	private static int playbackSize = 20;
 	private static int trackingInterval = 1;
 
 	private static Scene scene;
@@ -210,6 +206,7 @@ public class SpaceView {
 
 		playback.clear();
 		PBStatusIndex.clear();
+
 
 	}
 
@@ -338,9 +335,9 @@ public class SpaceView {
 
 		scene = new Scene(ui);
 
-		return scene;
+		//animate();
 
-		// animate();
+		return scene;
 
 	}
 
@@ -367,7 +364,7 @@ public class SpaceView {
 			public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
 				if (playbackControl.getMax() > 0 && !sizechanged) {
 					// if (executor.isTerminated()) {
-					int playI = playbackControl.valueProperty().intValue() - 1;
+					int playI = playbackControl.valueProperty().intValue();
 					if (playI < 0)
 						playI = 0;
 					playback.get(playI).play();
@@ -421,8 +418,6 @@ public class SpaceView {
 
 	public void animate() {
 
-		atStartPoint = false;
-
 		// return the states to the lastest one to make sure the playback will
 		// not interrupt the current animation
 		if (playbacked) {
@@ -441,7 +436,10 @@ public class SpaceView {
 		for (int ai = 0; ai < n; ai++) {
 			for (int aj = 0; aj < m; aj++) {
 				CellView currentnode = cellView[ai][aj];
-				Color previouscolor = currentnode.previouscolor;
+				String previsouStatus = currentnode.getStatus();
+				Color previouscolor = currentnode.getPreviouscolor();
+				Color nextcolor;
+
 				if (!currentnode.isDatalistEmp()) {
 					CellView nextnode = currentnode.step();
 					// CACurrentTime is the current time for the CA system. It
@@ -449,7 +447,10 @@ public class SpaceView {
 					if (nextnode.currentTime > CAcurrentTime) {
 						CAcurrentTime = nextnode.currentTime;
 					}
-					Color nextcolor = nextnode.currentcolor;
+
+					String currentStatus = currentnode.getStatus();
+					nextcolor = nextnode.getCurrentcolor();
+
 					if (count % stepSpeed == 0) {
 						animationPaused = false;
 
@@ -458,7 +459,7 @@ public class SpaceView {
 						animationPaused = true;
 					}
 
-					if (nextcolor != previouscolor) {
+					if (previsouStatus != currentStatus) {
 
 						numberOfCellChanged++;
 
@@ -469,29 +470,31 @@ public class SpaceView {
 					 */
 					if (!animationPaused && animationSelected) {
 						cellView[ai][aj].rectangle.setFill(nextcolor);
-						cellView[ai][aj].previouscolor = nextcolor;
+						cellView[ai][aj].setPreviouscolor(nextcolor);
 					} else {
 						cellView[ai][aj].rectangle.setFill(nextcolor);
-						cellView[ai][aj].previouscolor = nextcolor;
+						cellView[ai][aj].setPreviouscolor(nextcolor);
 					}
+				} else {
 
-					if (playbackSelected && count % trackingInterval == 0) {
-						// if animation is selected and at the tracking interval
-						// step, all the cells' transition will be recorded.
-						// add a background thread for the filltransition
-						// animation, because this can be efficient.
-						Runnable r = new Runnable() {
-							public void run() {
-								FillTransition ftA = new FillTransition(Duration.millis(40), currentnode.rectangle,
-										previouscolor, nextcolor);
-								ftA.setAutoReverse(false);
-								ftList.add(ftA);
-							}
-						};
+					nextcolor = currentnode.getCurrentcolor();
+				}
 
-						executor.execute(r);
+				if (playbackSelected && count % trackingInterval == 0 || playback.size() <= 1) {
+					// if animation is selected and at the tracking interval
+					// step, all the cells' transition will be recorded.
+					// add a background thread for the filltransition
+					// animation, because this can be efficient.
+					Runnable r = new Runnable() {
+						public void run() {
+							FillTransition ftA = new FillTransition(Duration.millis(40), currentnode.rectangle,
+									previouscolor, nextcolor);
+							ftA.setAutoReverse(false);
+							ftList.add(ftA);
+						}
+					};
 
-					}
+					executor.execute(r);
 
 				}
 
@@ -508,7 +511,7 @@ public class SpaceView {
 
 		};
 
-		if (playbackSelected) {
+		if (playbackSelected || playback.size() <= 1) {
 			executor.execute(r1);
 		}
 
@@ -517,20 +520,20 @@ public class SpaceView {
 				sizechanged = true;
 				if (!playbackTransition.getChildren().isEmpty()) {
 
-					if (playback.size() < playbackSize) {
+					if (playback.size() <= playbackSize) {
 						playback.add(playbackTransition);
 						// add time for PB Status Display
 						PBStatusIndex.add(CAcurrentTime);
-						playbackControl.setMin(1);
-						playbackControl.setMax(playback.size());
-						playbackControl.setValue(playback.size());
+						playbackControl.setMin(0);
+						playbackControl.setMax(playback.size()-1);
+						playbackControl.setValue(playback.size()-1);
 
 					} else {
 						playback.poll();
 						playback.add(playbackTransition);
 						PBStatusIndex.poll();
 						PBStatusIndex.add(CAcurrentTime);
-						playbackControl.setValue(playback.size());
+						playbackControl.setValue(playback.size()-1);
 
 					}
 				}
@@ -539,11 +542,28 @@ public class SpaceView {
 
 		};
 
-		if (playbackSelected) {
+		Runnable r3 = new Runnable() {
+			public void run() {
+
+				if (!playbackTransition.getChildren().isEmpty()) {
+					playback.set(0, playbackTransition);
+					PBStatusIndex.set(0, CAcurrentTime);
+
+				}
+
+			}
+
+		};
+
+		if (playbackSelected || playback.size() < 1) {
 			executor.execute(r2);
+		} else if (playback.size() == 1) {
+			executor.execute(r3);
 		}
 
 		count++;
+		
+		atStartPoint = false;
 
 		// synchronizeView();
 
@@ -875,7 +895,7 @@ public class SpaceView {
 				// add to playfield for further reference using an array
 				cellView[i][j] = node;
 
-				currentPhase = node.status;
+				currentPhase = node.getStatus();
 				color4phase.setValue(CAViewUI.getColor(currentPhase));
 
 				node.setOnMousePressed(new EventHandler<MouseEvent>() {
@@ -886,7 +906,7 @@ public class SpaceView {
 						if (t.isSecondaryButtonDown()) {
 							contextMenu.show(mynode, mynode.getScene().getWindow().getX() + t.getSceneX(),
 									mynode.getScene().getWindow().getY() + t.getSceneY());
-							String currentPhase = node.status;
+							String currentPhase = node.getStatus();
 							colorPickerItem.setText(currentPhase);
 							color4phase.setValue(CAViewUI.getColor(currentPhase));
 							color4phase.setOnAction(new EventHandler() {
@@ -1089,21 +1109,23 @@ public class SpaceView {
 
 	}
 
-	public double topleftNodeInScrollPaneY(ScrollPane scrollPane, Node node) {
-		double h = scrollPane.getContent().getBoundsInLocal().getHeight();
-		double y = node.getBoundsInParent().getMinY();
-		double v = scrollPane.getViewportBounds().getHeight();
-		double m = scrollPane.getVmax();
-		return (m * ((y) / (h - v)));
-	}
-
-	public double topleftNodeInScrollPaneX(ScrollPane scrollPane, Node node) {
-		double w = scrollPane.getContent().getBoundsInLocal().getWidth();
-		double x = node.getBoundsInParent().getMinX();
-		double v = scrollPane.getViewportBounds().getWidth();
-		double m = scrollPane.getHmax();
-		return (m * ((x) / (w - v)));
-	}
+	// public double topleftNodeInScrollPaneY(ScrollPane scrollPane, Node node)
+	// {
+	// double h = scrollPane.getContent().getBoundsInLocal().getHeight();
+	// double y = node.getBoundsInParent().getMinY();
+	// double v = scrollPane.getViewportBounds().getHeight();
+	// double m = scrollPane.getVmax();
+	// return (m * ((y) / (h - v)));
+	// }
+	//
+	// public double topleftNodeInScrollPaneX(ScrollPane scrollPane, Node node)
+	// {
+	// double w = scrollPane.getContent().getBoundsInLocal().getWidth();
+	// double x = node.getBoundsInParent().getMinX();
+	// double v = scrollPane.getViewportBounds().getWidth();
+	// double m = scrollPane.getHmax();
+	// return (m * ((x) / (w - v)));
+	// }
 
 	@FXML
 	public void initialize() {
@@ -1205,6 +1227,7 @@ public class SpaceView {
 				rbs.disable(!new_val);
 			}
 		});
+		
 
 	}
 
@@ -1244,6 +1267,14 @@ public class SpaceView {
 	private void changeSliderValue(double value) {
 
 		PBTracking.setValue(value);
+	}
+
+	public static boolean isAtStartPoint() {
+		return atStartPoint;
+	}
+
+	public static void setAtStartPoint(boolean atStartPoint) {
+		SpaceView.atStartPoint = atStartPoint;
 	}
 
 }
