@@ -229,11 +229,14 @@ public class ModelTrackingComponent
         htmlString.append("</TR>");
         for (int row = 0; row < modelColumn.length; row++)
         {
+        	//added by Chao. Only add tracking row when trackingLog is selected
+        	if(modelColumn[row].isTrackingSelected()){
             htmlString.append("<TR>");
             htmlString.append("<TD nowrap><B>"+modelColumn[row]+"</B></TD>");
             for (int column = 0; column < dataColumns.size(); column++)
                 htmlString.append("<TD nowrap>"+((String[])dataColumns.get(column))[row]+"&nbsp;</TD>");
             htmlString.append("</TR>");
+        	}
             
         }
         htmlString.append("</TABLE></BODY></HTML>");

@@ -925,6 +925,10 @@ public class SpaceView {
 										node.setCATimeViewGraphs();
 										node.isTimeViewWindowOpen = true;
 									}
+									if(okClicked && node.istrackinglogselected){
+										node.setCATimeViewGraphs();
+										
+									}
 								}
 							});
 

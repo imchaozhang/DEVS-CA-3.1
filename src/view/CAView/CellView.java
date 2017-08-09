@@ -278,8 +278,14 @@ public class CellView extends StackPane {
 
 		this.catracker.setGraphs(graphs);
 
+		if(isCATimeViewSelected)
 		catracker.getCATrackingControl().registerCATimeView(catracker.getGraphs(), catracker.getModelNum(),
 				catracker.getxUnit(), catracker.gettimeIncrement(), isTimeViewWindowOpen);
+		if(istrackinglogselected){
+			catracker.setTrackingLogSelected(true);
+			catracker.getCATrackingControl().registerTrackingLog();
+
+		}
 
 	}
 

@@ -20,6 +20,8 @@ import facade.modeling.CAmodeling.FCASpaceModel;
 import javafx.application.Platform;
 import javafx.embed.swing.JFXPanel;
 import view.ExternalTimeView;
+import view.ModelTrackingComponent;
+import view.View;
 import view.ViewUtils;
 import view.timeView.Event;
 import view.timeView.TimeView;
@@ -39,6 +41,9 @@ public class CATrackingControl {
 	protected static TimeView[] timeView;
 
 	protected static ArrayList<ExternalTimeView> windowHandles = new ArrayList<ExternalTimeView>(0);
+
+	private boolean isTrackingLogSelected = false;
+	private static ModelTrackingComponent modelTracking;
 
 	private static JFrame dialog;
 
@@ -174,12 +179,16 @@ public class CATrackingControl {
 
 			}
 		}
+
 		caView.animate();
 
 	}
 
 	public void addCATimeViewTracking(double currTime) {
 		for (int i = 0; i < CAmodelColumn.length; i++) {
+			if (!isTrackingLogSelected)
+				isTrackingLogSelected = CAmodelColumn[i].isTrackingSelected();
+
 			dataTimeView = CAmodelColumn[i].getCurrentTimeViewData(currTime);
 			int x = CAmodelColumn[i].getX();
 			int y = CAmodelColumn[i].getY();
@@ -195,13 +204,17 @@ public class CATrackingControl {
 			}
 		}
 
+		if (isTrackingLogSelected) {
+			modelTracking.addTrackingSet(currTime);
+			//modelTracking.refresh();
+		}
 	}
 
 	public SpaceView getCAView() {
 		return caView;
 	}
 
-	// adding by Chao. For the CA Timeview Tracking
+	// For the CA Timeview Tracking
 	public void registerCATimeView(ArrayList graphs, final int num, String XLabel, String TimeIncre,
 			boolean isTimeViewWindowOpen) {
 		timeView[num] = new TimeView(graphs, CAmodelColumn[num].getAttachedModel().getName(), XLabel, TimeIncre);
@@ -219,6 +232,16 @@ public class CATrackingControl {
 		windowHandles.add(ETV);
 		javax.swing.SwingUtilities.invokeLater(ETV);
 
+	}
+
+	// For the Tracking Log
+	public void registerTrackingLog() {
+		modelTracking = new ModelTrackingComponent();
+		modelTracking.loadModel(rootModelName, CAmodelColumn);
+
+		ExternalTimeView ELOG = new ExternalTimeView("Tracking Log", modelTracking.retTL());
+		windowHandles.add(ELOG);
+		javax.swing.SwingUtilities.invokeLater(ELOG);
 	}
 
 	public void controlCATimeView(String control) {

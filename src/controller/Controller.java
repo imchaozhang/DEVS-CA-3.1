@@ -140,11 +140,11 @@ public class Controller implements ControllerInterface, SimulatorHookListener {
 
 	//this is run after simulation step, so it will be getTimeOfLastEvent
 	public void CAPostComputeInputOutputHook() {
-		// else if (View.isCATracking) {
+		if (View.isCATracking) {
 		view.addCATrackingColumn(simulator.getTimeOfLastEvent());
 		view.synchronizeCAView();
 
-		// }
+		}
 
 	}
 
